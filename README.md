@@ -18,3 +18,8 @@ virtualenv venv
 # means you have activated the virtual environment successfully
 pip install -r requirements.txt # this will install flask
 ```
+
+* to deactivate the virtual environment
+```bash
+deactivate
+```
