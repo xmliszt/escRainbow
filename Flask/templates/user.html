@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User {{name}}</title>
+</head>
+<body>
+    <h1>Welcome {{name}}</h1>
+    <p>{{get_flashed_messages()[0]}}</p>
+    <p>{{get_flashed_messages()[1]}}</p>
+
+    {% for message in get_flashed_messages() %}
+        <p>{{message}}</p>
+    {% endfor %}
+
+    <button onclick="window.location.href='/'">back</button>
+</body>
+</html>
