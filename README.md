@@ -21,5 +21,4 @@ node app
   
 ## License & Copyright
 © ESCC1G9, Singapore University of Technology and Design
-
 Licensed under the [MIT License](LICENSE)

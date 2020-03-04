@@ -5,6 +5,8 @@ class Agent{
         this.skillsets = skillsets;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.isBusy = false;
+        this.isFree = true;
     }
     getFirstName(){
         return this.firstName;
@@ -23,10 +25,11 @@ class Agent{
     }
     /**
      * add skill to the existing skillsets
-     * @param {int} skill skill code describing the skill
+     * see queries.js
+     * @param {int} query query code describing the agent's skill
      */
-    addSkill(skill){
-        this.skillsets.push(skill);
+    addSkill(query){
+        this.skillsets.push(query);
         return 1;
     }
     /**
@@ -42,4 +45,20 @@ class Agent{
             return 0;
         }
     }
+    isFree(){
+        return this.isFree;
+    }
+    isBusy(){
+        return this.isBusy;
+    }
+    free(){
+        this.isFree = true;
+        this.isBusy = false;
+    }
+    work(){
+        this.isFree = false;
+        this.isBusy = true;
+    }
 }
+
+exports = Agent;
