@@ -2,7 +2,7 @@ $(document).ready(function(){
     var dateTime = getDateTime();
     var responseBubble = $(`
     <div>
-        <span class="msg_head">Agent 1</span>
+        <span class="msg_head">Mr. Bot</span>
         <div>
             <div class="msg_cotainer">  
                 <span class="msg_body"> Hi! How can I help you? </span><br>
@@ -46,7 +46,7 @@ $(document).ready(function(){
                     var dateTime = getDateTime();
                     var responseBubble = $(`
                     <div>
-                        <span class="msg_head">${responseBody==0 ? "Bot" : "Agent "+responseBody}</span>
+                        <span class="msg_head">${responseBody==0 ? "Mr. Bot" : "Agent "+responseBody}</span>
                         <div>
                             <div class="msg_cotainer">  
                                 <span class="msg_body">${responseMsg}</span><br>
