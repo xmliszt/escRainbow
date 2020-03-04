@@ -1,21 +1,33 @@
 $(document).ready(function(){
+    var dateTime = getDateTime();
+    var responseBubble = $(`
+    <div>
+        <span class="msg_head">Agent 1</span>
+        <div>
+            <div class="msg_cotainer">  
+                <span class="msg_body"> Hi! How can I help you? </span><br>
+                <button class="btn btn-sm btn-primary">Click Me</button>
+            </div>
+        </div>
+        <span class="msg_time">${dateTime}</span>
+    </div>`);
+    $('#conversation_body').append(responseBubble);
     $('form').submit(function(e){
         e.preventDefault();
         // append chat message bubble
-        var today = new Date();
-        var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-        var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        var dateTime = date+' '+time;
+        var dateTime = getDateTime();
         var message = $('#userInputMsg').val();
         var fName = document.getElementById("fName").innerHTML;
         var lName = document.getElementById("lName").innerHTML;
         var bubble = $(`
-        <div class="d-flex justify-content-end mb-4">
-            <div class="msg_cotainer_send">
-                <span class="msg_head_send">${fName} ${lName}</span>
-                ${message}
-                <span class="msg_time_send">${dateTime}</span>
+        <div style="text-align: right">
+            <span class="msg_head_send">${fName} ${lName}</span>
+            <div>
+                <div class="msg_cotainer_send">  
+                    <span class="msg_body">$${message}</span><br>
+                </div>
             </div>
+            <span class="msg_time_send">${dateTime}</span>
         </div>`);
         $('#conversation_body').append(bubble);
         document.getElementById("userInputMsg").value = "";
@@ -31,19 +43,16 @@ $(document).ready(function(){
                 var responseBody = data.from;
                 console.log(`${responseMsg} ${responseBody}`);
                 setTimeout(function(){
-                    var today = new Date();
-                    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-                    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-                    var dateTime = date+' '+time;
+                    var dateTime = getDateTime();
                     var responseBubble = $(`
-                    <div class="d-flex justify-content-start mb-4">
-                        <div class="msg_cotainer">
-                            <span class="msg_head">
-                            ${responseBody==0 ? "Bot" : "Agent "+responseBody}
-                            </span>
-                            ${responseMsg}
-                            <span class="msg_time">${dateTime}</span>
+                    <div>
+                        <span class="msg_head">${responseBody==0 ? "Bot" : "Agent "+responseBody}</span>
+                        <div>
+                            <div class="msg_cotainer">  
+                                <span class="msg_body">${responseMsg}</span><br>
+                            </div>
                         </div>
+                        <span class="msg_time">${dateTime}</span>
                     </div>`);
                     $('#conversation_body').append(responseBubble);
                 }, 1000);
@@ -67,3 +76,11 @@ $(document).ready(function(){
         }
     });
 });
+
+function getDateTime(){
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
+    return dateTime;
+}

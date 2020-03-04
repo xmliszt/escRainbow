@@ -45,28 +45,32 @@ body,html{
 }
 
 .msg_cotainer{
+    display: inline-block;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-left: 10px;
-    border-radius: 25px;
+    border-radius: 15px;
     background-color: #82ccdd;
     padding: 10px;
     position: relative;
+    text-align: left;
+    white-space: normal;
 }
 .msg_cotainer_send{
+    display: inline-block;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-right: 10px;
-    border-radius: 25px;
+    border-radius: 15px;
     background-color: #78e08f;
     padding: 10px;
     position: relative;
     text-align: right;
+    white-space: normal;
 }
 .msg_time{
-    position: absolute;
-    left: 5;
-    bottom: -15px;
+    position: relative;
+    left: 15;
     color: rgba(255,255,255,0.5);
     font-size: 10px;
     overflow-x: visible;
@@ -75,9 +79,8 @@ body,html{
     white-space: nowrap;
 }
 .msg_time_send{
-    position: absolute;
-    right:5;
-    bottom: -15px;
+    position: relative;
+    right: 15px;
     color: rgba(255,255,255,0.5);
     text-align: right;
     font-size: 10px;
@@ -85,26 +88,28 @@ body,html{
     overflow-wrap: normal;
     white-space: nowrap;
 }
-.msg_title{
+.msg_body{
     position: relative;
 }
 .msg_head{
-    position: absolute;
+    position: relative;
     color: rgba(255,255,255,0.5);
-    bottom: 45px;
-    left:5;
     font-size: 10px;
+    left: 15px;
+    top: 15px;
     white-space: nowrap;
     overflow-x: visible;
+    text-align: left;
 }
 .msg_head_send{
-    position: absolute;
+    position: relative;
     color: rgba(255,255,255,0.5);
-    bottom: 45px;
-    right:5;
     font-size: 10px;
+    right: 15px;
+    top: 15px;
     white-space: nowrap;
     overflow-x: visible;
+    text-align: right;
 }
 .chat-btn{
     max-width: 100px;
