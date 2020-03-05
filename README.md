@@ -1,8 +1,6 @@
 # ESC Project Alpha -- Routing Engine for Bank Industry using Rainbow Services
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
-[TOC]
-
 ## How To Run
 *Make sure you have MongoDB installed before running*
 ```bash
