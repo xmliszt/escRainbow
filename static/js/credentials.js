@@ -2,7 +2,6 @@ const USER = "yuxuan_li@mymail.sutd.edu.sg";
 const PWD = "jTijtM1oXr~4";
 const APPID = "47a88e404ed911ea819a43cb4a9dae9b";
 const SECRET = "GXWv2NNkOnZ573jTlLo6vq3vc05PEgiObRGf0jAWfTXYe01LkN72kzGpXkkpvqf9";
-let KEY = "sutd20alpha";
 
 let options = {
     rainbow: {
