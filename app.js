@@ -157,7 +157,7 @@ app.post('/bot/choices/:uid', (req, res)=>{
 });
 
 
-app.listen(8887);
+app.listen(80, '0.0.0.0');
 
 // Rainbow Node SDK
 // Load the SDK
