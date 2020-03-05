@@ -31,6 +31,14 @@ node app
 * Backend successfully receive requests from Frontend and send back responses accordingly
 * Frontend achieves Asynchronously update message bubbles and continuous chatting
 * When the guest leaves the chat, his data will be removed from MongoDB as well as deleted from Rainbow
+### 2020/03/05 Yuxuan
+* Customer interface to simulate signin as Guest User on Rainbow
+* Chat panel for sending chat bubbles async
+* Sample choices for customer to select for queries
+* Dynamic binding of Frontend js functions to elements
+* Utility functions to help creating dynamic elements at frontend easier :)
+* Exit to clear data from MongoDB as well as remove account from Rainbow
+* Implementation of Queue class established. Utility methods for MongoDB functionality
   
 ## Alpha API
 ### Render Guest Login Page (temporary)
