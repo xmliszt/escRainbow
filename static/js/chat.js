@@ -3,6 +3,15 @@ var cloneCount = 0;
 $(document).ready(function(){
 
     generateBotChoicesBubble();
+    $('.chat').hide();
+
+    $('.chat-img').click(function(){
+        $('.chat').show();
+        $('.chat').animate({opacity: '1.0', bottom: '20px'}, 'slow');
+        $('.toggle-chat-btn').animate({opacity: '0.0'}, 'slow');
+        $('.toggle-chat-btn').hide();
+    });
+
     $('form').submit(function(e){
         e.preventDefault();
         // append chat message bubble
@@ -24,6 +33,13 @@ $(document).ready(function(){
             });
             return;
         }
+    });
+
+    $('#close').click(function(){
+        $('.chat').animate({opacity: '0.0', bottom: '0'}, 'slow');
+        $('.chat').hide();
+        $('.toggle-chat-btn').show();
+        $('.toggle-chat-btn').animate({opacity: '1.0'}, 'slow');
     });
 
     $('#quit').click(function(){
@@ -93,7 +109,7 @@ function generateBotChoicesBubble(){
                 <button class="q1 btn btn-sm btn-dark" id="${cloneCount*5+1}">Card Replacement</button>
                 <button class="q2 btn btn-sm btn-dark" id="${cloneCount*5+2}">Investment/Loan</button>
                 <button class="q3 btn btn-sm btn-dark" id="${cloneCount*5+3}">Overseas Spending Activation</button>
-                <button class="q4 btn btn-sm btn-success" id="${cloneCount*5+4}">Chat With Agents</button><br>
+                <button class="q4 btn btn-sm btn-primary" id="${cloneCount*5+4}">Chat With Agents</button><br>
                 <span class="msg_body">Type <b>"help"</b> to bring up the choices again.</span>
             </div>
         </div>

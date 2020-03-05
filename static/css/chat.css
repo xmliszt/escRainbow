@@ -1,20 +1,66 @@
 body,html{
+    width: 100%;
     height: 100%;
     margin: 0;
-    background: #7F7FD5;
-    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    font-size: small;
+    background-image: url("/img/bg.jpg");
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
+/* Inspection code
+* {
+    border: 1px solid #f00 !important;
+  } */
+
 .chat{
+    position: fixed;
+    bottom: 0;
+    right: 0;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-right: 20px;
+    width: 30%;
+    height: 80%;
+    opacity: 0;
 }
+
+.chat-img{
+    max-width: 40px;
+    cursor: pointer;
+}
+
+.toggle-chat-btn{
+    z-index: 1;
+    position: fixed;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    right: 0;
+    bottom: 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.chat-ease-in{
+    animation:mymove 3s ease-in forwards;
+    -webkit-animation:mymove 3s;
+}
+
 .card{
     height: 100%;
-    border-radius: 0px !important;
-    background-color: rgba(0,0,0,0.4) !important;
+    border-radius: 15px !important;
+    background-color: rgba(0,0,0,0.8) !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
+#close{
+    margin: 0 !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 20px !important;
+    border-color: transparent !important;    
+    background-color: transparent !important;
+}
+
 .msg_card_body{
     position: relative;
     overflow-y: auto;
@@ -23,23 +69,27 @@ body,html{
     position: relative;
     border-radius: 15px 15px 0 0 !important;
     border-bottom: 0 !important;
+    height: 10%;
 }
 .card-footer{
     position: relative;
     border-radius: 0 0 15px 15px !important;
     border-top: 0 !important;
+    height: 10%;
 }
 .container{
     align-content: center;
 }
+
+#sendBtn{
+    max-width: 1.5vw;
+}
+
 .type_msg{
     background-color: rgba(0,0,0,0.3) !important;
     border:0 !important;
     color:white !important;
-    height: 60px !important;
     overflow-y: auto;
-}
-.type_msg:focus{
     box-shadow:none !important;
     outline:0px !important;
 }
@@ -118,30 +168,71 @@ body,html{
     margin-left: 2rem;
 }
 .user_info{
-    font-size: 3.5vw;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    position: absolute;
+    top: 1vw;
+    font-size: 1vw;
+    font-family: Arial, Helvetica, sans-serif;
     font-style: initial;
     color: azure;
 }
-.send_btn{
+
+button{
+    margin: 2px;
+    outline: none;
+}
+
+.input-group{
+    position: relative !important;
+}
+
+input[type='text']{
+    font-size: small;
+}
+
+.input-group-text{
+    border: 0 !important;
+}
+
+.input-group-append{
+    border: 0 !important;
+    border-color: transparent !important;
+    background-color: transparent !important;
+}
+
+#send-container{
     background-color: rgba(0,0,0,0.3) !important;
-    border:0 !important;
 }
 
 .q0,.q1,.q2,.q3{
     border-color: white;
     border-width: 1px;
-    background-color: darkslategray;
+    background-color: #444444;
 }
 
 .q4{
     border-color: white;
     border-width: 1px;
-    background-color: mediumaquamarine;
+    background-color: #85c2fc;
+    color: #444444;
 }
 
-@media(max-width: 576px){
-.contacts_card{
-margin-bottom: 15px !important;
+
+.jumbotron{
+    background-color: rgba(255, 255, 255, 0.60);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    text-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    color: #444;
 }
+
+.demo-text{
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.9);
+    margin: 10px;
+}
+
+@media(max-width: 576px)
+{
+    .contacts_card{
+    margin-bottom: 15px !important;
+    }
 }
