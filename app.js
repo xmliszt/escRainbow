@@ -53,6 +53,7 @@ app.post('/',  (req, res) => {
     })
     .catch((err) => {
         console.log(`Create User Error: ${err}`);
+        res.status(501);
         res.render('index');
     });
 });
@@ -65,7 +66,8 @@ app.get('/chat/:uid', (req, res)=>{
         var sess = req.session;
         res.render('chat', sess);
     }).catch(e=>{
-        console.error(`Failed to find user with id: ${mUser.id} [${e}]`);
+        console.error(`Failed to find user with id: ${uid} [${e}]`);
+        res.status(500);
         res.redirect('/');
     });
 });

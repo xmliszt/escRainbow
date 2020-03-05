@@ -6,8 +6,12 @@ $(document).ready(function(){
         <div>
             <div class="msg_cotainer">  
                 <span class="msg_body"> Hi! How can I help you? </span><br>
-                <button class="btn btn-sm btn-primary">Click Me</button>
-            </div>
+                <button class="btn btn-sm btn-dark" id="q0">General Enquiry</button>
+                <button class="btn btn-sm btn-dark" id="q1">Replace Card</button>
+                <button class="btn btn-sm btn-dark" id="q2">Loan/Investment</button>
+                <button class="btn btn-sm btn-dark" id="q3">Activate Overseas Spending</button>
+                <button class="btn btn-sm btn-warning" id="q4">Contact Agents</button>
+                </div>
         </div>
         <span class="msg_time">${dateTime}</span>
     </div>`);
@@ -24,7 +28,7 @@ $(document).ready(function(){
             <span class="msg_head_send">${fName} ${lName}</span>
             <div>
                 <div class="msg_cotainer_send">  
-                    <span class="msg_body">$${message}</span><br>
+                    <span class="msg_body">${message}</span><br>
                 </div>
             </div>
             <span class="msg_time_send">${dateTime}</span>
@@ -75,6 +79,25 @@ $(document).ready(function(){
             return false;
         }
     });
+
+    // update user's enquiry information at backend through route '/q/<uid>' as POST method
+    $('#q0').click(function(){
+        //TODO: push a bubble about the text you selected
+        //TODO: ajax post request and receive response about next step
+    });
+
+    $('#q1').click(function(){
+        //TODO
+    });
+
+    $('#q1').click(function(){
+        //TODO
+    });
+
+    $('#q1').click(function(){
+        //TODO
+    });
+
 });
 
 function getDateTime(){
