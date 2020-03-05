@@ -2,6 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
 
 ## How To Run
+*Make sure you have MongoDB installed before running*
 ```bash
 git clone https://github.com/xmliszt/escRainbow.git
 cd escRainbow
@@ -120,6 +121,29 @@ $.ajax({
   success : function(data, status, r) {
     console.log(status);
     console.log(data.response);
+  }
+});
+```
+### Delete user
+Remove user info from database and remove from Rainbow
+|   |                       |
+|:--|:----------------------:|
+|URL|/delete|
+|Method|`GET`|
+|URL Params|None|
+|Data Params|None|
+|Success Response (code)| 200 OK|
+|Success Response (content)|`{id:[String]}`|
+|Error Response (code)|501 NOT IMPLEMENTED|
+|Error Response (content)|None|
+* Sample Call
+```js
+$.ajax({
+  url: "/delete",
+  type: "GET",
+  success : function(data, status, r) {
+    console.log(status);
+    console.log(`User deleted is: ${data.id}`);
   }
 });
 ```

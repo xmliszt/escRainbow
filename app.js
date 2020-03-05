@@ -4,11 +4,11 @@ const BOT = 0;
 
 // import packages
 const express = require('express');
-const hash = require('./static/js/hash');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 var db = require('./static/js/db.js').dbUtils;
 var queries = require('./static/js/queries.js').queries;
+var elements = require('./static/js/elementsUtils.js').elementUtils;
 
 // create db collections
 db.createUniqueCollection("Users").catch(e=>{console.error(e); process.exit(1);})
@@ -78,7 +78,7 @@ app.get('/chat/:uid', (req, res)=>{
 app.post('/chat/:uid', (req, res)=>{
     var uid = req.params.uid;
     var message = req.body.message;
-    var replyMsg = `I receive the message "${message}" from User with ID: ${uid}`; 
+    var replyMsg = `Backend received message: "${message}" from User with ID: ${uid}. Sorry I can't do free chat with you yet :((`; 
     res.send({response: replyMsg, from: BOT});  // 0: bot, 1,2,3... Agent 1,2,3...
     res.status(200);
     res.end();
@@ -104,6 +104,56 @@ app.get('/delete', function(req, res){
     else{
         res.redirect('/');
     }
+});
+
+// route for bot choices response POST
+var count0 = 0;
+var count1 = 0;
+var count2 = 0;
+var count3 = 0;
+app.post('/bot/choices/:uid', (req, res)=>{
+    var uid = req.params.uid;
+    var choice = req.body.choice;
+    console.log(`Updating for: ${uid}`);
+    db.update({id: uid}, {query: choice}, "Users")
+    .then(success=>{
+        if (choice == queries.GENERAL_ENQUIRY){
+            //do something
+            var content = "This is an example of General Enquiry response with choices: ";
+            var btn0 = elements.generateBtn(`ge${count0*5+0}`, "I don't have a bank account :(", 0);
+            var btn1 = elements.generateBtn(`ge${count0*5+1}`, "What is online banking?", 1);
+            res.status(200).send({response: {message: content, elements: [btn0, btn1], elementIds: [`ge${count0*5+0}`, `ge${count0*5+1}`]}});
+            count0 += 1;
+            res.end();
+        } else if (choice == queries.CARD_REPLACEMENT){
+            //do something
+            var content = "This is an example of Card Replacement response";
+            res.status(200).send({response: {message: content}});
+            res.end();
+        } else if (choice == queries.INVESTMENT_LOAN){
+            //do something
+            var content = "This is an example of Investment and Loan response";
+            res.status(200).send({response: {message: content}});
+            res.end();
+        } else if (choice == queries.OVERSEAS_SPENDING){
+            //do something
+            var content = "This is an example of Activation of Overseas Spending response";
+            res.status(200).send({response: {message: content}});
+            res.end();
+        } else {
+            res.status(500);
+            res.json({error: "Invalid choice code: " + choice});
+            res.end()
+        }
+    })
+    .catch(e=>{
+        console.error(e);
+        res.status(500);
+        res.json({error: "Failed to update query in DB for user: " + e});
+        res.end();
+    });
+    
+    
 });
 
 
