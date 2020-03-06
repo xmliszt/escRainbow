@@ -14,6 +14,9 @@ var elements = require('./static/js/elementsUtils.js').elementUtils;
 db.createUniqueCollection("Users").catch(e=>{console.error(e); process.exit(1);})
 db.createUniqueCollection("Agents").catch(e=>{console.error(e); process.exit(1);})
 
+
+//hihi
+
 // set up express app
 const app = express();
 
