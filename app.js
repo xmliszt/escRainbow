@@ -25,31 +25,78 @@ app.use(express.static(__dirname + '/static'));
 app.use(session({secret: 'sutd20-alpha~!@',saveUninitialized: true,resave: true}));
 
 // index route GET
-app.get('/', function(req, res){
-    res.render('index');
+app.get('/', (req, res)=>{
+    res.render('home');
+});
+
+// login POST
+app.post('/login', (req,res)=>{
+    var username = req.body.username;
+    var password = req.body.password;
+    //TODO: user verification against database
+    var userExist = false;
+    var sess = req.session;
+
+    //if exist:
+    if (userExist) {
+        var firstName = "";
+        var lastName = "";
+        sess.LoggedIn = true;
+        res.send({firstName: firstName, lastName: lastName});
+        res.status(200);
+        res.end();
+    } else {
+        sess.LoggedIn = false;
+        res.send({error: "User not found!"});
+        res.status(500);
+        res.end();
+    }
+});
+
+// register a bank account
+app.post('/register', (req, res)=>{
+    var data = req.body;
+    var username = data.username;
+    var password = data.password;
+    var firstName = data.firstName;
+    var lastName = data.lastName;
+    //TODO: Store information into MongoDB
+    var userElement = {
+        username: username,
+        password: password,
+        firstName: firstName,
+        lastName: lastName
+    }
+    db.insert(userElement, "Users").then(success=>{
+        res.send({success: 1});
+        res.status(500);
+        res.end();
+    }).catch(err=>{
+        res.send({error: `Registration failed! ${err}`});
+        res.status(500);
+        res.end();
+    });
+});
+
+// logout a bank account
+app.get('/logout', (req, res)=>{
+    var uid = req.params.uid;
+    // TODO: logout the user, switch 
+    var sess = req.session;
+    sess.LoggedIn = false;
+    res.send({success: 1});
+    res.status(200);
+    res.end();
 });
 
 // index route POST -> create guest account -> direct to chat
-app.post('/',  (req, res) => {
-    var firstName = req.body.firstN;
-    var lastName = req.body.lastN;
-    rainbowSDK.admin.createGuestUser(firstName, lastName)
+app.get('/chat',  (req, res) => {
+    rainbowSDK.admin.createAnonymousGuestUser()
     .then((result) => {
-        var mUser = result;  // this mUser contains credentials needed for login
-        var userValues = {
-            id: mUser.id,
-            firstName: mUser.firstName,
-            lastName: mUser.lastName,
-            credentials: result,
-            query: undefined
-        };
-        sess = req.session;
-        sess.uid = mUser.id;
-        sess.fName = mUser.firstName;
-        sess.lName = mUser.lastName;
-        db.insert(userValues, "Users").catch(e=>{console.error("Failed to insert entry into Users! " + e)});
-        console.log(`Create New Guest User: ${mUser.id}\t`);
-        res.redirect(`/chat/${mUser.id}`);
+        var credentials = result;  // this mUser contains credentials needed for login
+        res.send({data: credentials});
+        res.status(200);
+        res.end();
     })
     .catch((err) => {
         console.log(`Create User Error: ${err}`);
@@ -58,25 +105,11 @@ app.post('/',  (req, res) => {
     });
 });
 
-// route to display chat UI for a particular user GET
-app.get('/chat/:uid', (req, res)=>{
-    var uid = req.params.uid;
-    db.search({id: uid}, "Users").then(usr=>{
-        console.log(`Found a user in MongoDB: ID ${usr.id} firstName ${usr.firstName} lastName ${usr.lastName} query ${usr.query}`);
-        var sess = req.session;
-        res.render('chat', sess);
-    }).catch(e=>{
-        console.error(`Failed to find user with id: ${uid} [${e}]`);
-        res.status(500);
-        res.redirect('/');
-    });
-});
-
 // route to receive message data sent from user on chat UI
 // and do something about it POST
 // currently implemented with bot auto reply
-app.post('/chat/:uid', (req, res)=>{
-    var uid = req.params.uid;
+app.post('/chat', (req, res)=>{
+    var data = req.body.data;
     var message = req.body.message;
     var replyMsg = `Backend received message: "${message}" from User with ID: ${uid}. Sorry I can't do free chat with you yet :((`; 
     res.send({response: replyMsg, from: BOT});  // 0: bot, 1,2,3... Agent 1,2,3...
