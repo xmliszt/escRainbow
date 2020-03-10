@@ -39,10 +39,24 @@ node app
 * Utility functions to help creating dynamic elements at frontend easier :)
 * Exit to clear data from MongoDB as well as remove account from Rainbow
 * Implementation of Queue class established. Utility methods for MongoDB functionality
-  
+### 2020/03/10 Team
+* TODO
+
+## Routes
+### `/` GET
+### `/login` POST
+### `/register` POST
+### `/logout/:user` GET
+### `/delete/:guest` GET
+### `/chat` GET
+### `/chat` POST
+### `/agent` GET  [Agent connection request, dequeue the request]
+### `/loan` GET [backend check against session see if user is logged in. If not cannot proceed with loan response]
+
 ## Alpha API
-### Render Guest Login Page (temporary)
-Render the guest login page
+### Render Home Page
+
+Render Alpha bank home page without any login
 |   |                       |
 |:--|:----------------------:|
 |URL|/|
@@ -50,9 +64,9 @@ Render the guest login page
 |URL Params| None|
 |Data Params| None|
 |Success Response (code)| 200 OK|
-|Success Response (content)| "index.ejs" text/html|
+|Success Response (content)| "home.ejs" text/html |
 |Error Response (code)| 404 NOT FOUND|
-|Error Response (content)|None|
+|Error Response (content)|{error: [String]}|
 * Sample Call
 ```js
 $.ajax({
@@ -63,45 +77,80 @@ $.ajax({
   }
 });
 ```
-### Login Guest (temporary)
-Take user input names and log him/her in as guest account in Rainbow
+### Login Bank Account
+
+Log in a user to its bank account [Differentiate this with "Login Guest", which is for the Rainbow side]
+
+When user logged in using its username and password, they are sent to backend to do verification. If success, the user's firstName and lastName stored in database will be returned.
+
+Once logged in, frontend will create cookie for this user account to be stored in the browser.
+
+https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
+
 |   |                       |
 |:--|:----------------------:|
-|URL|/|
+|URL|/login|
 |Method|`POST`|
 |URL Params| None|
-|Data Params|`{firstN: [String], lastN: [String]}`|
+|Data Params|`{username: [String], password: [String]}`|
 |Success Response (code)| 200 OK|
-|Success Response (content)| "chat.ejs" text/html|
-|Error Response (code)| 501 NOT IMPLEMENTED|
-|Error Response (content)| None (render "index.ejs" text/html)|
+|Success Response (content)| `{firstName: [String], lastName: [String]}` |
+|Error Response (code)| 500 INTERNAL SERVER ERROR |
+|Error Response (content)| {error: "User not found!"} |
 * Sample Call
 ```js
 $.ajax({
   url: "/",
   type: "POST",
-  data: {firstN: "firstName", lastN: "lastName"},
+  data: {username: "amyTan2012", password: "iloverainbow"},
+  success : function(data, status, r) {
+    console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+  }
+});
+```
+### Bank Account Registration
+
+New user register for a bank account, information will be submitted to MongoDB at Bankend
+|   |                       |
+|:--|:----------------------:|
+|URL|/register|
+|Method|POST|
+|URL Params|None|
+|Data Params| `{username: [String], password: [String], firstName: [String], lastName: [String]}` |
+|Success Response (code)| 200 OK|
+|Success Response (content)| `{success: 1}` |
+|Error Response (code)|500 INTERNAL SERVER ERROR|
+|Error Response (content)|`{error: "Registration failed! " + <errorMessage>}`|
+* Sample Call
+```js
+$.ajax({
+  url: "/register",
+  type : "POST",
+  data: {username: "xmlist", password: "whatever", firstName: "David", lastName: "Lee"}
   success : function(data, status, r) {
     console.log(status);
   }
 });
 ```
-### Display chat UI for a particular user
-Render the "chat" view for a user
+
+### Logout Bank Account
+
+Logout the current logged in bank account
 |   |                       |
 |:--|:----------------------:|
-|URL|/chat/:uid|
+|URL|/logout/:uid|
 |Method|`GET`|
 |URL Params|`uid=[String]`|
 |Data Params| None|
 |Success Response (code)| 200 OK|
-|Success Response (content)| "chat.ejs" text/html|
+|Success Response (content)| `{success: 1}` |
 |Error Response (code)|500 INTERNAL SERVER ERROR|
-|Error Response (content)|None (redirect to '/')|
+|Error Response (content)|`{error: "Failed to logout! " + <errorMessage>}`|
+* To get the uid ,which will be stored in cookie in the browser, call `getCookie("uid")`
 * Sample Call
 ```js
 $.ajax({
-  url: "/chat/5e606260d8084c29e64eb64f",
+  url: "/logout/14werwe084119849dsf",
   type : "GET",
   success : function(data, status, r) {
     console.log(status);
@@ -109,6 +158,7 @@ $.ajax({
 });
 ```
 ### Send Message and Receive Message
+
 Render the guest login page
 |   |                       |
 |:--|:----------------------:|
