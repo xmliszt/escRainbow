@@ -134,10 +134,35 @@ app.post('/request', (req, res) => {
         res.status(501);
         res.render('home');*/
 });
-
-// queue user's request
-
 // agent connection
+app.get('/agent', (req, res) =>{
+    // call async function to get availble agent
+    function().then(success=>{
+        var agentID = success.agentID;
+        var skill = success.skill;
+        res.send({agentID: agentID, skill:skill});
+        res.status(200);
+        res.end();
+    }).catch(err=>{
+        res.send({error: "Failed to call agent! " + err});
+        res.status(501);
+        res.end();
+    })
+});
+
+// check logged in status
+app.get('/check', (req, res) => {
+    var sess = req.session;
+    if (sess.LoggedIn){
+        res.send({success: 1});
+        res.status(200);
+        res.end();
+    } else {
+        res.send({success: 0});
+        res.status(200);
+        res.end();
+    }
+});
 
 // user make loan appointment - need to check login status
 app.get('/loan', (res, req) => {
