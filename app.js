@@ -26,6 +26,7 @@ app.use(session({secret: 'sutd20-alpha~!@',saveUninitialized: true,resave: true}
 
 // index route GET
 app.get('/', (req, res)=>{
+    console.log(`Incoming address is: ${res.connection.remoteAddress}`);
     res.render('home');
 });
 
@@ -60,7 +61,6 @@ app.post('/register', (req, res)=>{
     var password = data.password;
     var firstName = data.firstName;
     var lastName = data.lastName;
-    //TODO: Store information into MongoDB
     var userElement = {
         username: username,
         password: password,
@@ -69,7 +69,7 @@ app.post('/register', (req, res)=>{
     }
     db.insert(userElement, "Users").then(success=>{
         res.send({success: 1});
-        res.status(500);
+        res.status(200);
         res.end();
     }).catch(err=>{
         res.send({error: `Registration failed! ${err}`});
@@ -80,8 +80,6 @@ app.post('/register', (req, res)=>{
 
 // logout a bank account
 app.get('/logout', (req, res)=>{
-    var uid = req.params.uid;
-    // TODO: logout the user, switch 
     var sess = req.session;
     sess.LoggedIn = false;
     res.send({success: 1});
@@ -105,88 +103,22 @@ app.get('/chat',  (req, res) => {
     });
 });
 
-// route to receive message data sent from user on chat UI
-// and do something about it POST
-// currently implemented with bot auto reply
-app.post('/chat', (req, res)=>{
-    var data = req.body.data;
-    var message = req.body.message;
-    var replyMsg = `Backend received message: "${message}" from User with ID: ${uid}. Sorry I can't do free chat with you yet :((`; 
-    res.send({response: replyMsg, from: BOT});  // 0: bot, 1,2,3... Agent 1,2,3...
-    res.status(200);
-    res.end();
-});
+// queue user's request 
 
-// route to delete user POST
-app.get('/delete', function(req, res){
-    var uid = req.session.uid;
-    if(uid){
-        console.log(`User ID to be deleted: ${uid}`);
-        db.delete({id: uid}, "Users")
-        .then(success=>{
-            rainbowSDK.admin.deleteUser(uid).catch(e=>{console.error(e)});
-            res.status(200).send({id: uid});
-            res.end();
-        })
-        .catch(e=>{
-            console.error("Delete Unsuccessful! " + e);
-            res.status(501);
-            res.end();
-        });
-    }
-    else{
-        res.redirect('/');
-    }
-});
+// agent connection
 
-// route for bot choices response POST
-var count0 = 0;
-var count1 = 0;
-var count2 = 0;
-var count3 = 0;
-app.post('/bot/choices/:uid', (req, res)=>{
-    var uid = req.params.uid;
-    var choice = req.body.choice;
-    console.log(`Updating for: ${uid}`);
-    db.update({id: uid}, {query: choice}, "Users")
-    .then(success=>{
-        if (choice == queries.GENERAL_ENQUIRY){
-            //do something
-            var content = "This is an example of General Enquiry response with choices: ";
-            var btn0 = elements.generateBtn(`ge${count0*5+0}`, "I don't have a bank account :(", 0);
-            var btn1 = elements.generateBtn(`ge${count0*5+1}`, "What is online banking?", 1);
-            res.status(200).send({response: {message: content, elements: [btn0, btn1], elementIds: [`ge${count0*5+0}`, `ge${count0*5+1}`]}});
-            count0 += 1;
-            res.end();
-        } else if (choice == queries.CARD_REPLACEMENT){
-            //do something
-            var content = "This is an example of Card Replacement response";
-            res.status(200).send({response: {message: content}});
-            res.end();
-        } else if (choice == queries.INVESTMENT_LOAN){
-            //do something
-            var content = "This is an example of Investment and Loan response";
-            res.status(200).send({response: {message: content}});
-            res.end();
-        } else if (choice == queries.OVERSEAS_SPENDING){
-            //do something
-            var content = "This is an example of Activation of Overseas Spending response";
-            res.status(200).send({response: {message: content}});
-            res.end();
-        } else {
-            res.status(500);
-            res.json({error: "Invalid choice code: " + choice});
-            res.end()
-        }
-    })
-    .catch(e=>{
-        console.error(e);
-        res.status(500);
-        res.json({error: "Failed to update query in DB for user: " + e});
+// user make loan appointment - need to check login status
+app.get('/loan', (res, req) => {
+    var sess = req.session;
+    if (sess.LoggedIn == true){
+        res.send({success: true});
+        res.status(200);
         res.end();
-    });
-    
-    
+    } else {
+        res.send({success: false});
+        res.status(200);
+        res.end();
+    }
 });
 
 
