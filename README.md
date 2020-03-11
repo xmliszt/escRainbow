@@ -43,17 +43,13 @@ node app
 * TODO
 
 ## Routes
-### `/` GET
-### `/login` POST
-### `/register` POST
-### `/logout/:user` GET
-### `/delete/:guest` GET
-### `/chat` GET
-### `/chat` POST
+
 ### `/agent` GET  [Agent connection request, dequeue the request]
+
 ### `/loan` GET [backend check against session see if user is logged in. If not cannot proceed with loan response]
 
 ## Alpha API
+
 ### Render Home Page
 
 Render Alpha bank home page without any login
@@ -83,7 +79,7 @@ Log in a user to its bank account [Differentiate this with "Login Guest", which 
 
 When user logged in using its username and password, they are sent to backend to do verification. If success, the user's firstName and lastName stored in database will be returned.
 
-Once logged in, frontend will create cookie for this user account to be stored in the browser.
+Once logged in, backend will create cookie for this user account to be stored in the browser.
 
 https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
 
@@ -138,75 +134,109 @@ $.ajax({
 Logout the current logged in bank account
 |   |                       |
 |:--|:----------------------:|
-|URL|/logout/:uid|
+|URL|/logout|
 |Method|`GET`|
-|URL Params|`uid=[String]`|
+|URL Params|None|
 |Data Params| None|
 |Success Response (code)| 200 OK|
 |Success Response (content)| `{success: 1}` |
 |Error Response (code)|500 INTERNAL SERVER ERROR|
 |Error Response (content)|`{error: "Failed to logout! " + <errorMessage>}`|
-* To get the uid ,which will be stored in cookie in the browser, call `getCookie("uid")`
+* To get the uid, which will be stored in cookie in the browser, call `getCookie("uid")`
 * Sample Call
 ```js
 $.ajax({
-  url: "/logout/14werwe084119849dsf",
+  url: "/logout",
   type : "GET",
   success : function(data, status, r) {
     console.log(status);
   }
 });
 ```
-### Send Message and Receive Message
+### Create Anonymous Guest User at Rainbow
 
-Render the guest login page
+User opens chat panel, backend create anonymous guest user in Rainbow and pass to frontend
 |   |                       |
 |:--|:----------------------:|
-|URL|/chat/:uid|
-|Method|`POST`|
-|URL Params| `uid=[String]`|
-|Data Params|`{message: [String]}`|
-|Success Response (code)| 200 OK|
-|Success Response (content)|`{response: [String], from: [Integer]}`|
-|Error Response (code)|404 NOT FOUND|
-|Error Response (content)|None|
-* Sample Call
-```js
-$.ajax({
-  url: "/chat/5e606260d8084c29e64eb64f",
-  type: "POST",
-  data: {message: "Hello World!"},
-  success : function(data, status, r) {
-    console.log(status);
-    console.log(data.response);
-  }
-});
-```
-### Delete user
-Remove user info from database and remove from Rainbow
-|   |                       |
-|:--|:----------------------:|
-|URL|/delete|
-|Method|`GET`|
-|URL Params|None|
+|URL|/chat|
+|Method|GET|
+|URL Params| None |
 |Data Params|None|
 |Success Response (code)| 200 OK|
-|Success Response (content)|`{id:[String]}`|
-|Error Response (code)|501 NOT IMPLEMENTED|
-|Error Response (content)|None|
+|Success Response (content)|`{data: [Object]}`|
+|Error Response (code)|501 INTERNAL SERVER ERROR|
+|Error Response (content)|`{error: "Failed to create user! " + <errorMessage>}`|
 * Sample Call
 ```js
 $.ajax({
-  url: "/delete",
+  url: "/chat",
   type: "GET",
   success : function(data, status, r) {
     console.log(status);
-    console.log(`User deleted is: ${data.id}`);
+    var credentials = data.data;
+  }
+});
+```
+### Queue user's agent call request
+
+User selects "chat with agent", backend receive query skill type and user ID (rainbow guest account). Backend queue the request object.
+
+|                            |                                                             |
+| :------------------------- | :---------------------------------------------------------: |
+| URL                        |                          /request                           |
+| Method                     |                            POST                             |
+| URL Params                 |                            None                             |
+| Data Params                |            `{id: [String], request: [Integer]}`             |
+| Success Response (code)    |                           200 OK                            |
+| Success Response (content) |                       `{success: 1}`                        |
+| Error Response (code)      |                  501 INTERNAL SERVER ERROR                  |
+| Error Response (content)   | `{error: "Failed to queue the request! " + <errorMessage>}` |
+
+* Sample Call
+
+```js
+$.ajax({
+  url: "/request",
+  type: "GET",
+  success : function(data, status, r) {
+    console.log(status);
   }
 });
 ```
 
+
+
+### Make connection with available agent
+
+Frontend signal the need for connecting an agent. 
+
+|                            |                                                             |
+| :------------------------- | :---------------------------------------------------------: |
+| URL                        |                          /request                           |
+| Method                     |                            POST                             |
+| URL Params                 |                            None                             |
+| Data Params                |            `{id: [String], request: [Integer]}`             |
+| Success Response (code)    |                           200 OK                            |
+| Success Response (content) |                       `{success: 1}`                        |
+| Error Response (code)      |                  501 INTERNAL SERVER ERROR                  |
+| Error Response (content)   | `{error: "Failed to queue the request! " + <errorMessage>}` |
+
+* Sample Call
+
+```js
+$.ajax({
+  url: "/request",
+  type: "GET",
+  success : function(data, status, r) {
+    console.log(status);
+  }
+});
+```
+
+
+
 ## License & Copyright
+
 © ESCC1G9, Singapore University of Technology and Design
 
 
