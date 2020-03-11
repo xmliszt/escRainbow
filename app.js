@@ -32,7 +32,7 @@ app.use(session({secret: 'sutd20-alpha~!@', saveUninitialized: true, resave: tru
 
 // index route GET
 app.get('/', (req, res) => {
-    console.log(`Incoming: ${
+    console.log(`Incoming address is: ${
         res.connection.remoteAddress
     }`);
     res.render('home');
@@ -69,7 +69,6 @@ app.post('/register', (req, res) => {
     var password = data.password;
     var firstName = data.firstName;
     var lastName = data.lastName;
-    // TODO: Store information into MongoDB
     var userElement = {
         username: username,
         password: password,
@@ -78,7 +77,7 @@ app.post('/register', (req, res) => {
     }
     db.insert(userElement, "Users").then(success => {
         res.send({success: 1});
-        res.status(500);
+        res.status(200);
         res.end();
     }).catch(err => {
         res.send({error: `Registration failed! ${err}`});
@@ -89,8 +88,6 @@ app.post('/register', (req, res) => {
 
 // logout a bank account
 app.get('/logout', (req, res) => {
-    var uid = req.params.uid;
-    // TODO: logout the user, switch
     var sess = req.session;
     sess.LoggedIn = false;
     res.send({success: 1});
@@ -136,7 +133,24 @@ app.post('/request', (req, res) => {
         res.send({error:`Failed to queue the request! ${err}`});
         res.status(501);
         res.render('home');*/
+});
 
+// queue user's request
+
+// agent connection
+
+// user make loan appointment - need to check login status
+app.get('/loan', (res, req) => {
+    var sess = req.session;
+    if (sess.LoggedIn == true) {
+        res.send({success: true});
+        res.status(200);
+        res.end();
+    } else {
+        res.send({success: false});
+        res.status(200);
+        res.end();
+    }
 });
 
 
