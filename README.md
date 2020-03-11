@@ -197,7 +197,8 @@ User selects "chat with agent", backend receive query skill type and user ID (ra
 ```js
 $.ajax({
   url: "/request",
-  type: "GET",
+  type: "POST",
+  data: {id: "dafljadlfjer30u1f", request: 0},
   success : function(data, status, r) {
     console.log(status);
   }
@@ -208,27 +209,60 @@ $.ajax({
 
 ### Make connection with available agent
 
-Frontend signal the need for connecting an agent. 
+Frontend signal the need for connecting an agent. Backend serve the queue to matching agent
 
-|                            |                                                             |
-| :------------------------- | :---------------------------------------------------------: |
-| URL                        |                          /request                           |
-| Method                     |                            POST                             |
-| URL Params                 |                            None                             |
-| Data Params                |            `{id: [String], request: [Integer]}`             |
-| Success Response (code)    |                           200 OK                            |
-| Success Response (content) |                       `{success: 1}`                        |
-| Error Response (code)      |                  501 INTERNAL SERVER ERROR                  |
-| Error Response (content)   | `{error: "Failed to queue the request! " + <errorMessage>}` |
+|                            |                                                      |
+| :------------------------- | :--------------------------------------------------: |
+| URL                        |                        /agent                        |
+| Method                     |                         GET                          |
+| URL Params                 |                         None                         |
+| Data Params                |                         None                         |
+| Success Response (code)    |                        200 OK                        |
+| Success Response (content) |       `{agentID: [String], skill: [Integer]}`        |
+| Error Response (code)      |              501 INTERNAL SERVER ERROR               |
+| Error Response (content)   | `{error: "Failed to call agent! " + <errorMessage>}` |
 
 * Sample Call
 
 ```js
 $.ajax({
-  url: "/request",
+  url: "/agent",
   type: "GET",
   success : function(data, status, r) {
-    console.log(status);
+    var agentID = data.agentID;
+    var skill = data.skill;
+    // search for agent in Rainbow and open conversation
+  }
+});
+```
+
+### Check Logged In status
+
+Check if user is logged in.
+
+|                            |                                                              |
+| :------------------------- | :----------------------------------------------------------: |
+| URL                        |                            /check                            |
+| Method                     |                             GET                              |
+| URL Params                 |                             None                             |
+| Data Params                |                             None                             |
+| Success Response (code)    |                            200 OK                            |
+| Success Response (content) | `{success: 1} if logged in` or `{success: 0} if not logged in` |
+| Error Response (code)      |                             None                             |
+| Error Response (content)   |                             None                             |
+
+* Sample Call
+
+```js
+$.ajax({
+  url: "/check",
+  type: "GET",
+  success : function(data, status, r) {
+    if (data.success){
+        //do something if logged in
+    } else {
+        //do something if not logged in
+    }
   }
 });
 ```
