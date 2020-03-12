@@ -28,7 +28,8 @@ function createResponseMessageForButton(identifier, responseMsg, from, query){
     $(identifier).click(function(){
         generateSendBubble($(identifier).html());
         setTimeout(generateResponseBubble.bind(this, responseMsg, from),1000);
-        query = query;
+        current_query = query;
+        console.log("Query set to " + current_query);
     });
 }
 
@@ -112,13 +113,24 @@ function generateResponseBubble(response, from){
         <span class="msg_time">${dateTime}</span><br>
     </div>`);
     $('#conversation_body').append(responseBubble);
-    $(`#agent-${agent_btn}`).click(function(){
-        generateSendBubble(this.innerHTML);
-        // TODO: send request to backend to connect to an available agent!! IMPORTANT!! ROUTING ENGINE FEATURES!
-        sendRequest();
-        getAgent();
-    });
+    $(`#agent-${agent_btn}`).click(callAgent);
     agent_btn += 1;
+    scrollToBottom();
+}
+
+function generateResponseBubbleWithoutAgentBtn(response, from){
+    var dateTime = getDateTime();
+    var responseBubble = $(`
+    <div>
+        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <div>
+            <div class="msg_cotainer">  
+                <span class="msg_body">${response}</span>
+            </div>
+        </div>
+        <span class="msg_time">${dateTime}</span><br>
+    </div>`);
+    $('#conversation_body').append(responseBubble);
     scrollToBottom();
 }
 
@@ -137,16 +149,7 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
         <span class="msg_time">${dateTime}</span>
     </div>`);
     $('#conversation_body').append(responseBubble);
-    $(`#agent-${agent_btn}`).click(function(){
-        generateSendBubble("Connecting to available agent...");
-        // TODO: send request to backend to connect to an available agent!! IMPORTANT!! ROUTING ENGINE FEATURES!
-        // sendRequest();
-        // getAgent();
-        $.ajax({
-            url: '/connect',
-            
-        });
-    });
+    $(`#agent-${agent_btn}`).click(callAgent);
     agent_btn += 1;
     scrollToBottom();   
 }
@@ -158,4 +161,55 @@ function sendRequest(){
 
 function getAgent(){
 // AJAX GET to /agent
+}
+
+// simple version:  function for agent routing
+async function connectAgent(){
+    $.ajax({
+        url: '/connect',
+        data: {request: current_query},
+        type: "POST",
+        success: function(data, status, els){
+            console.log("Connect to agent successfully!");
+            var agentInfo = data.info;
+            console.log(agentInfo);
+            rainbowSDK.contacts.searchById(agentInfo.id).then(contact=>{
+                console.log("Agent found: " + contact.firstname); 
+                rainbowSDK.conversations.openConversationForContact(contact).then(conversation=>{
+                    generateResponseBubbleWithoutAgentBtn(`You are connected to agent: ${agentInfo.name}. ID: ${agentInfo.id}`, 0);
+                    $("form").submit(function(e) {
+                        console.log("New function for form! :" + message);
+                        rainbowSDK.im.sendMessageToConversation(conversation, message);
+                    });
+                    }).catch(err=>{
+                        console.error("Failed to open conversation! "+ err);
+                    });
+            }).catch(err=>{console.error("Failed to find agent: " + err)});
+        },
+        error: function(error, status, els){
+            if (error.status == 501){
+                console.log(error.responseJSON.error);
+                generateResponseBubble("Sorry we cannot find an available agent now! Please come back later!", 0);
+            }
+        }
+    });
+}
+
+function callAgent(){
+    generateSendBubble("Connecting to available agent...");
+    // create Anonymous account to get credentials
+    $.ajax({
+        url: '/chat',
+        type: 'GET',
+        success: function(data, status, els){
+            var email = data.data.loginEmail;
+            var pwd = data.data.password;
+            rainbowSDK.connection.signin(email, pwd).then(success=>{
+                connectAgent();
+            }).catch(err =>{
+                console.error("Failed to sign in guest account!");
+                generateResponseBubble("Connection refused. Please try again!", 0);
+            });
+        }
+    });
 }

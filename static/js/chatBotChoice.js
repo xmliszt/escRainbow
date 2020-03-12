@@ -1,4 +1,4 @@
-var query = 0;
+var current_query = 0;
 var agent_btn = 0;
 
 function generateBotChoicesBubble(){
@@ -20,10 +20,7 @@ function generateBotChoicesBubble(){
     </div>`);
     $('#conversation_body').append(responseBubble);
     scrollToBottom();
-
-    var handleBotChoiceURL = `/bot/choices/${getPartFromURL(window.location.href,2)}`;
-    console.log(handleBotChoiceURL);
-
+    
     // Sub response for GENERAL ENQUERIES
     createCallbackResponseForButton(`#${cloneCount*5+0}`, function(){
         var elements = [
@@ -38,7 +35,8 @@ function generateBotChoicesBubble(){
             generateResponseBubbleWithInsertionElements("Hello more choices: ", 0, [generateButton(`ge-sub-${cloneCount*5+0}`, "woah", 0)]);
             createResponseMessageForButton(`#ge-sub-${cloneCount*5+0}`, "you found me!");
         });
-        query = 0;
+        current_query = 0;
+        console.log("Query set to 0");
      });
 
      // Sub response for CARD REPLACEMENT

@@ -39,9 +39,7 @@ function initialize(){
       let message = event.detail.message;
       let conversation = event.detail.conversation;
       rainbowSDK.im.markMessageFromConversationAsRead(conversation, message);
-      // $('.msgRev').append(
-      //     `<p>Message Received: ${message.data}<p>`
-      // );
+      generateResponseBubbleWithoutAgentBtn(message.data, message.from.lastname + " " + message.from.firstname);
   };
   document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, onMessageReceived);
 

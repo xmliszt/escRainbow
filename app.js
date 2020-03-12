@@ -109,18 +109,6 @@ app.get('/chat', (req, res) => {
     });
 });
 
-// route to receive message data sent from user on chat UI
-// and do something about it POST
-// currently implemented with bot auto reply
-app.post('/chat', (req, res) => {
-    var data = req.body.data;
-    var message = req.body.message;
-    var replyMsg = `Backend received message: "${message}" from User with ID: ${uid}. Sorry I can't do free chat with you yet :((`;
-    res.send({response: replyMsg, from: BOT}); // 0: bot, 1,2,3... Agent 1,2,3...
-    res.status(200);
-    res.end();
-});
-
 // User selects "chat with agent", backend receive query skill type and user ID (rainbow guest account). Backend queue the request object.
 app.post('/request', (req, res) => {
     var id = req.body.id;
@@ -162,6 +150,44 @@ app.get('/check', (req, res) => {
         res.status(200);
         res.end();
     }
+});
+
+// test route for connecting an available agent to chat
+app.post('/connect', (req, res) => {
+    var data = req.body;
+    var query = data.request;
+    var found = false;
+    console.log(`Query: ${query}`);
+    db.findAll({skill: Number(query)}, "Agents").then(agents=>{
+        console.log(agents);
+        if (agents.length == 0){
+            res.status(501).send({error: "No available agent found!"});
+            res.end();
+        } else {
+            for (var i=0; i<agents.length; i++){
+                var agent = agents[i];
+                if(!agent.busy){
+                    var agentID = agent.id;
+                    db.update({id: agentID}, {busy: true}, "Agents").then(success=>{
+                        console.log(`Agent ${agent.name} is connected! Status updated successfully!`);
+                        res.send({info: agent});
+                        res.status(200);
+                        res.end();
+                        found = true;
+                    });
+                    break;
+                }
+            }
+            if (found == false){
+                res.status(501).send({error: "No available agent found!"});
+                res.end();
+            }
+        }
+    }).catch(err=>{
+        res.send({error: err});
+        res.status(500);
+        res.end();
+    })
 });
 
 // user make loan appointment - need to check login status

@@ -1,4 +1,6 @@
 var cloneCount = 0;
+var hasOpened = false;
+var message;
 
 $(document).ready(function() {
   
@@ -7,7 +9,10 @@ $(document).ready(function() {
   $(".chat").hide();
 
   $(".chat-img").click(function() {
-    generateBotChoicesBubble();
+    if (!hasOpened){
+      generateBotChoicesBubble();
+      hasOpened = true;
+    }
     $(".chat").show();
     $(".chat").animate({ opacity: "1.0", bottom: "20px" }, "slow");
     $(".toggle-chat-btn").animate({ opacity: "0.0" }, "slow");
@@ -17,10 +22,9 @@ $(document).ready(function() {
   $("form").submit(function(e) {
     e.preventDefault();
     // append chat message bubble
-    var message = $("#userInputMsg").val();
+    message = $("#userInputMsg").val();
     generateSendBubble(message);
     document.getElementById("userInputMsg").value = "";
-    botTextResponse(message);
   });
 
   $("#close").click(function() {
