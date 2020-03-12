@@ -137,17 +137,17 @@ app.post('/request', (req, res) => {
 // agent connection
 app.get('/agent', (req, res) =>{
     // call async function to get availble agent
-    function().then(success=>{
-        var agentID = success.agentID;
-        var skill = success.skill;
-        res.send({agentID: agentID, skill:skill});
-        res.status(200);
-        res.end();
-    }).catch(err=>{
-        res.send({error: "Failed to call agent! " + err});
-        res.status(501);
-        res.end();
-    })
+    // function().then(success=>{
+    //     var agentID = success.agentID;
+    //     var skill = success.skill;
+    //     res.send({agentID: agentID, skill:skill});
+    //     res.status(200);
+    //     res.end();
+    // }).catch(err=>{
+    //     res.send({error: "Failed to call agent! " + err});
+    //     res.status(501);
+    //     res.end();
+    // })
 });
 
 // check logged in status
