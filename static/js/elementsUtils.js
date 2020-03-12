@@ -1,3 +1,7 @@
+function waitSeconds(seconds, callback){
+    setTimeout(callback, seconds*1000);
+}
+
 function generateButton(id, content, btn_value){
     var element = 
         `<button class="btn btn-sm btn-dark" style="margin: 5" id="${id}" value="${btn_value}">${content}</button>`
@@ -29,13 +33,16 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
 }
 
 function createCallbackResponseForButton(identifier, callback){
-    $(identifier).click(callback);
+    $(identifier).click(function(){
+        generateSendBubble($(identifier).html());
+        waitSeconds(1, callback);
+    });
 }
 
 function createResponseMessageForButton(identifier, responseMsg, from){
     $(identifier).click(function(){
         generateSendBubble($(identifier).html());
-        setTimeout(generateResponseBubble(responseMsg, from),1000);
+        setTimeout(generateResponseBubble.bind(this, responseMsg, from),1000);
     });
 }
 
@@ -46,14 +53,14 @@ function createResponseMessageForButton(identifier, responseMsg, from){
 function createResponseMessageWithChoicesForButton(identifier, responseMsg, from, choices){
     $(identifier).click(function(){
         generateSendBubble($(identifier).html());
-        setTimeout(generateResponseBubbleWithInsertionElements(responseMsg, from, choices), 1000);
+        setTimeout(generateResponseBubbleWithInsertionElements.bind(this, responseMsg, from, choices), 1000);
     });
 }
 
 function createResponseWithAjaxForButton(identifier, responseMsg, from, method, url, data, callback){
     $(identifier).click(function(){
         generateSendBubble($(identifier).html());
-        setTimeout(generateResponseBubble(responseMsg, from), 1000);
+        setTimeout(generateResponseBubble.bind(this, responseMsg, from), 1000);
         createAjax(method, url, data, callback);
     });
 }
