@@ -15,22 +15,7 @@ function generateButton(id, content, btn_value){
  * @param {Integer} from 0: bot, 1,2,3...: Agent 1,2,3...
  * @param {Array[String]} elements array of elements as string to be inserted
  */
-function generateResponseBubbleWithInsertionElements(response, from, elements){
-    var dateTime = getDateTime();
-    var responseBubble = $(`
-    <div>
-        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
-        <div>
-            <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span><br> 
-                ${elements.join("<br>")} 
-            </div>
-        </div>
-        <span class="msg_time">${dateTime}</span>
-    </div>`);
-    $('#conversation_body').append(responseBubble);
-    scrollToBottom();   
-}
+
 
 function createCallbackResponseForButton(identifier, callback){
     $(identifier).click(function(){
@@ -39,10 +24,11 @@ function createCallbackResponseForButton(identifier, callback){
     });
 }
 
-function createResponseMessageForButton(identifier, responseMsg, from){
+function createResponseMessageForButton(identifier, responseMsg, from, query){
     $(identifier).click(function(){
         generateSendBubble($(identifier).html());
         setTimeout(generateResponseBubble.bind(this, responseMsg, from),1000);
+        query = query;
     });
 }
 
@@ -119,11 +105,57 @@ function generateResponseBubble(response, from){
         <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
         <div>
             <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span><br>
+                <span class="msg_body">${response}</span>
+                <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}">
+            </div>
+        </div>
+        <span class="msg_time">${dateTime}</span><br>
+    </div>`);
+    $('#conversation_body').append(responseBubble);
+    $(`#agent-${agent_btn}`).click(function(){
+        generateSendBubble(this.innerHTML);
+        // TODO: send request to backend to connect to an available agent!! IMPORTANT!! ROUTING ENGINE FEATURES!
+        sendRequest();
+        getAgent();
+    });
+    agent_btn += 1;
+    scrollToBottom();
+}
+
+function generateResponseBubbleWithInsertionElements(response, from, elements){
+    var dateTime = getDateTime();
+    var responseBubble = $(`
+    <div>
+        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <div>
+            <div class="msg_cotainer">  
+                <span class="msg_body">${response}</span><br> 
+                ${elements.join("")} 
+                <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}">
             </div>
         </div>
         <span class="msg_time">${dateTime}</span>
     </div>`);
     $('#conversation_body').append(responseBubble);
-    scrollToBottom();
+    $(`#agent-${agent_btn}`).click(function(){
+        generateSendBubble("Connecting to available agent...");
+        // TODO: send request to backend to connect to an available agent!! IMPORTANT!! ROUTING ENGINE FEATURES!
+        // sendRequest();
+        // getAgent();
+        $.ajax({
+            url: '/connect',
+            
+        });
+    });
+    agent_btn += 1;
+    scrollToBottom();   
+}
+
+
+function sendRequest(){
+// AJAX POST to /request
+}
+
+function getAgent(){
+// AJAX GET to /agent
 }
