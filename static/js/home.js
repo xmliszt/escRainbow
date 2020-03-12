@@ -1,10 +1,13 @@
 var cloneCount = 0;
 
 $(document).ready(function() {
-  generateBotChoicesBubble();
+  
+  initialize();
+
   $(".chat").hide();
 
   $(".chat-img").click(function() {
+    generateBotChoicesBubble();
     $(".chat").show();
     $(".chat").animate({ opacity: "1.0", bottom: "20px" }, "slow");
     $(".toggle-chat-btn").animate({ opacity: "0.0" }, "slow");
@@ -26,7 +29,6 @@ $(document).ready(function() {
     $(".toggle-chat-btn").show();
     $(".toggle-chat-btn").animate({ opacity: "1.0" }, "slow");
   });
-
   $("#quit").click(function() {
     var decision = confirm(
       "You are in Guest mode. Exit will erase all dialogue history."
@@ -43,7 +45,6 @@ $(document).ready(function() {
 
   $("#registerBtn").click(function() {
     var username = $("#usernameInput").val();
-
     $.ajax({
       url: "/register",
       data: {
