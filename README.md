@@ -260,6 +260,32 @@ $.ajax({
 });
 ```
 
+### Disconnect from Agent
+Update agent's availability status
+|                            |                                                                |
+| :------------------------- | :------------------------------------------------------------: |
+| URL                        |                             /disconnect                             |
+| Method                     |                              POST                               |
+| URL Params                 |                              None                              |
+| Data Params                |                              `{agentID: [String]}`                              |
+| Success Response (code)    |                             200 OK                             |
+| Success Response (content) | `{id: [String]}` |
+| Error Response (code)      |                              501                              |
+| Error Response (content)   |                              `{error: "Failed to update agent" + <errorMessage>}`                              |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/disconnect",
+  type: "POST",
+  success: function(data, status, r) {
+    console.log(data.id);
+  }
+});
+```
+
+
 ### Check Logged In status
 
 Check if user is logged in.
