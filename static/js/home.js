@@ -6,6 +6,23 @@ $(document).ready(function() {
   
   initialize();
 
+  if(performance.navigation.type == performance.navigation.TYPE_RELOAD){
+    console.info("Page reloaded!");
+    if (agentInfo){
+      $.ajax({
+        url: '/disconnect',
+        type: 'POST',
+        data: {agentID: agentInfo.id},
+        success: function(data, status, els){
+            console.log(`Agent [${data.id}] freed successfully!`);
+        },
+        error: function(err){
+            console.error(err.responseText);
+        }
+      });
+    }
+  }
+
   $(".chat").hide();
 
   $(".chat-img").click(function() {
@@ -24,7 +41,11 @@ $(document).ready(function() {
     // append chat message bubble
     message = $("#userInputMsg").val();
     generateSendBubble(message);
+    if (mConversation){
+      rainbowSDK.im.sendMessageToConversation(mConversation, message);
+    }
     document.getElementById("userInputMsg").value = "";
+
   });
 
   $("#close").click(function() {

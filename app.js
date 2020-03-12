@@ -152,6 +152,19 @@ app.get('/check', (req, res) => {
     }
 });
 
+// disconnect agent, free his/her busy status
+app.post('/disconnect', (req, res) => {
+    var data = req.body;
+    var agentID = data.agentID;
+    db.update({id: agentID}, {busy: false}, "Agents").then(success=>{
+        res.status(200).send({id: agentID});
+        res.end();
+    }).catch(err=>{
+        res.status(501).send({error: "Failed to update agent" + err});
+        res.end();
+    });
+});
+
 // test route for connecting an available agent to chat
 app.post('/connect', (req, res) => {
     var data = req.body;
@@ -168,17 +181,18 @@ app.post('/connect', (req, res) => {
                 var agent = agents[i];
                 if(!agent.busy){
                     var agentID = agent.id;
+                    found = true;
                     db.update({id: agentID}, {busy: true}, "Agents").then(success=>{
                         console.log(`Agent ${agent.name} is connected! Status updated successfully!`);
                         res.send({info: agent});
                         res.status(200);
                         res.end();
-                        found = true;
                     });
                     break;
                 }
             }
             if (found == false){
+                console.log("Not found!")
                 res.status(501).send({error: "No available agent found!"});
                 res.end();
             }

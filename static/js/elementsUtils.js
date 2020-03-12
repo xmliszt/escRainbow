@@ -1,3 +1,7 @@
+var agent_response_count = 0;
+var mConversation;
+var agentInfo;
+
 function waitSeconds(seconds, callback){
     setTimeout(callback, seconds*1000);
 }
@@ -118,7 +122,7 @@ function generateResponseBubble(response, from){
     scrollToBottom();
 }
 
-function generateResponseBubbleWithoutAgentBtn(response, from){
+function generateResponseBubbleForAgent(response, from){
     var dateTime = getDateTime();
     var responseBubble = $(`
     <div>
@@ -128,9 +132,11 @@ function generateResponseBubbleWithoutAgentBtn(response, from){
                 <span class="msg_body">${response}</span>
             </div>
         </div>
-        <span class="msg_time">${dateTime}</span><br>
+        <span class="msg_time">${dateTime}</span><span class="msg_disconnect" id="disconnect-${agent_response_count}"> DISCONNECT</span><br>
     </div>`);
     $('#conversation_body').append(responseBubble);
+    $(`#disconnect-${agent_response_count}`).click(disconnect);
+    agent_response_count += 1;
     scrollToBottom();
 }
 
@@ -152,64 +158,4 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
     $(`#agent-${agent_btn}`).click(callAgent);
     agent_btn += 1;
     scrollToBottom();   
-}
-
-
-function sendRequest(){
-// AJAX POST to /request
-}
-
-function getAgent(){
-// AJAX GET to /agent
-}
-
-// simple version:  function for agent routing
-async function connectAgent(){
-    $.ajax({
-        url: '/connect',
-        data: {request: current_query},
-        type: "POST",
-        success: function(data, status, els){
-            console.log("Connect to agent successfully!");
-            var agentInfo = data.info;
-            console.log(agentInfo);
-            rainbowSDK.contacts.searchById(agentInfo.id).then(contact=>{
-                console.log("Agent found: " + contact.firstname); 
-                rainbowSDK.conversations.openConversationForContact(contact).then(conversation=>{
-                    generateResponseBubbleWithoutAgentBtn(`You are connected to agent: ${agentInfo.name}. ID: ${agentInfo.id}`, 0);
-                    $("form").submit(function(e) {
-                        console.log("New function for form! :" + message);
-                        rainbowSDK.im.sendMessageToConversation(conversation, message);
-                    });
-                    }).catch(err=>{
-                        console.error("Failed to open conversation! "+ err);
-                    });
-            }).catch(err=>{console.error("Failed to find agent: " + err)});
-        },
-        error: function(error, status, els){
-            if (error.status == 501){
-                console.log(error.responseJSON.error);
-                generateResponseBubble("Sorry we cannot find an available agent now! Please come back later!", 0);
-            }
-        }
-    });
-}
-
-function callAgent(){
-    generateSendBubble("Connecting to available agent...");
-    // create Anonymous account to get credentials
-    $.ajax({
-        url: '/chat',
-        type: 'GET',
-        success: function(data, status, els){
-            var email = data.data.loginEmail;
-            var pwd = data.data.password;
-            rainbowSDK.connection.signin(email, pwd).then(success=>{
-                connectAgent();
-            }).catch(err =>{
-                console.error("Failed to sign in guest account!");
-                generateResponseBubble("Connection refused. Please try again!", 0);
-            });
-        }
-    });
 }
