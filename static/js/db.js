@@ -77,10 +77,23 @@ async function deleteOne(query, collecitonName){
     })
 }
 
+async function findAll(query, collectionName){
+    const client = await MongoClient.connect(url, {useNewUrlParser: true}).catch(e=>{
+        client.close();
+        throw e;
+    });
+    const db = client.db(dbName);
+    coln = db.collection(collectionName);
+    var results = coln.find(query).toArray();
+    client.close();
+    return results;
+}
+
 exports.dbUtils = {
     createUniqueCollection: createUniqueCollection,
     insert: insert,
     search: search,
     update: update,
-    delete: deleteOne
+    delete: deleteOne,
+    findAll: findAll
 }

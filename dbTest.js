@@ -1,11 +1,7 @@
-const express = require('express');
-const app = express();
+const db = require('./static/js/db').dbUtils;
 
-app.set('views', __dirname + "/views");
-app.set('view engine', 'ejs');
-
-app.listen(8000);
-
-app.get('/',(req, res)=>{
-    res.render('chat');
-});
+db.findAll({skill: 0}, "Agents").then(results=>{
+    console.log(results[0]);
+}).catch(err =>{
+    console.error(err);
+})
