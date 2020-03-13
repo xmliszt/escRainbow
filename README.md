@@ -17,6 +17,55 @@ npm install
 node app
 ```
 
+## MongoDB Schema
+
+* Collection name: "Agents"
+
+```JSON
+{
+    name: [String],
+    skill: [Number],
+    id: [String],
+    busy: [Boolean],
+    priority: [Number]
+}
+```
+
+​	example:
+
+```json
+{
+    name: "Michalina Hebert",
+    skill: 2,
+    id: "5e5e23516c332176648fe58e",
+    busy: false,
+    priority: 0
+}
+```
+
+* Collection name: "Users"
+
+```JSON
+{
+    username: [String],
+    firstname: [String],
+    lastname: [String],
+    email: [String],
+    password: [String]
+}
+```
+
+​	example:
+```JSON
+{
+    username: "alphaTest",
+    firstname: "Alpha",
+    lastname: "Go",
+    email: "alpha_go@alpha.com",
+    password: "4243@##$daf3124$351E213"
+}
+```
+
 ## Alpha API
 
 ### Render Home Page
