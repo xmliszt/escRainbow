@@ -98,16 +98,17 @@ Once logged in, backend will create cookie for this user account to be stored in
 
 https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
 
-|                            |                                             |
+https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response
+| | |
 | :------------------------- | :-----------------------------------------: |
-| URL                        |                   /login                    |
-| Method                     |                   `POST`                    |
-| URL Params                 |                    None                     |
-| Data Params                | `{username: [String], password: [String]}`  |
-| Success Response (code)    |                   200 OK                    |
+| URL | /login |
+| Method | `POST` |
+| URL Params | None |
+| Data Params | `{username: [String], password: [String]}` |
+| Success Response (code) | 200 OK |
 | Success Response (content) | `{firstName: [String], lastName: [String]}` |
-| Error Response (code)      |          500 INTERNAL SERVER ERROR          |
-| Error Response (content)   |         {error: "User not found!"}          |
+| Error Response (code) | 500 INTERNAL SERVER ERROR |
+| Error Response (content) | {error: "User not found!"} |
 
 - Sample Call
 
@@ -261,17 +262,18 @@ $.ajax({
 ```
 
 ### Disconnect from Agent
+
 Update agent's availability status
-|                            |                                                                |
+| | |
 | :------------------------- | :------------------------------------------------------------: |
-| URL                        |                             /disconnect                             |
-| Method                     |                              POST                               |
-| URL Params                 |                              None                              |
-| Data Params                |                              `{agentID: [String]}`                              |
-| Success Response (code)    |                             200 OK                             |
+| URL | /disconnect |
+| Method | POST |
+| URL Params | None |
+| Data Params | `{agentID: [String]}` |
+| Success Response (code) | 200 OK |
 | Success Response (content) | `{id: [String]}` |
-| Error Response (code)      |                              501                              |
-| Error Response (content)   |                              `{error: "Failed to update agent" + <errorMessage>}`                              |
+| Error Response (code) | 501 |
+| Error Response (content) | `{error: "Failed to update agent" + <errorMessage>}` |
 
 - Sample Call
 
@@ -284,7 +286,6 @@ $.ajax({
   }
 });
 ```
-
 
 ### Check Logged In status
 
