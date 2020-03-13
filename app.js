@@ -1,7 +1,3 @@
-// bot ID
-const BOT_ID = "5e45ff0fe9f1273063695d17";
-const BOT = 0;
-
 // import packages
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -120,16 +116,22 @@ app.get('/chat', (req, res) => {
 app.post('/disconnect', (req, res) => {
     var data = req.body;
     var agentID = data.agentID;
-    db.update({id: agentID}, {busy: false}, "Agents").then(success=>{
-        res.status(200).send({id: agentID});
-        res.end();
+    db.search({id: agentID}, "Agents").then(agent=>{
+        var priority = agent.priority + 1;
+        db.update({id: agentID}, {busy: false, priority: priority}, "Agents").then(success=>{
+            res.status(200).send({id: agentID});
+            res.end();
+        }).catch(err=>{
+            res.status(501).send({error: "Failed to update agent" + err});
+            res.end();
+        });
     }).catch(err=>{
-        res.status(501).send({error: "Failed to update agent" + err});
+        res.status(501).send({error: "Failed to find agent" + err});
         res.end();
     });
 });
 
-// test route for connecting an available agent to chat
+// connecting an available agent to chat
 app.post('/connect', (req, res) => {
     var data = req.body;
     var query = data.request;
@@ -139,6 +141,8 @@ app.post('/connect', (req, res) => {
             res.status(501).send({error: "No available agent found!"});
             res.end();
         } else {
+            // sort agent according to priority scores
+            agents.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
             for (var i=0; i<agents.length; i++){
                 var agent = agents[i];
                 if(!agent.busy){
