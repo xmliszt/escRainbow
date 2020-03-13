@@ -39,6 +39,11 @@ $(document).ready(function () {
                     username: usernameInput,
                     password: passwordInput
                 },
+                crossDomain: true,
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                }, // request for browser to pass back cookie
                 success: function (data, status, r) {
                     console.log(`First Name: ${
                         data.firstName
