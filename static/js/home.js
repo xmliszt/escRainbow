@@ -27,6 +27,7 @@ $(document).ready(function () {
         }
     }
 
+    // login bank account
     $("#submit_btn").click(function () {
         var usernameInput = $("#usernameInput").val();
         var passwordInput = $("#passwordInput").val();
@@ -52,6 +53,30 @@ $(document).ready(function () {
         } else {
             return false;
         }
+    });
+
+    // bank account registration
+    $("#register_btn").click(function () {
+        var usernameInput = $("#usernameInput").val();
+        var passwordInput = $("#passwordInput").val();
+        var firstNameInput = $("#firstNameInput").val();
+        var lastNameInput = $("#lastNameInput").val();
+        $.ajax({
+            url: "/register",
+            type: "POST",
+            data: {
+                username = usernameInput,
+                password = passwordInput,
+                firstName = firstNameInput,
+                lastName = lastNameInput
+            },
+            success: function (data, status, r) {
+                console.log(status)
+            },
+            error: function (err) {
+                console.log("Registration failed!" + err.responseText);
+            }
+        });
     });
 
     $(".chat").hide();
@@ -109,20 +134,4 @@ $(document).ready(function () {
         }
     });
 
-    $("#registerBtn").click(function () {
-        var username = $("#usernameInput").val();
-        $.ajax({
-            url: "/register",
-            data: {
-                username: username,
-                password: "whatever",
-                firstName: "David",
-                lastName: "Lee"
-            },
-            type: "POST",
-            success: function (data, status, r) {
-                console.log(status);
-            }
-        });
-    });
 });
