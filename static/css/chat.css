@@ -9,10 +9,14 @@ body,html{
     background-size: cover;
 }
 
-Inspection code
+/* Inspection code
 * {
     border: 1px solid #f00 !important;
-  }
+  } */
+
+a {
+    cursor: pointer;
+}
 
 h2 {
 font-size: 24px;
