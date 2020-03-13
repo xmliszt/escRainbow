@@ -17,6 +17,7 @@ async function createUniqueCollection(collecitonName){
     return 1;
 }
 
+
 async function insert(data, collecitonName){
     const client = await MongoClient.connect(url, {useNewUrlParser: true}).catch(e=>{
         client.close();
@@ -31,16 +32,19 @@ async function insert(data, collecitonName){
     return 1
 }
 
+
 async function search(query, collecitonName){
     const client = await MongoClient.connect(url, {useNewUrlParser: true}).catch(e=>{
         client.close();
         throw e;});
     const db = client.db(dbName);
     coln = db.collection(collecitonName);
-    result = await coln.findOne(query).catch(e=>{
+    result = await coln.find(query).toArray().catch(e=>{
+    //result = await coln.findOne(query).catch(e=>{
         client.close();
         throw e;});
     console.log("Entry found!");
+    console.log(result);
     client.close()
     return result;
 }
