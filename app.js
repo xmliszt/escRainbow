@@ -6,8 +6,14 @@ const BOT = 0;
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const rateLimit = require("express-rate-limit");
 var db = require('./static/js/db.js').dbUtils;
 var queries = require('./static/js/queries.js').queries;
+
+const limiter = rateLimit({
+    windowMs: 1000, // 
+    max: 50 // limit each IP to 100 requests per windowMs
+  });
 
 // create db collections
 db.createUniqueCollection("Users").catch(e => {
@@ -28,6 +34,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/static'));
 app.use(session({secret: 'sutd20-alpha~!@', saveUninitialized: true, resave: true}));
+app.use("/chat", limiter);
+app.use("/connect", limiter);
 
 // index route GET
 app.get('/', (req, res) => {
@@ -135,20 +143,6 @@ app.get('/agent', (req, res) =>{
     //     res.status(501);
     //     res.end();
     // })
-});
-
-// check logged in status
-app.get('/check', (req, res) => {
-    var sess = req.session;
-    if (sess.LoggedIn){
-        res.send({success: 1});
-        res.status(200);
-        res.end();
-    } else {
-        res.send({success: 0});
-        res.status(200);
-        res.end();
-    }
 });
 
 // disconnect agent, free his/her busy status
