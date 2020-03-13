@@ -116,35 +116,6 @@ app.get('/chat', (req, res) => {
     });
 });
 
-// User selects "chat with agent", backend receive query skill type and user ID (rainbow guest account). Backend queue the request object.
-app.post('/request', (req, res) => {
-    var id = req.body.id;
-    var request = req.body.request;
-    // call function for queue
-    res.status(200); // success
-    res.send({success: 1});
-    res.end();
-    /*.catch((err) => {
-        res.send({error:`Failed to queue the request! ${err}`});
-        res.status(501);
-        res.render('home');*/
-});
-// agent connection
-app.get('/agent', (req, res) =>{
-    // call async function to get availble agent
-    // function().then(success=>{
-    //     var agentID = success.agentID;
-    //     var skill = success.skill;
-    //     res.send({agentID: agentID, skill:skill});
-    //     res.status(200);
-    //     res.end();
-    // }).catch(err=>{
-    //     res.send({error: "Failed to call agent! " + err});
-    //     res.status(501);
-    //     res.end();
-    // })
-});
-
 // disconnect agent, free his/her busy status
 app.post('/disconnect', (req, res) => {
     var data = req.body;
@@ -229,15 +200,3 @@ rainbowSDK.events.on('rainbow_onready', function () { // do something when the S
 rainbowSDK.events.on('rainbow_onerror', function (err) { // do something when something goes wrong
     console.error("Something wrong!")
 });
-
-// bot auto reply
-// when receive message
-// rainbowSDK.events.on('rainbow_onmessagereceived', (message) => {
-//     // Check if the message comes from a user
-//     if(message.type === "chat") {
-//         // Do something with the message
-//         rainbowSDK.im.sendMessageToJid(`I receive the message "${message.content}" from User with ID: ${message.fromJid}`, message.fromJid);
-//     } else if(message.type === "groupchat"){
-//         rainbowSDK.im.sendMessageToBubbleJid(`I receive the message "${message.content}" from User with ID: ${message.fromBubbleUserJid}`, message.fromBubbleJid);
-//     }
-// });
