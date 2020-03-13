@@ -57,6 +57,63 @@ $(document).ready(function() {
 
   $(".chat").hide();
 
+  // bank account registration
+  $("#register_btn").click(function () {
+    var usernameInput = $("#usernameInput").val();
+    var passwordInput = $("#passwordInput").val();
+    var firstNameInput = $("#firstNameInput").val();
+    var lastNameInput = $("#lastNameInput").val();
+    $.ajax({
+        url: "/register",
+        type: "POST",
+        data: {
+            username = usernameInput,
+            password = passwordInput,
+            firstName = firstNameInput,
+            lastName = lastNameInput
+        },
+        success: function (data, status, r) {
+            console.log(status);
+        },
+        error: function (err) {
+            console.log("Registration failed!" + err.responseText);
+          }
+      });
+  });
+
+  // bank account signin ajax
+  $("#login_btn").click(function () {
+    var usernameInput = $("#usernameInput").val();
+    var passwordInput = $("#passwordInput").val();
+    if (username != '' && password != '') {
+        $.ajax({
+            url: '/login',
+            type: 'POST',
+            data: {
+                username: usernameInput,
+                password: passwordInput
+            },
+            crossDomain: true,
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                }, // request for browser to pass back cookie
+            success: function (data, status, r) {
+                console.log(`First Name: ${
+                    data.firstName
+                } Last Name: ${
+                    data.lastName
+                }`);
+            },
+            error: function (err) {
+                console.log('User not found');
+            }
+          })
+      } else {
+          return false;
+      }
+  });
+
   $(".chat-img").click(function() {
     if (!hasOpened){
       generateBotChoicesBubble();
