@@ -2,6 +2,10 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[TOC]
+
+
+
 ## How To Run
 
 _Make sure you have MongoDB installed before running_
@@ -12,53 +16,6 @@ cd escRainbow
 npm install
 node app
 ```
-
-## Project Brief
-
-- Front-end:
-  - UI for bank customers to make queries
-  - Bot auto reply
-  - Notify back-end when human agents are requested
-- Back-end:
-  - Manage agents queue
-  - Database to store agents information
-  - Link front-end user's message to the agent via Rainbow services
-
-## Updates
-
-### 2020/03/03 Yuxuan
-
-- Set up simple chat UI page for developing chatting service
-- Explore ExpressJS and EJS framework
-- Learn about Async methods and JQuery
-- Basic UI allows user to input names and create Guest account through RainbowSDK
-
-### 2020/03/04 Yuxuan
-
-- Implement MongoDB to store User and Agent information
-- Backend successfully receive requests from Frontend and send back responses accordingly
-- Frontend achieves Asynchronously update message bubbles and continuous chatting
-- When the guest leaves the chat, his data will be removed from MongoDB as well as deleted from Rainbow
-
-### 2020/03/05 Yuxuan
-
-- Customer interface to simulate signin as Guest User on Rainbow
-- Chat panel for sending chat bubbles async
-- Sample choices for customer to select for queries
-- Dynamic binding of Frontend js functions to elements
-- Utility functions to help creating dynamic elements at frontend easier :)
-- Exit to clear data from MongoDB as well as remove account from Rainbow
-- Implementation of Queue class established. Utility methods for MongoDB functionality
-
-### 2020/03/10 Team
-
-- TODO
-
-## Routes
-
-### `/agent` GET [Agent connection request, dequeue the request]
-
-### `/loan` GET [backend check against session see if user is logged in. If not cannot proceed with loan response]
 
 ## Alpha API
 
@@ -97,6 +54,7 @@ When user logged in using its username and password, they are sent to backend to
 Once logged in, backend will create cookie for this user account to be stored in the browser.
 
 https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
+https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response 
 
 |                            |                                             |
 | :------------------------- | :-----------------------------------------: |
@@ -187,7 +145,7 @@ User opens chat panel, backend create anonymous guest user in Rainbow and pass t
 |Data Params|None|
 |Success Response (code)| 200 OK|
 |Success Response (content)|`{data: [Object]}`|
-|Error Response (code)|501 INTERNAL SERVER ERROR|
+|Error Response (code)|501 NOT IMPLEMENTED|
 |Error Response (content)|`{error: "Failed to create user! " + <errorMessage>}`|
 
 - Sample Call
@@ -203,59 +161,37 @@ $.ajax({
 });
 ```
 
-### Queue user's agent call request
+### Connect to agents on Rainbow
 
-User selects "chat with agent", backend receive query skill type and user ID (rainbow guest account). Backend queue the request object.
+User selects "chat with agent", backend find available agent and return 
 
-|                            |                                                             |
-| :------------------------- | :---------------------------------------------------------: |
-| URL                        |                          /request                           |
-| Method                     |                            POST                             |
-| URL Params                 |                            None                             |
-| Data Params                |            `{id: [String], request: [Integer]}`             |
-| Success Response (code)    |                           200 OK                            |
-| Success Response (content) |                       `{success: 1}`                        |
-| Error Response (code)      |                  501 INTERNAL SERVER ERROR                  |
-| Error Response (content)   | `{error: "Failed to queue the request! " + <errorMessage>}` |
+|                            |                                                            |
+| :------------------------- | :--------------------------------------------------------: |
+| URL                        |                          /connect                          |
+| Method                     |                            POST                            |
+| URL Params                 |                            None                            |
+| Data Params                |                   `{request: [Integer]}`                   |
+| Success Response (code)    |                           200 OK                           |
+| Success Response (content) |                     `{info: [Object]}`                     |
+| Error Response (code)      |       501 NOT IMPLEMENTED, 500 INTERNAL SERVER ERROR       |
+| Error Response (content)   | `{error: "No available agent found!"}`, `{error: [error]}` |
 
 - Sample Call
 
 ```js
 $.ajax({
-  url: "/request",
+  url: "/connect",
   type: "POST",
-  data: { id: "dafljadlfjer30u1f", request: 0 },
+  data: { request: 0 },
   success: function(data, status, r) {
-    console.log(status);
-  }
-});
-```
-
-### Make connection with available agent
-
-Frontend signal the need for connecting an agent. Backend serve the queue to matching agent
-
-|                            |                                                      |
-| :------------------------- | :--------------------------------------------------: |
-| URL                        |                        /agent                        |
-| Method                     |                         GET                          |
-| URL Params                 |                         None                         |
-| Data Params                |                         None                         |
-| Success Response (code)    |                        200 OK                        |
-| Success Response (content) |       `{agentID: [String], skill: [Integer]}`        |
-| Error Response (code)      |              501 INTERNAL SERVER ERROR               |
-| Error Response (content)   | `{error: "Failed to call agent! " + <errorMessage>}` |
-
-- Sample Call
-
-```js
-$.ajax({
-  url: "/agent",
-  type: "GET",
-  success: function(data, status, r) {
-    var agentID = data.agentID;
-    var skill = data.skill;
-    // search for agent in Rainbow and open conversation
+    var info = data.info;
+  },
+  error: function(error){
+    if (error.status == 501){
+        console.info(error.responseJSON.error);
+    } else {
+        console.info(error.responseJSON.error);
+    }
   }
 });
 ```
