@@ -1,20 +1,71 @@
 body,html{
+    width: 100%;
     height: 100%;
     margin: 0;
-    background: #7F7FD5;
-    background: -webkit-linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
-    background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);
+    font-size: small;
+    /* background-image: url("/img/bg.jpg"); */
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* Inspection code
+* {
+    border: 1px solid #f00 !important;
+  } */
+
+.agent-icon{
+    width: 16px;
+    margin-left: 2px;
+    cursor: pointer;
 }
 
 .chat{
+    position: fixed;
+    bottom: 0;
+    right: 0;
     margin-top: 0;
-    margin-bottom: 0;
+    margin-right: 20px;
+    width: 30%;
+    height: 80%;
+    opacity: 0;
 }
+
+.chat-img{
+    max-width: 40px;
+    cursor: pointer;
+}
+
+.toggle-chat-btn{
+    z-index: 1;
+    position: fixed;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    right: 0;
+    bottom: 0;
+}
+.chat-ease-in{
+    animation:mymove 3s ease-in forwards;
+    -webkit-animation:mymove 3s;
+}
+
 .card{
     height: 100%;
-    border-radius: 0px !important;
-    background-color: rgba(0,0,0,0.4) !important;
+    border-radius: 15px !important;
+    background-color: rgba(0,0,0,0.8) !important;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
+
+#close{
+    margin: 0 !important;
+    position: absolute;
+    right: 0;
+    top: 0;
+    border-radius: 20px !important;
+    border-color: transparent !important;    
+    background-color: transparent !important;
+}
+
 .msg_card_body{
     position: relative;
     overflow-y: auto;
@@ -23,50 +74,58 @@ body,html{
     position: relative;
     border-radius: 15px 15px 0 0 !important;
     border-bottom: 0 !important;
+    height: 10%;
 }
 .card-footer{
     position: relative;
     border-radius: 0 0 15px 15px !important;
     border-top: 0 !important;
+    height: 10%;
 }
 .container{
     align-content: center;
 }
+
+#sendBtn{
+    max-width: 1.5vw;
+}
+
 .type_msg{
     background-color: rgba(0,0,0,0.3) !important;
     border:0 !important;
     color:white !important;
-    height: 60px !important;
     overflow-y: auto;
-}
-.type_msg:focus{
     box-shadow:none !important;
     outline:0px !important;
 }
 
 .msg_cotainer{
+    display: inline-block;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-left: 10px;
-    border-radius: 25px;
+    border-radius: 15px;
     background-color: #82ccdd;
     padding: 10px;
     position: relative;
+    text-align: left;
+    white-space: normal;
 }
 .msg_cotainer_send{
+    display: inline-block;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-right: 10px;
-    border-radius: 25px;
+    border-radius: 15px;
     background-color: #78e08f;
     padding: 10px;
     position: relative;
     text-align: right;
+    white-space: normal;
 }
 .msg_time{
-    position: absolute;
-    left: 5;
-    bottom: -15px;
+    position: relative;
+    left: 15;
     color: rgba(255,255,255,0.5);
     font-size: 10px;
     overflow-x: visible;
@@ -74,10 +133,20 @@ body,html{
     overflow-wrap: normal;
     white-space: nowrap;
 }
+.msg_disconnect{
+    position: relative;
+    left: 15;
+    color: #f87474;
+    font-size: 10px;
+    overflow-x: visible;
+    text-align: left;
+    overflow-wrap: normal;
+    cursor: pointer;
+    white-space: nowrap;
+}
 .msg_time_send{
-    position: absolute;
-    right:5;
-    bottom: -15px;
+    position: relative;
+    right: 15px;
     color: rgba(255,255,255,0.5);
     text-align: right;
     font-size: 10px;
@@ -85,26 +154,28 @@ body,html{
     overflow-wrap: normal;
     white-space: nowrap;
 }
-.msg_title{
+.msg_body{
     position: relative;
 }
 .msg_head{
-    position: absolute;
+    position: relative;
     color: rgba(255,255,255,0.5);
-    bottom: 45px;
-    left:5;
     font-size: 10px;
+    left: 15px;
+    top: 15px;
     white-space: nowrap;
     overflow-x: visible;
+    text-align: left;
 }
 .msg_head_send{
-    position: absolute;
+    position: relative;
     color: rgba(255,255,255,0.5);
-    bottom: 45px;
-    right:5;
     font-size: 10px;
+    right: 15px;
+    top: 15px;
     white-space: nowrap;
     overflow-x: visible;
+    text-align: right;
 }
 .chat-btn{
     max-width: 100px;
@@ -113,18 +184,84 @@ body,html{
     margin-left: 2rem;
 }
 .user_info{
-    font-size: 3.5vw;
-    font-family: Georgia, 'Times New Roman', Times, serif;
+    position: absolute;
+    top: 1vw;
+    font-size: 1vw;
+    font-family: Arial, Helvetica, sans-serif;
     font-style: initial;
     color: azure;
 }
-.send_btn{
-    background-color: rgba(0,0,0,0.3) !important;
-    border:0 !important;
+
+button{
+    margin: 2px;
+    outline: none;
 }
 
-@media(max-width: 576px){
-.contacts_card{
-margin-bottom: 15px !important;
+.input-group{
+    position: relative !important;
 }
+
+input[type='text']{
+    font-size: small;
+}
+
+.input-group-text{
+    border: 0 !important;
+}
+
+.input-group-append{
+    border: 0 !important;
+    border-color: transparent !important;
+    background-color: transparent !important;
+}
+
+#send-container{
+    background-color: rgba(0,0,0,0.3) !important;
+}
+
+.q0,.q1,.q2,.q3{
+    border-color: white;
+    border-width: 1px;
+    background-color: #444444;
+}
+
+.q4{
+    border-color: white;
+    border-width: 1px;
+    background-color: #85c2fc;
+    color: #444444;
+}
+
+
+.jumbotron{
+    background-image: url("/img/bg.jpg");   
+    background-position: 50%;
+    background-color: rgba(255, 255, 255, 0.60);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    text-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    color: #fff;
+}
+
+.demo-text{
+    border-radius: 10px;
+    background-color: rgba(255,255,255,0.9);
+    margin: 10px;
+}
+
+@media(max-width: 768px)
+{
+    .contacts_card{
+        margin-bottom: 15px !important;
+    }
+    .chat{
+        position: fixed;
+        bottom: 0;
+        right: 0;
+        margin-top: 0;
+        margin-right: 10px;
+        width: 60%;
+        height: 80%;
+        opacity: 0;
+    }
+    
 }
