@@ -77,7 +77,7 @@ $(document).ready(function() {
       rainbowSDK.im.sendMessageToConversation(mConversation, message);
     }
     document.getElementById("userInputMsg").value = "";
-
+    botTextResponse(message);
   });
 
   $("#close").click(function() {

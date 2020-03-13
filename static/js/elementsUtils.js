@@ -1,9 +1,19 @@
 var agent_response_count = 0;
+var call_request_count = 0;
 var mConversation;
 var agentInfo;
+var intervalEvent;
 
 function waitSeconds(seconds, callback){
     setTimeout(callback, seconds*1000);
+}
+
+function intervalCallAgent(milliseconds){
+    intervalEvent = setInterval(connectAgent, milliseconds);
+}
+
+function stopCallAgent(){
+    clearInterval(intervalEvent);
 }
 
 function generateButton(id, content, btn_value){
@@ -102,6 +112,32 @@ function generateSendBubble(message){
         <span class="msg_time_send">${dateTime}</span>
     </div>`);
     $('#conversation_body').append(bubble);
+    scrollToBottom();
+}
+
+function generateSendBubbleConnectingAgent(message){
+    var dateTime = getDateTime();
+    var name = document.getElementById("settings").innerHTML;
+    if (name == "Settings"){
+        name = "Guest";
+    }
+    var bubble = $(`
+    <div style="text-align: right">
+        <span class="msg_head_send">${name}</span>
+        <div>
+            <div class="msg_cotainer_send">  
+                <span class="msg_body">${message}</span><br>
+            </div>
+        </div>
+        <span class="msg_time_send">${dateTime}</span><span class="msg_disconnect" id="cancel-${call_request_count}">CANCEL CONNECTION</span><br>
+    </div>`);
+    $('#conversation_body').append(bubble);
+    $(`#cancel-${call_request_count}`).click(function(){
+        stopCallAgent();
+        generateResponseBubble("Connection has been cancelled!", 0);
+        waitSeconds(1, generateBotChoicesBubble);
+    });
+    call_request_count += 1;
     scrollToBottom();
 }
 

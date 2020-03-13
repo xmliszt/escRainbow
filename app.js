@@ -169,9 +169,7 @@ app.post('/connect', (req, res) => {
     var data = req.body;
     var query = data.request;
     var found = false;
-    console.log(`Query: ${query}`);
     db.findAll({skill: Number(query)}, "Agents").then(agents=>{
-        console.log(agents);
         if (agents.length == 0){
             res.status(501).send({error: "No available agent found!"});
             res.end();
@@ -202,6 +200,8 @@ app.post('/connect', (req, res) => {
         res.end();
     })
 });
+
+
 
 // user make loan appointment - need to check login status
 app.get('/loan', (res, req) => {

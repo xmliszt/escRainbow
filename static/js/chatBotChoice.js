@@ -13,7 +13,10 @@ function generateBotChoicesBubble(){
                 <button class="q1 btn btn-sm btn-dark" id="${cloneCount*5+1}">Card Replacement</button>
                 <button class="q2 btn btn-sm btn-dark" id="${cloneCount*5+2}">Investment/Loan</button>
                 <button class="q3 btn btn-sm btn-dark" id="${cloneCount*5+3}">Overseas Spending Activation</button>
+                <br>
                 <span class="msg_body">Type <b>"help"</b> to bring up the choices again.</span>
+                <br>
+                <span class="msg_body">Still have questions? Click on </span><img class="agent-icon" src="/icon/agent.png" style="cursor: auto"><span> to call our agents for help.</span>
             </div>
         </div>
         <span class="msg_time">${dateTime}</span>
