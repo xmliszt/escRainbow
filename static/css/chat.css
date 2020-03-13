@@ -3,7 +3,7 @@ body,html{
     height: 100%;
     margin: 0;
     font-size: small;
-    background-image: url("/img/bg.jpg");
+    /* background-image: url("/img/bg.jpg"); */
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-size: cover;
@@ -234,10 +234,12 @@ input[type='text']{
 
 
 .jumbotron{
+    background-image: url("/img/bg.jpg");   
+    background-position: 50%;
     background-color: rgba(255, 255, 255, 0.60);
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     text-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    color: #444;
+    color: #fff;
 }
 
 .demo-text{
@@ -246,10 +248,10 @@ input[type='text']{
     margin: 10px;
 }
 
-@media(max-width: 576px)
+@media(max-width: 768px)
 {
     .contacts_card{
-    margin-bottom: 15px !important;
+        margin-bottom: 15px !important;
     }
     .chat{
         position: fixed;

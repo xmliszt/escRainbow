@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 var db = require('./static/js/db.js').dbUtils;
 var queries = require('./static/js/queries.js').queries;
-var elements = require('./static/js/elementsUtils.js').elementUtils;
 
 // create db collections
 db.createUniqueCollection("Users").catch(e => {
@@ -23,7 +22,7 @@ db.createUniqueCollection("Agents").catch(e => {
 // set up express app
 const app = express();
 
-app.set('views', __dirname + "/views");
+app.set('views', __dirname + "/views/ui");
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));

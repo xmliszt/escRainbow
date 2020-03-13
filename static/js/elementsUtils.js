@@ -87,11 +87,13 @@ function getDateTime(){
 
 function generateSendBubble(message){
     var dateTime = getDateTime();
-    var fName = document.getElementById("fName").innerHTML;
-    var lName = document.getElementById("lName").innerHTML;
+    var name = document.getElementById("settings").innerHTML;
+    if (name == "Settings"){
+        name = "Guest";
+    }
     var bubble = $(`
     <div style="text-align: right">
-        <span class="msg_head_send">${fName} ${lName}</span>
+        <span class="msg_head_send">${name}</span>
         <div>
             <div class="msg_cotainer_send">  
                 <span class="msg_body">${message}</span><br>
