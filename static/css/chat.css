@@ -231,7 +231,6 @@ visibility: visible;
     position: relative;
     border-radius: 0 0 15px 15px !important;
     border-top: 0 !important;
-    height: 10%;
 }
 .container{
     align-content: center;
@@ -248,6 +247,15 @@ visibility: visible;
     overflow-y: auto;
     box-shadow:none !important;
     outline:0px !important;
+}
+
+#emoji-button{
+    margin: 0 !important;
+    background-color: rgba(0,0,0,0.3) !important;
+    border: 0 !important;
+    color: white !important;
+    box-shadow: none !important;
+    outline: 0px !important;;
 }
 
 .msg_cotainer{

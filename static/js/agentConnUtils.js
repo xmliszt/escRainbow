@@ -39,6 +39,7 @@ async function connectAgent(){
         error: function(error, status, els){
             if (error.status == 501){
                 console.info(error.responseJSON.error);
+                intervalCallAgent(1000);
             }
         }
     });
@@ -54,7 +55,7 @@ function callAgent(){
             email = data.data.loginEmail;
             pwd = data.data.password;
             rainbowSDK.connection.signin(email, pwd).then(success=>{
-                intervalCallAgent(1000);
+                connectAgent();
             }).catch(err =>{
                 console.error("Failed to sign in guest account!");
                 generateResponseBubble("Connection refused. Please try again!", 0);

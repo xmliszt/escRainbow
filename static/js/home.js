@@ -25,6 +25,25 @@ $(document).ready(function() {
     } // End if
   });
   
+  const button = $('#emoji-button');
+  const chat_box = document.querySelector('.emoji-block');
+  const picker = new EmojiButton({
+    rootElement: chat_box,
+    theme: "dark",
+    zIndex: 999,
+    position: "auto",
+    showSearch: false,
+    showPreview: false,
+    autoHide: false
+  });
+
+  picker.on('emoji', emoji => {
+    document.querySelector('#userInputMsg').value += emoji;
+  });
+  button.click(function(){
+    picker.togglePicker(button);
+  });
+  
   $(window).scroll(function() {
     $(".slideanim").each(function(){
       var pos = $(this).offset().top;
@@ -35,7 +54,9 @@ $(document).ready(function() {
         }
     });
   });
-  
+
+
+  // initialize rainbow SD
   initialize();
 
   if(performance.navigation.type == performance.navigation.TYPE_RELOAD){
@@ -58,7 +79,7 @@ $(document).ready(function() {
   $(".chat").hide();
 
   // bank account registration
-  $("#register_btn").click(function () {
+  $("#register_btn").click(function (){
     var usernameInput = $("#usernameInput").val();
     var passwordInput = $("#passwordInput").val();
     var firstNameInput = $("#firstNameInput").val();
@@ -67,10 +88,10 @@ $(document).ready(function() {
         url: "/register",
         type: "POST",
         data: {
-            username = usernameInput,
-            password = passwordInput,
-            firstName = firstNameInput,
-            lastName = lastNameInput
+            username: usernameInput,
+            password: passwordInput,
+            firstName: firstNameInput,
+            lastName: lastNameInput
         },
         success: function (data, status, r) {
             console.log(status);
@@ -85,7 +106,7 @@ $(document).ready(function() {
   $("#login_btn").click(function () {
     var usernameInput = $("#usernameInput").val();
     var passwordInput = $("#passwordInput").val();
-    if (username != '' && password != '') {
+    if (usernameInput != '' && passwordInput != '') {
         $.ajax({
             url: '/login',
             type: 'POST',
@@ -125,16 +146,16 @@ $(document).ready(function() {
     $(".toggle-chat-btn").hide();
   });
 
-  $("form").submit(function(e) {
-    e.preventDefault();
+  $("#sendBtn").click(function() {
     // append chat message bubble
     message = $("#userInputMsg").val();
     generateSendBubble(message);
     if (mConversation){
       rainbowSDK.im.sendMessageToConversation(mConversation, message);
+    } else {
+      botTextResponse(message);
     }
     document.getElementById("userInputMsg").value = "";
-    botTextResponse(message);
   });
 
   $("#close").click(function() {

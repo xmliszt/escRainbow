@@ -17,7 +17,8 @@
         "http-auth": "^3.2.4",
         "mongoose": "^5.9.4",
         "pug": "^2.0.4",
-        "express-rate-limit": "5.1.1"
+        "express-rate-limit": "5.1.1",
+        "@joeattardi/emoji-button": "2.12.1"
     },
     "devDependencies": {
         "nodemon": "^2.0.2"

@@ -16,6 +16,7 @@
   <script src="/js/jquery/dist/jquery.min.js"></script>
   <script src="/js/rainbow-sdk.min.js" ></script>
   <script src="/js/vendors-sdk.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -27,6 +28,7 @@
   <script src="/js/agentConnUtils.js"></script>
   <script src="/js/initialize.js"></script>
   <script src="/js/home.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@2.12.1/dist/index.min.js"></script>
 </head>
 <body>
   <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">    
@@ -260,33 +262,25 @@
               </div>
           </div>
       </div>
-      <div class="card-body msg_card_body" id="conversation_body">
-          <!--A bot message sample-->
-          <!-- <div class="d-flex justify-content-start mb-4">
-              <div class="msg_cotainer">
-                  <span class="msg_head">Bot</span>
-                  Sample reply from bot
-                  <span class="msg_time">2020-3-3 22:49:43</span>
-              </div>
-          </div> -->
-          <!--An agent message sample-->
-          <!-- <div class="d-flex justify-content-start mb-4">
-              <div class="msg_cotainer">
-                  <span class="msg_head">Agent 01</span>
-                  Sample reply from Agent
-                  <span class="msg_time">2020-3-3 23:49:43</span>
-              </div>
-          </div> -->
-      </div>
+      <div class="card-body msg_card_body" id="conversation_body"></div>
       <div class="card-footer fixed-bottom">
-          <form>
+        <div class="input-block d-flex">
+          <div class="d-flex">
+            <button id="emoji-button">😄</button> 
+          </div>
+          <div class="flex-grow-1">
+            <form id="input-form">
               <div class="input-group">
-                  <input id='userInputMsg' class="form-control type_msg" placeholder="Type your message..." type="text" autocomplete="off">
+                  <input id='userInputMsg' class="form-control type_msg" placeholder="Type your message here..." type="text" autocomplete="off">
                   <div class="input-group-append">
                       <span class="input-group-text send_btn" id="send-container"><input type="image" id="sendBtn" src="/icon/send.png"></span>
                   </div>
               </div>
           </form>
+          </div>
+        </div>
+        <div class="emoji-block"></div>
+
       </div>
   </div>
 </div>
@@ -300,7 +294,6 @@
   </a>
   <p>Go to Top</p>
 </footer>
-
 </body>
 </html>
 
