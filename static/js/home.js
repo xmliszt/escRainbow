@@ -79,6 +79,20 @@ $(document).ready(function () {
         });
     });
 
+    // logout bank account
+    $("#logout-btn").click(function () {
+        $.ajax({
+            url: "/logout",
+            type: "GET",
+            success: function (data, status, r) {
+                console.log(status);
+            },
+            error: function (err) {
+                console.log("Failed to logout!" + err.responseText);
+            }
+        });
+    });
+
     $(".chat").hide();
 
     $(".chat-img").click(function () {
