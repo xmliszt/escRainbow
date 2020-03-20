@@ -317,6 +317,7 @@ visibility: visible;
     overflow-x: visible;
     overflow-wrap: normal;
     white-space: nowrap;
+    margin-left: 15px;
 }
 .msg_body{
     position: relative;
