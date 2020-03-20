@@ -89,11 +89,28 @@ async function findAll(query, collectionName){
     return results;
 }
 
+function resetAgents(){
+    findAll({}, "Agents").then(success=>{
+        for (var i=0; i<success.length; i++){
+            var agent = success[i];
+            var agentID = agent.id;
+            update({id: agentID}, {priority: 0, busy: false}, "Agents").then(success=>{
+                console.log("Priority score reset successfully!");
+            }).catch(err=>{
+                console.error("Failed to reset priority!" + err);
+            })
+        }
+    }).catch(err=>{
+        console.error("Failed to reset priority!" + err);
+    });
+}
+
 exports.dbUtils = {
     createUniqueCollection: createUniqueCollection,
     insert: insert,
     search: search,
     update: update,
     delete: deleteOne,
-    findAll: findAll
+    findAll: findAll,
+    resetAgents: resetAgents
 }

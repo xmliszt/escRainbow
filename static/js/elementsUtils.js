@@ -148,8 +148,8 @@ function generateResponseBubble(response, from){
         <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
         <div>
             <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span>
-                <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}">
+                <span class="msg_body">${response}</span> 
+                <p>Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
             </div>
         </div>
         <span class="msg_time">${dateTime}</span><br>
@@ -187,8 +187,9 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span><br> 
                 ${elements.join("")} 
-                <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}">
+                <p>Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
             </div>
+            
         </div>
         <span class="msg_time">${dateTime}</span>
     </div>`);

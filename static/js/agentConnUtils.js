@@ -23,6 +23,7 @@ async function connectAgent(){
             rainbowSDK.contacts.searchById(agentInfo.id)
             .then(contact=>{
                 console.log("Agent found: " + contact.firstname); 
+                console.log(contact);
                 rainbowSDK.conversations.openConversationForContact(contact)
                 .then(conversation=>{
                     console.log(`Conversation ${conversation.id} is opened successfully!`);
