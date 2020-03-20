@@ -29,7 +29,10 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
 }
 
 function createCallbackResponseForButton(identifier, callback){
-    $(identifier).click(callback);
+    $(identifier).click(function(){
+        generateSendBubble($(identifier).html());
+        callback();
+    });
 }
 
 function createResponseMessageForButton(identifier, responseMsg, from){

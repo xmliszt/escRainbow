@@ -25,21 +25,119 @@ function generateBotChoicesBubble(){
     // Sub response for GENERAL ENQUERIES
     createCallbackResponseForButton(`#${cloneCount*5+0}`, function(){
         var elements = [
-            generateButton(`ge-${cloneCount*5+0}`, "I don't know how to create a bank account :(", 0),
-            generateButton(`ge-${cloneCount*5+1}`, "what?", 1),
-            generateButton(`ge-${cloneCount*5+2}`, "Hello", 2)
+            generateButton(`ge-${cloneCount*5+0}`, "Show me account types", 0),
+            generateButton(`ge-${cloneCount*5+1}`, "Ibanking", 1),
+            //generateButton(`ge-${cloneCount*5+2}`, "Hello", 2)
     ];
+        //button response 
         generateResponseBubbleWithInsertionElements("You selected general enqueries: ", 0, elements);
-        createResponseMessageForButton(`#ge-${cloneCount*5+0}`, "Go create one :)))");
-        createResponseMessageForButton(`#ge-${cloneCount*5+1}`, "It is doing bank stuff on the Internet");
-        createCallbackResponseForButton(`#ge-${cloneCount*5+2}`, function(){
-            generateResponseBubbleWithInsertionElements("Hello more choices: ", 0, [generateButton(`ge-sub-${cloneCount*5+0}`, "woah", 0)]);
-            createResponseMessageForButton(`#ge-sub-${cloneCount*5+0}`, "you found me!");
-        });
+        //createResponseMessageForButton(`#ge-${cloneCount*5+0}`, "Day"); 
+        //createResponseMessageForButton(`#ge-${cloneCount*5+1}`, "It is doing bank stuff on the Internet");
+        
+        createCallbackResponseForButton(`#ge-${cloneCount*5+0}`, function(){ 
+            var elements = [
+                generateButton(`ge-sub${cloneCount*5+0}`, "Day to Day", 0),
+                generateButton(`ge-sub${cloneCount*5+1}`, "Fixed Deposit", 1),
+        ];
+            generateResponseBubbleWithInsertionElements("Which account type do you prefer? ", 0, elements);
+            var msg1 = `
+                <ol>
+                    <li>Account Mutiplier</li>
+                    <li>Autosave Account</li>
+                </ol>
+                `;
+            createResponseMessageForButton(`#ge-sub${cloneCount*5+0}`, msg1, 0);
+            var msg2 = `
+            <ol>
+                <li>Singapore Dollar Fixed Deposit</li>
+                <li>Foreign Currency Fixed Deposit</li>
+            </ol>
+            `;
+            createResponseMessageForButton(`#ge-sub${cloneCount*5+1}`, msg2, 0);
+
+        }); 
+
+        createCallbackResponseForButton(`#ge-${cloneCount*5+1}`, function(){ 
+            var elements = [
+                generateButton(`ge-sub${cloneCount*5+0}`, "What is the eligibility to apply for iBanking?", 0),
+                generateButton(`ge-sub${cloneCount*5+1}`, "What can i do on iBanking?", 1),
+        ];
+            generateResponseBubbleWithInsertionElements("I am wondering ... ", 0, elements);
+            var msg1 = `
+                <ol>
+                    <li>At least 16 years old</li>
+                    <li>Have a personal or joint alternate account</li>
+                </ol>
+                `;
+            createResponseMessageForButton(`#ge-sub${cloneCount*5+0}`, msg1, 0);
+            var msg2 = `
+            <p>
+            wieubia
+            <ol>
+                <li>Account summary</li>
+                <li>Make credit card payments</li>
+                <li>Make local or overseas transfers</li>
+                <li>Make investments</li>
+            </ol>
+            </p>
+            `;
+            createResponseMessageForButton(`#ge-sub${cloneCount*5+1}`, msg2, 0);
+
+        }); 
+       
+        
      });
 
      // Sub response for CARD REPLACEMENT
-    createResponseMessageForButton(`#${cloneCount*5+1}`, "Card replacement information", 0);
+    //createResponseMessageForButton(`#${cloneCount*5+1}`, "Card replacement information", 0);
+    //response for button 
+    /*
+    createCallbackResponseForButton(`#${cloneCount*5+1}`, function(){
+        //text response 
+        generateResponseBubble("To protect yourself, would you like to deactivate your stolen card?", 0);
+        if (message.toLowerCase().includes("yes")){
+            generateResponseBubble("Please", 0);
+            return;
+            
+    });
+    */
+    
+    createCallbackResponseForButton(`#${cloneCount*5+1}`, function(){
+    var elements = [
+        generateButton(`cd-${cloneCount*5+0}`, "Yes please", 0),
+        generateButton(`cd-${cloneCount*5+1}`, "Nope, I have already done so", 1)
+    ];
+    generateResponseBubbleWithInsertionElements("To protect yourself, would you like to deactivate your stolen card? ", 0, elements);
+    });
+
+    //Sub response for Investment/Loan
+    createCallbackResponseForButton(`#${cloneCount*5+2}`, function(){
+        var elements = [
+            generateButton(`i-${cloneCount*5+0}`, "Show me loan types", 0),
+            generateButton(`i-${cloneCount*5+1}`, "Apply for loan", 1)
+    ];
+        generateResponseBubbleWithInsertionElements("You have selected Investment/Loan:", 0, elements);
+    });
+        
+    createCallbackResponseForButton(`#i-${cloneCount*5+0}`, function(){ 
+        var elements = [
+                generateButton(`i-sub${cloneCount*5+0}`, "Get to know Collaborative Loan", 0),
+
+    ];
+        generateResponseBubbleWithInsertionElements("Which loan type do you prefer? ", 0, elements);
+        var msg1 = `
+                <p>
+                Collaborative Loans invest a pool of money, collected from a number of investors, in a range of assest. 
+                <ol>
+                    <li>Invest in stocks</li>
+                    <li>Invest in bonds </li>
+                    <li>Invest in a mix of stocks and bonds </li>
+                </ol>
+                </p>
+                `;
+        createResponseMessageForButton(`#i-sub${cloneCount*5+0}`, msg1, 0);
+}); 
+    
 
     // Sub response for 
     createResponseWithAjaxForButton(`#${cloneCount*5+2}`, "You selected Investment/Loan", 0, "POST", handleBotChoiceURL, {choice:2}, function(data, status,els){
