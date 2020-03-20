@@ -1,14 +1,15 @@
-// bot ID
-const BOT_ID = "5e45ff0fe9f1273063695d17";
-const BOT = 0;
-
 // import packages
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const rateLimit = require("express-rate-limit");
 var db = require('./static/js/db.js').dbUtils;
 var queries = require('./static/js/queries.js').queries;
-var elements = require('./static/js/elementsUtils.js').elementUtils;
+
+const limiter = rateLimit({
+    windowMs: 1000, // 
+    max: 50 // limit each IP to 100 requests per windowMs
+  });
 
 // create db collections
 db.createUniqueCollection("Users").catch(e => {
@@ -20,15 +21,19 @@ db.createUniqueCollection("Agents").catch(e => {
     process.exit(1);
 })
 
+db.resetAgents();
+
 // set up express app
 const app = express();
 
-app.set('views', __dirname + "/views");
+app.set('views', __dirname + "/views/ui");
 app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/static'));
 app.use(session({secret: 'sutd20-alpha~!@', saveUninitialized: true, resave: true}));
+app.use("/chat", limiter);
+app.use("/connect", limiter);
 
 // index route GET
 app.get('/', (req, res) => {
@@ -109,90 +114,56 @@ app.get('/chat', (req, res) => {
     });
 });
 
-// User selects "chat with agent", backend receive query skill type and user ID (rainbow guest account). Backend queue the request object.
-app.post('/request', (req, res) => {
-    var id = req.body.id;
-    var request = req.body.request;
-    // call function for queue
-    res.status(200); // success
-    res.send({success: 1});
-    res.end();
-    /*.catch((err) => {
-        res.send({error:`Failed to queue the request! ${err}`});
-        res.status(501);
-        res.render('home');*/
-});
-// agent connection
-app.get('/agent', (req, res) =>{
-    // call async function to get availble agent
-    // function().then(success=>{
-    //     var agentID = success.agentID;
-    //     var skill = success.skill;
-    //     res.send({agentID: agentID, skill:skill});
-    //     res.status(200);
-    //     res.end();
-    // }).catch(err=>{
-    //     res.send({error: "Failed to call agent! " + err});
-    //     res.status(501);
-    //     res.end();
-    // })
-});
-
-// check logged in status
-app.get('/check', (req, res) => {
-    var sess = req.session;
-    if (sess.LoggedIn){
-        res.send({success: 1});
-        res.status(200);
-        res.end();
-    } else {
-        res.send({success: 0});
-        res.status(200);
-        res.end();
-    }
-});
-
 // disconnect agent, free his/her busy status
 app.post('/disconnect', (req, res) => {
     var data = req.body;
     var agentID = data.agentID;
-    db.update({id: agentID}, {busy: false}, "Agents").then(success=>{
-        res.status(200).send({id: agentID});
-        res.end();
+    db.search({id: agentID}, "Agents").then(agent=>{
+        var priority = agent.priority + 1;
+        db.update({id: agentID}, {busy: false, priority: priority}, "Agents").then(success=>{
+            res.status(200).send({id: agentID});
+            res.end();
+        }).catch(err=>{
+            res.status(501).send({error: "Failed to update agent" + err});
+            res.end();
+        });
     }).catch(err=>{
-        res.status(501).send({error: "Failed to update agent" + err});
+        res.status(501).send({error: "Failed to find agent" + err});
         res.end();
     });
 });
 
-// test route for connecting an available agent to chat
+// connecting an available agent to chat
 app.post('/connect', (req, res) => {
     var data = req.body;
     var query = data.request;
     var found = false;
-    console.log(`Query: ${query}`);
     db.findAll({skill: Number(query)}, "Agents").then(agents=>{
-        console.log(agents);
         if (agents.length == 0){
             res.status(501).send({error: "No available agent found!"});
             res.end();
         } else {
+            // sort agent according to priority scores
+            agents.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
             for (var i=0; i<agents.length; i++){
                 var agent = agents[i];
                 if(!agent.busy){
                     var agentID = agent.id;
                     found = true;
-                    db.update({id: agentID}, {busy: true}, "Agents").then(success=>{
-                        console.log(`Agent ${agent.name} is connected! Status updated successfully!`);
-                        res.send({info: agent});
-                        res.status(200);
-                        res.end();
+                    rainbowSDK.admin.getContactInfos(agentID).then(success=>{
+                        console.log(success);
+                        db.update({id: agentID}, {busy: true}, "Agents").then(success=>{
+                            console.log(`Agent ${agent.name} is connected! Status updated successfully!`);
+                            res.send({info: agent});
+                            res.status(200);
+                            res.end();
+                        });
                     });
                     break;
                 }
             }
             if (found == false){
-                console.log("Not found!")
+                console.log("Not found!");
                 res.status(501).send({error: "No available agent found!"});
                 res.end();
             }
@@ -203,6 +174,8 @@ app.post('/connect', (req, res) => {
         res.end();
     })
 });
+
+
 
 // user make loan appointment - need to check login status
 app.get('/loan', (res, req) => {
@@ -236,15 +209,3 @@ rainbowSDK.events.on('rainbow_onready', function () { // do something when the S
 rainbowSDK.events.on('rainbow_onerror', function (err) { // do something when something goes wrong
     console.error("Something wrong!")
 });
-
-// bot auto reply
-// when receive message
-// rainbowSDK.events.on('rainbow_onmessagereceived', (message) => {
-//     // Check if the message comes from a user
-//     if(message.type === "chat") {
-//         // Do something with the message
-//         rainbowSDK.im.sendMessageToJid(`I receive the message "${message.content}" from User with ID: ${message.fromJid}`, message.fromJid);
-//     } else if(message.type === "groupchat"){
-//         rainbowSDK.im.sendMessageToBubbleJid(`I receive the message "${message.content}" from User with ID: ${message.fromBubbleUserJid}`, message.fromBubbleJid);
-//     }
-// });

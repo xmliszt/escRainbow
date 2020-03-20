@@ -1,5 +1,6 @@
 var email;
 var pwd;
+var intervalCallAgent;
 
 function sendRequest(){
 // AJAX POST to /request
@@ -22,9 +23,11 @@ async function connectAgent(){
             rainbowSDK.contacts.searchById(agentInfo.id)
             .then(contact=>{
                 console.log("Agent found: " + contact.firstname); 
+                console.log(contact);
                 rainbowSDK.conversations.openConversationForContact(contact)
                 .then(conversation=>{
                     console.log(`Conversation ${conversation.id} is opened successfully!`);
+                    stopCallAgent();
                     mConversation = conversation;
                     generateResponseBubbleForAgent(`You are connected to agent: ${agentInfo.name}. ID: ${agentInfo.id}`, 0);
                     rainbowSDK.im.sendMessageToConversation(conversation, `You are connected with guest user [${email}]`);
@@ -32,20 +35,19 @@ async function connectAgent(){
                 .catch(err=>{
                     console.error("Failed to open conversation! "+ err);
                 });
-            }).catch(err=>{console.error("Failed to find agent: " + err)});
+            }).catch(err=>{console.info("Failed to find agent: " + err)});
         },
         error: function(error, status, els){
             if (error.status == 501){
-                console.log(error.responseJSON.error);
-                generateResponseBubble("Sorry we cannot find an available agent now! Please come back later!", 0);
+                console.info(error.responseJSON.error);
+                intervalCallAgent(1000);
             }
         }
     });
 }
 
 function callAgent(){
-    generateSendBubble("Connecting to available agent...");
-    // create Anonymous account to get credentials
+    generateSendBubbleConnectingAgent("Connecting to available agent...");
     $.ajax({
         url: '/chat',
         type: 'GET',
