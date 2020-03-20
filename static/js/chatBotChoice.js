@@ -89,25 +89,44 @@ function generateBotChoicesBubble(){
      });
 
      // Sub response for CARD REPLACEMENT
-    //createResponseMessageForButton(`#${cloneCount*5+1}`, "Card replacement information", 0);
-    //response for button 
-    /*
-    createCallbackResponseForButton(`#${cloneCount*5+1}`, function(){
-        //text response 
-        generateResponseBubble("To protect yourself, would you like to deactivate your stolen card?", 0);
-        if (message.toLowerCase().includes("yes")){
-            generateResponseBubble("Please", 0);
-            return;
-            
-    });
-    */
-    
     createCallbackResponseForButton(`#${cloneCount*5+1}`, function(){
     var elements = [
         generateButton(`cd-${cloneCount*5+0}`, "Yes please", 0),
         generateButton(`cd-${cloneCount*5+1}`, "Nope, I have already done so", 1)
     ];
     generateResponseBubbleWithInsertionElements("To protect yourself, would you like to deactivate your stolen card? ", 0, elements);
+
+    //if customer is already signed in 
+    createCallbackResponseForButton(`#cd-${cloneCount*5+0}`, function(){
+    // if customer is already signed in (for all below)
+        generateResponseBubble("Please key in your card number", 0); 
+        //set time out 
+        generateResponseBubble("Successful deactivation of card!", 0);
+        //set time out (lesser time)
+        var elements = [
+            generateButton(`cd-sub1${cloneCount*5+0}`, "Yes", 0),
+            generateButton(`cd-sub1${cloneCount*5+1}`, "Nope", 1)
+        ];
+        generateResponseBubbleWithInsertionElements("Shall we proceed with card replacement?", 0, elements);
+        // if customer is already signed in (for yes)
+        createResponseMessageForButton(`#cd-sub1${cloneCount*5+0}`, "Rest assured, a new bank card and PIN number will be mailed to you within a week.", 0); 
+        createResponseMessageForButton(`#cd-sub1${cloneCount*5+1}`, "Thank you for the conversation! Hope we have resolved your issue!",0); 
+
+    }); 
+    
+    createCallbackResponseForButton(`#cd-${cloneCount*5+1}`, function(){
+        var elements = [
+            generateButton(`cd-sub2${cloneCount*5+0}`, "Yes", 0),
+            generateButton(`cd-sub2${cloneCount*5+1}`, "Nope", 1)
+        ];
+        generateResponseBubbleWithInsertionElements("Shall we proceed with card replacement?", 0, elements);
+        // if customer is already signed in (for yes)
+        createResponseMessageForButton(`#cd-sub2${cloneCount*5+0}`, "Rest assured, a new bank card and PIN number will be mailed to you within a week.", 0); 
+        createResponseMessageForButton(`#cd-sub2${cloneCount*5+1}`, "Thank you for the conversation! Hope we have resolved your issue!",0); 
+    }); 
+    
+    
+    
     });
 
     //Sub response for Investment/Loan
@@ -115,15 +134,15 @@ function generateBotChoicesBubble(){
         var elements = [
             generateButton(`i-${cloneCount*5+0}`, "Show me loan types", 0),
             generateButton(`i-${cloneCount*5+1}`, "Apply for loan", 1)
-    ];
+        ];
         generateResponseBubbleWithInsertionElements("You have selected Investment/Loan:", 0, elements);
-    });
-        
-    createCallbackResponseForButton(`#i-${cloneCount*5+0}`, function(){ 
-        var elements = [
-                generateButton(`i-sub${cloneCount*5+0}`, "Get to know Collaborative Loan", 0),
 
-    ];
+
+        createCallbackResponseForButton(`#i-${cloneCount*5+0}`, function(){ 
+        var elements = [
+                generateButton(`i-sub1${cloneCount*5+0}`, "Get to know Collaborative Loan", 0),
+
+        ];
         generateResponseBubbleWithInsertionElements("Which loan type do you prefer? ", 0, elements);
         var msg1 = `
                 <p>
@@ -135,21 +154,37 @@ function generateBotChoicesBubble(){
                 </ol>
                 </p>
                 `;
-        createResponseMessageForButton(`#i-sub${cloneCount*5+0}`, msg1, 0);
-}); 
-    
+        createResponseMessageForButton(`#i-sub1${cloneCount*5+0}`, msg1, 0);
+        }); 
 
-    // Sub response for 
-    createResponseWithAjaxForButton(`#${cloneCount*5+2}`, "You selected Investment/Loan", 0, "POST", handleBotChoiceURL, {choice:2}, function(data, status,els){
-        var response = data.response.message;
-        generateResponseBubble(response, 0);
-    });
+
+        createCallbackResponseForButton(`#i-${cloneCount*5+1}`, function(){
+        //if customer is already signed in (for all below)
+            var elements = [
+                generateButton(`i-sub2${cloneCount*5+0}`, "Collaborative Loan", 0),
+                generateButton(`i-sub2${cloneCount*5+1}`, "Fly with Alpha Holding", 1)
+            ];
+            generateResponseBubbleWithInsertionElements("Please select the loan type you would like to apply for:", 0, elements);
+            createCallbackResponseForButton(`#i-sub2${cloneCount*5+0}`, function(){
+                //set time out 
+                generateResponseBubble("Successfully creation of loan!", 0); 
+            }); 
+            createCallbackResponseForButton(`#i-sub2${cloneCount*5+1}`, function(){
+                //set time out 
+                generateResponseBubble("Successfully creation of loan!", 0); 
+            });
+        });
+
+    }); 
+        
+    //Sub response for Overseas Spending Activation
+    createCallbackResponseForButton(`#${cloneCount*5+3}`, function(){
+    //if customer is already signed in (for all below)
+        generateResponseBubble("Please key in your credit card number:", 0); 
+        //set time out 
+        generateResponseBubble("Successful Overseas Spending Activation!", 0); 
+    }); 
     
-    //
-    createResponseWithAjaxForButton(`#${cloneCount*5+3}`, "You selected Overseas Spending Activation", 0, "POST", handleBotChoiceURL, {choice:3}, function(data, status,els){
-        var response = data.response.message;
-        generateResponseBubble(response, 0);
-    });
 
     $(`#${cloneCount*5+4}`).click(function(){
         generateSendBubble(this.innerHTML);
