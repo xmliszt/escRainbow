@@ -2,14 +2,6 @@ var email;
 var pwd;
 var intervalCallAgent;
 
-function sendRequest(){
-// AJAX POST to /request
-}
-
-function getAgent(){
-// AJAX GET to /agent
-}
-
 // simple version:  function for agent routing
 async function connectAgent(){
     $.ajax({
@@ -27,9 +19,10 @@ async function connectAgent(){
                 rainbowSDK.conversations.openConversationForContact(contact)
                 .then(conversation=>{
                     console.log(`Conversation ${conversation.id} is opened successfully!`);
-                    stopCallAgent();
+                    stopTimeOutEvent();
                     mConversation = conversation;
                     generateResponseBubbleForAgent(`You are connected to agent: ${agentInfo.name}. ID: ${agentInfo.id}`, 0);
+                    startTimeOutForReminder(3);
                     rainbowSDK.im.sendMessageToConversation(conversation, `You are connected with guest user [${email}]`);
                 })
                 .catch(err=>{
@@ -39,15 +32,16 @@ async function connectAgent(){
         },
         error: function(error, status, els){
             if (error.status == 501){
+                console.info("Cannot find available agents!");
                 console.info(error.responseJSON.error);
-                intervalCallAgent(1000);
+                setTimeout(connectAgent, 1000);
             }
         }
     });
 }
 
 function callAgent(){
-    generateSendBubbleConnectingAgent("Connecting to available agent...");
+    generateSendBubble("Connecting to available agent...");
     $.ajax({
         url: '/chat',
         type: 'GET',
@@ -57,6 +51,7 @@ function callAgent(){
             pwd = data.data.password;
             rainbowSDK.connection.signin(email, pwd).then(success=>{
                 connectAgent();
+                startTimeOutForTerminateCallAgent(1);
             }).catch(err =>{
                 console.error("Failed to sign in guest account!");
                 generateResponseBubble("Connection refused. Please try again!", 0);
@@ -66,6 +61,7 @@ function callAgent(){
 }
     
 function disconnect(){
+    stopTimeOutEvent();
     rainbowSDK.im.sendMessageToConversation(mConversation, `You have been disconnected with guest user [${email}]`);
     rainbowSDK.conversations.closeConversation(mConversation).then(success=>{
         console.log(`Conversation ${mConversation.id} successfully closed!`);

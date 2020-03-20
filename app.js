@@ -134,44 +134,46 @@ app.post('/disconnect', (req, res) => {
 });
 
 // connecting an available agent to chat
-app.post('/connect', (req, res) => {
+app.post('/connect', async (req, res) => {
     var data = req.body;
     var query = data.request;
-    var found = false;
-    db.findAll({skill: Number(query)}, "Agents").then(agents=>{
+    await db.findAll({skill: Number(query)}, "Agents").then(async agents=>{
         if (agents.length == 0){
             res.status(501).send({error: "No available agent found!"});
             res.end();
+            return 1;
         } else {
             // sort agent according to priority scores
             agents.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
             for (var i=0; i<agents.length; i++){
                 var agent = agents[i];
+                // find a agent not busy
                 if(!agent.busy){
                     var agentID = agent.id;
-                    found = true;
-                    rainbowSDK.admin.getContactInfos(agentID).then(success=>{
-                        console.log(success);
-                        db.update({id: agentID}, {busy: true}, "Agents").then(success=>{
-                            console.log(`Agent ${agent.name} is connected! Status updated successfully!`);
-                            res.send({info: agent});
-                            res.status(200);
-                            res.end();
-                        });
-                    });
-                    break;
+                    var contact = await rainbowSDK.contacts.getContactById(agentID, true);
+                    var presence = contact.presence;
+                    console.log(`${agent.name} presence: ${presence}`);
+                    // if he is online: connect
+                    if (presence == "online"){
+                        await db.update({id: agentID}, {busy: true}, "Agents")
+                        console.log(`Agent ${agent.name} is connected! Status updated successfully!`);
+                        res.send({info: agent});
+                        res.status(200);
+                        res.end();
+                        return 1;
+                    }
                 }
             }
-            if (found == false){
-                console.log("Not found!");
-                res.status(501).send({error: "No available agent found!"});
-                res.end();
-            }
+            console.log("Not found!");
+            res.status(501).send({error: "No available agent found!"});
+            res.end();
+            return 1;
         }
     }).catch(err=>{
         res.send({error: err});
         res.status(500);
         res.end();
+        return 1;
     })
 });
 

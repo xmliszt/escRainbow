@@ -3,17 +3,41 @@ var call_request_count = 0;
 var mConversation;
 var agentInfo;
 var intervalEvent;
+var timeoutEvent;
+var timeoutEvent2;
 
 function waitSeconds(seconds, callback){
     setTimeout(callback, seconds*1000);
 }
 
-function intervalCallAgent(milliseconds){
-    intervalEvent = setInterval(connectAgent, milliseconds);
+function cancelAgentCall(){
+    clearInterval(intervalEvent);
+    stopTimeOutEvent();
+    generateResponseBubble("Sorry all our agents are currently busy! Please try again later!", 0);
 }
 
-function stopCallAgent(){
-    clearInterval(intervalEvent);
+function startTimeOutForReminder(minutes){
+    timeoutEvent = setTimeout(sendReminderForInactivity, minutes*60*1000);
+}
+
+function stopTimeOutEvent(){
+    clearTimeout(timeoutEvent);
+    clearTimeout(timeoutEvent2);
+}
+
+function startTimeOutForDisconnection(minutes){
+    timeoutEvent = setTimeout(disconnect, minutes*60*1000);
+}
+
+function startTimeOutForTerminateCallAgent(minutes){
+    timeoutEvent = setTimeout(cancelAgentCall, minutes*60*1000);
+    timeoutEvent2 = setTimeout(generateConnectionReminderBubble.bind(this, "All our agents are still busy, we are still trying out best to connect you!", 0), 0.5*60*1000);
+}
+
+function sendReminderForInactivity(){
+    generateResponseBubbleForAgent("Hey there! This chat will close automatically if no activity is detected in the next 2 minutes. Should you have any further queries, feel free to start a new chat with our friendly Agents later! Thank you and have a nice day (:", 0);
+    stopTimeOutEvent();
+    startTimeOutForDisconnection(2);
 }
 
 function generateButton(id, content, btn_value){
@@ -133,7 +157,7 @@ function generateSendBubbleConnectingAgent(message){
     </div>`);
     $('#conversation_body').append(bubble);
     $(`#cancel-${call_request_count}`).click(function(){
-        stopCallAgent();
+        stopTimeOutEvent();
         generateResponseBubble("Connection has been cancelled!", 0);
         waitSeconds(1, generateBotChoicesBubble);
     });
@@ -157,6 +181,28 @@ function generateResponseBubble(response, from){
     $('#conversation_body').append(responseBubble);
     $(`#agent-${agent_btn}`).click(callAgent);
     agent_btn += 1;
+    scrollToBottom();
+}
+
+function generateConnectionReminderBubble(response, from){
+    var dateTime = getDateTime();
+    var responseBubble = $(`
+    <div>
+        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <div>
+            <div class="msg_cotainer">  
+                <span class="msg_body">${response}</span> 
+            </div>
+        </div>
+        <span class="msg_time_send">${dateTime}</span><span class="msg_disconnect" id="cancel-${call_request_count}">CANCEL CONNECTION</span><br>
+    </div>`);
+    $('#conversation_body').append(responseBubble);
+    $(`#cancel-${call_request_count}`).click(function(){
+        stopTimeOutEvent();
+        generateResponseBubble("Connection has been cancelled!", 0);
+        waitSeconds(1, generateBotChoicesBubble);
+    });
+    call_request_count += 1;
     scrollToBottom();
 }
 

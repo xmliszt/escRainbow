@@ -152,6 +152,8 @@ $(document).ready(function() {
     generateSendBubble(message);
     if (mConversation){
       rainbowSDK.im.sendMessageToConversation(mConversation, message);
+      stopTimeOutEvent();
+      startTimeOutForReminder(3);
     } else {
       botTextResponse(message);
     }
