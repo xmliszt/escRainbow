@@ -43,6 +43,18 @@ app.get('/', (req, res) => {
     res.render('home');
 });
 
+app.get('/faq', (req, res) => {
+    res.render('faqpage');
+})
+
+app.get('/login', (req, res) => {
+    res.render('login');
+})
+
+app.get('/register', (req, res) => {
+    res.render('register');
+})
+
 // login POST
 app.post('/login', (req, res) => {
     var username = req.body.username;

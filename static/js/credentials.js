@@ -18,7 +18,7 @@ let options = {
     },
     // Logs options
     logs: {
-        enableConsoleLogs: true,
+        enableConsoleLogs: false,
         enableFileLogs: false,
         "color": true,
         "level": 'debug',
