@@ -29,9 +29,183 @@
   <script src="/js/initialize.js"></script>
   <script src="/js/home.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@2.12.1/dist/index.min.js"></script>
+
+  <style>
+    h2 {
+      font-size: 24px;
+      text-transform: uppercase;
+      color: #303030;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+    h4 {
+      font-size: 19px;
+      line-height: 1.375em;
+      color: #303030;
+      font-weight: 400;
+      margin-bottom: 30px;
+    }  
+    .jumbotron {
+      background-color: light;
+      padding: 100px 25px;
+      font-family: Montserrat, sans-serif;
+    }
+    .container-fluid {
+      padding: 60px 50px;
+    }
+    .bg-grey {
+      background-color: #f6f6f6;
+    }
+    .logo-small {
+      color: #f4511e;
+      font-size: 50px;
+    }
+    .logo {
+      color: #f4511e;
+      font-size: 200px;
+    }
+    .thumbnail {
+      padding: 0 0 15px 0;
+      border: none;
+      border-radius: 0;
+    }
+    .thumbnail img {
+      width: 100%;
+      height: 100%;
+      margin-bottom: 10px;
+    }
+    .carousel-control.right, .carousel-control.left {
+      background-image: url("/img/bg.jpg");
+      color: #f4511e;
+    }
+    .carousel-indicators li {
+      border-color: #f4511e;
+    }
+    .carousel-indicators li.active {
+      background-color: #f4511e;
+    }
+    .item h4 {
+      font-size: 19px;
+      line-height: 1.375em;
+      font-weight: 400;
+      font-style: italic;
+      margin: 70px 0;
+    }
+    .item span {
+      font-style: normal;
+    }
+    .panel {
+      border: 1px solid #f4511e; 
+      border-radius:0 !important;
+      transition: box-shadow 0.5s;
+    }
+    .panel:hover {
+      box-shadow: 5px 0px 40px rgba(0,0,0, .2);
+    }
+    .panel-footer .btn:hover {
+      border: 1px solid #f4511e;
+      background-color: #fff !important;
+      color: #f4511e;
+    }
+    .panel-heading {
+      color: #fff !important;
+      background-color: #f4511e !important;
+      padding: 25px;
+      border-bottom: 1px solid transparent;
+      border-top-left-radius: 0px;
+      border-top-right-radius: 0px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+    }
+    .panel-footer {
+      background-color: white !important;
+    }
+    .panel-footer h3 {
+      font-size: 32px;
+    }
+    .panel-footer h4 {
+      color: #aaa;
+      font-size: 14px;
+    }
+    .panel-footer .btn {
+      margin: 15px 0;
+      background-color: #f4511e;
+      color: #fff;
+    }
+    
+    footer .glyphicon {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #f4511e;
+    }
+    .slideanim {visibility:hidden;}
+    .slide {
+      animation-name: slide;
+      -webkit-animation-name: slide;
+      animation-duration: 1s;
+      -webkit-animation-duration: 1s;
+      visibility: visible;
+    }
+    @keyframes slide {
+      0% {
+        opacity: 0;
+        transform: translateY(70%);
+      } 
+      100% {
+        opacity: 1;
+        transform: translateY(0%);
+      }
+    }
+    @-webkit-keyframes slide {
+      0% {
+        opacity: 0;
+        -webkit-transform: translateY(70%);
+      } 
+      100% {
+        opacity: 1;
+        -webkit-transform: translateY(0%);
+      }
+    }
+    @media screen and (max-width: 768px) {
+      .col-sm-4 {
+        text-align: center;
+        margin: 25px 0;
+      }
+      .btn-lg {
+        width: 100%;
+        margin-bottom: 35px;
+      }
+    }
+    @media screen and (max-width: 768px) {
+      .logo {
+        font-size: 150px;
+      }
+    }
+
+
+    .icon-bar {
+      position: fixed;
+      top: 50%;
+      right:0%
+    }
+
+    .icon-bar a {
+      display: block;
+      text-align: center;
+      padding: 16px;
+      transition: all 0.3s ease;
+      color: black;
+      font-size: 20px;
+    }
+
+    .icon-bar a:hover {
+      background-color:powderblue;
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">    
+
+  <!-- <nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">    
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="navbar-toggler-icon"></span>
       </button> 
@@ -61,7 +235,47 @@
               </li>
           </ul>
       </div>
-  </nav>
+  </nav> -->
+
+  <!-- faq side button -->
+  <div class="icon-bar">
+    <a id='faqclick' href="/faq" target="_blank">Link 1</a>
+  </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                     
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="navbar-toggler-icon"></span>
+    </button> 
+    <a class="navbar-brand" href="#">ALPHA</a>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                 <a class="nav-link" href="#about">About <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                 <a class="nav-link" href="#services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#career">Career</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#media">Media</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-md-auto">
+            <li class="nav-item dropdown">
+                 <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" href="#" data-toggle="dropdown"><span id="settings">Settings</span></a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                     <a class="dropdown-item" href="#">About ALPHA</a> 
+                     <a class="dropdown-item" href="#">Terms and Conditions</a>
+                    <div class="dropdown-divider">
+                    </div> 
+                    <a class="dropdown-item" href="#" id="quit">Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
 
 <div id="top" class="jumbotron text-center" style="margin-top: 45px;">
   <h1><strong>Alpha Holding</strong></h1> 
