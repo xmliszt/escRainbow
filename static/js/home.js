@@ -1,6 +1,8 @@
 var cloneCount = 0;
 var hasOpened = false;
 var message;
+var FN;
+var LN;
 
 $(document).ready(function() {
 
@@ -55,7 +57,6 @@ $(document).ready(function() {
     });
   });
 
-
   // initialize rainbow SD
   initialize();
 
@@ -73,6 +74,10 @@ $(document).ready(function() {
             console.error(err.responseText);
         }
       });
+    }
+    var myCookies = document.cookie;
+    if (myCookies){
+      console.log(`cookie: ${myCookies}`);
     }
   }
 
@@ -102,39 +107,7 @@ $(document).ready(function() {
       });
   });
 
-  // bank account signin ajax
-  $("#login_btn").click(function () {
-    var usernameInput = $("#usernameInput").val();
-    var passwordInput = $("#passwordInput").val();
-    if (usernameInput != '' && passwordInput != '') {
-        $.ajax({
-            url: '/login',
-            type: 'POST',
-            data: {
-                username: usernameInput,
-                password: passwordInput
-            },
-            crossDomain: true,
-                dataType: "json",
-                xhrFields: {
-                    withCredentials: true
-                }, // request for browser to pass back cookie
-            success: function (data, status, r) {
-                console.log(`First Name: ${
-                    data.firstName
-                } Last Name: ${
-                    data.lastName
-                }`);
-            },
-            error: function (err) {
-                console.log('User not found');
-            }
-          })
-      } else {
-          return false;
-      }
-  });
-
+  
   $(".chat-img").click(function() {
     if (!hasOpened){
       generateBotChoicesBubble();
@@ -166,34 +139,94 @@ $(document).ready(function() {
     $(".toggle-chat-btn").show();
     $(".toggle-chat-btn").animate({ opacity: "1.0" }, "slow");
   });
+
   $("#quit").click(function() {
     var decision = confirm(
-      "You are in Guest mode. Exit will erase all dialogue history."
+      "Logout will erase all dialogue history."
     );
-    if (decision) {
-      createAjax("GET", "/delete", {}, function(data, status, els) {
-        console.log(`${status}: ${data.id} has been deleted successfully!`);
-        window.location.href = "/";
+    if (decision){
+      createAjax("GET", "/logout", {}, function(data){
+        window.alert("You have been logged out successfully!");
+        window.location.reload();
       });
-    } else {
-      return false;
     }
   });
 
-  $("#registerBtn").click(function() {
-    var username = $("#usernameInput").val();
-    $.ajax({
-      url: "/register",
-      data: {
-        username: username,
-        password: "whatever",
-        firstName: "David",
-        lastName: "Lee"
-      },
-      type: "POST",
-      success: function(data, status, r) {
-        console.log(status);
+  // bank account signin ajax
+  $("#login_btn").click(function () {
+    var usernameInput = $("#usernameInput").val();
+    var passwordInput = $("#passwordInput").val();
+    if (usernameInput != '' && passwordInput != '') {
+        $.ajax({
+            url: '/login',
+            type: 'POST',
+            data: {
+                username: usernameInput,
+                password: passwordInput
+            },
+            crossDomain: true,
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                }, // request for browser to pass back cookie
+            success: function (data, status, r) {
+                if (data.loggedIn){
+                  console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+                  $('#titleText').html(`${data.firstName} ${data.lastName}`);
+                  $('#myForm').hide();
+                  window.alert("You are logged in successfully!");
+                  window.location.reload();
+                } else {
+                  $('#alertLogin').show();
+                  $('#alertLogin').html("Incorrect password! Please try again!");
+                }
+            },
+            error: function (err) {
+                console.log('User not found');
+                $('#alertLogin').show();
+                $('#alertLogin').html("You are not registered yet! Please register first!");
+                $('#signInRegisterBtn').show();
+            }
+          })
+      } else {
+          return false;
       }
-    });
+  });
+
+
+  $("#registerBtn").click(function() {
+    var username = $("#emailSignup").val();
+    var password = $('#pwdSignup').val();
+    var pwdrepeat = $('#pwdRepeat').val();
+    var firstName = $("#fnSignup").val();
+    var lastName = $("#lnSignup").val();
+    var alertMsg = $('#alertMsg');
+    var modal = document.getElementById('id01');
+    if (password == pwdrepeat){
+      $.ajax({
+        url: "/register",
+        data: {
+          username: username,
+          password: password,
+          firstName: firstName,
+          lastName: lastName
+        },
+        type: "POST",
+        success: function(data, status, r) {
+          modal.style.display = "none";
+          window.alert("You are registered successfully!");
+        },
+        error: function(error){
+          if (error.status == 500){
+            alertMsg.show();
+            alertMsg.html("Failed to register! Please contact the backend support team or try again!");
+          }
+        }
+      });
+    } else {
+      alertMsg.show();
+      alertMsg.html("Password does not match!");
+    }
+    
   });
 });
