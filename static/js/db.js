@@ -77,10 +77,40 @@ async function deleteOne(query, collecitonName){
     })
 }
 
+async function findAll(query, collectionName){
+    const client = await MongoClient.connect(url, {useNewUrlParser: true}).catch(e=>{
+        client.close();
+        throw e;
+    });
+    const db = client.db(dbName);
+    coln = db.collection(collectionName);
+    var results = coln.find(query).toArray();
+    client.close();
+    return results;
+}
+
+function resetAgents(){
+    findAll({}, "Agents").then(success=>{
+        for (var i=0; i<success.length; i++){
+            var agent = success[i];
+            var agentID = agent.id;
+            update({id: agentID}, {priority: 0, busy: false}, "Agents").then(success=>{
+                console.log("Priority score reset successfully!");
+            }).catch(err=>{
+                console.error("Failed to reset priority!" + err);
+            })
+        }
+    }).catch(err=>{
+        console.error("Failed to reset priority!" + err);
+    });
+}
+
 exports.dbUtils = {
     createUniqueCollection: createUniqueCollection,
     insert: insert,
     search: search,
     update: update,
-    delete: deleteOne
+    delete: deleteOne,
+    findAll: findAll,
+    resetAgents: resetAgents
 }

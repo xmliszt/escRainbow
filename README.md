@@ -1,8 +1,15 @@
 # ESC Project Alpha -- Routing Engine for Bank Industry using Rainbow Services
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[TOC]
+
+
 
 ## How To Run
-*Make sure you have MongoDB installed before running*
+
+_Make sure you have MongoDB installed before running_
+
 ```bash
 git clone https://github.com/xmliszt/escRainbow.git
 cd escRainbow
@@ -10,154 +17,302 @@ npm install
 node app
 ```
 
-## Project Brief
-* Front-end:
-  * UI for bank customers to make queries
-  * Bot auto reply
-  * Notify back-end when human agents are requested
-* Back-end:
-  * Manage agents queue
-  * Database to store agents information
-  * Link front-end user's message to the agent via Rainbow services
+## MongoDB Schema
 
-## Updates
-### 2020/03/03 Yuxuan
-* Set up simple chat UI page for developing chatting service
-* Explore ExpressJS and EJS framework
-* Learn about Async methods and JQuery
-* Basic UI allows user to input names and create Guest account through RainbowSDK
-### 2020/03/04 Yuxuan
-* Implement MongoDB to store User and Agent information
-* Backend successfully receive requests from Frontend and send back responses accordingly
-* Frontend achieves Asynchronously update message bubbles and continuous chatting
-* When the guest leaves the chat, his data will be removed from MongoDB as well as deleted from Rainbow
-### 2020/03/05 Yuxuan
-* Customer interface to simulate signin as Guest User on Rainbow
-* Chat panel for sending chat bubbles async
-* Sample choices for customer to select for queries
-* Dynamic binding of Frontend js functions to elements
-* Utility functions to help creating dynamic elements at frontend easier :)
-* Exit to clear data from MongoDB as well as remove account from Rainbow
-* Implementation of Queue class established. Utility methods for MongoDB functionality
-  
+* Collection name: "Agents"
+
+```JSON
+{
+    name: [String],
+    skill: [Number],
+    id: [String],
+    busy: [Boolean],
+    priority: [Number]
+}
+```
+
+​	example:
+
+```json
+{
+    name: "Michalina Hebert",
+    skill: 2,
+    id: "5e5e23516c332176648fe58e",
+    busy: false,
+    priority: 0
+}
+```
+
+* Collection name: "Users"
+
+```JSON
+{
+    username: [String],
+    firstname: [String],
+    lastname: [String],
+    email: [String],
+    password: [String]
+}
+```
+
+​	example:
+```JSON
+{
+    username: "alphaTest",
+    firstname: "Alpha",
+    lastname: "Go",
+    email: "alpha_go@alpha.com",
+    password: "4243@##$daf3124$351E213"
+}
+```
+
 ## Alpha API
-### Render Guest Login Page (temporary)
-Render the guest login page
-|   |                       |
+
+### Render Home Page
+
+Render Alpha bank home page without any login
+| | |
 |:--|:----------------------:|
 |URL|/|
 |Method|`GET`|
 |URL Params| None|
 |Data Params| None|
 |Success Response (code)| 200 OK|
-|Success Response (content)| "index.ejs" text/html|
+|Success Response (content)| "home.ejs" text/html |
 |Error Response (code)| 404 NOT FOUND|
-|Error Response (content)|None|
-* Sample Call
+|Error Response (content)|{error: [String]}|
+
+- Sample Call
+
 ```js
 $.ajax({
   url: "/",
-  type : "GET",
-  success : function(data, status, r) {
+  type: "GET",
+  success: function(data, status, r) {
     console.log(status);
   }
 });
 ```
-### Login Guest (temporary)
-Take user input names and log him/her in as guest account in Rainbow
-|   |                       |
-|:--|:----------------------:|
-|URL|/|
-|Method|`POST`|
-|URL Params| None|
-|Data Params|`{firstN: [String], lastN: [String]}`|
-|Success Response (code)| 200 OK|
-|Success Response (content)| "chat.ejs" text/html|
-|Error Response (code)| 501 NOT IMPLEMENTED|
-|Error Response (content)| None (render "index.ejs" text/html)|
-* Sample Call
+
+### Login Bank Account
+
+Log in a user to its bank account [Differentiate this with "Login Guest", which is for the Rainbow side]
+
+When user logged in using its username and password, they are sent to backend to do verification. If success, the user's firstName and lastName stored in database will be returned.
+
+Once logged in, backend will create cookie for this user account to be stored in the browser.
+
+https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
+https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response 
+
+|                            |                                             |
+| :------------------------- | :-----------------------------------------: |
+| URL                        |                   /login                    |
+| Method                     |                   `POST`                    |
+| URL Params                 |                    None                     |
+| Data Params                | `{username: [String], password: [String]}`  |
+| Success Response (code)    |                   200 OK                    |
+| Success Response (content) | `{loggedIn: [boolean], firstName: [String], lastName: [String]}` |
+| Error Response (code)      |          500 INTERNAL SERVER ERROR          |
+| Error Response (content)   |         {error: "User not found!"}          |
+
+- Sample Call
+
 ```js
 $.ajax({
   url: "/",
   type: "POST",
-  data: {firstN: "firstName", lastN: "lastName"},
-  success : function(data, status, r) {
-    console.log(status);
+  data: { username: "amyTan2012", password: "iloverainbow" },
+  success: function(data, status, r) {
+    if (data.loggedIn){
+      console.log("Logged In!");
+      console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+    } else {
+      console.log("Password wrong!");
+    }
   }
 });
 ```
-### Display chat UI for a particular user
-Render the "chat" view for a user
-|   |                       |
+
+### Bank Account Registration
+
+New user register for a bank account, information will be submitted to MongoDB at Bankend
+| | |
 |:--|:----------------------:|
-|URL|/chat/:uid|
-|Method|`GET`|
-|URL Params|`uid=[String]`|
-|Data Params| None|
+|URL|/register|
+|Method|POST|
+|URL Params|None|
+|Data Params| `{username: [String], password: [String], firstName: [String], lastName: [String]}` |
 |Success Response (code)| 200 OK|
-|Success Response (content)| "chat.ejs" text/html|
+|Success Response (content)| `{success: 1}` |
 |Error Response (code)|500 INTERNAL SERVER ERROR|
-|Error Response (content)|None (redirect to '/')|
-* Sample Call
+|Error Response (content)|`{error: "Registration failed! " + <errorMessage>}`|
+
+- Sample Call
+
 ```js
 $.ajax({
-  url: "/chat/5e606260d8084c29e64eb64f",
-  type : "GET",
+  url: "/register",
+  type : "POST",
+  data: {username: "xmlist", password: "whatever", firstName: "David", lastName: "Lee"}
   success : function(data, status, r) {
     console.log(status);
   }
 });
 ```
-### Send Message and Receive Message
-Render the guest login page
-|   |                       |
+
+### Logout Bank Account
+
+Logout the current logged in bank account
+| | |
 |:--|:----------------------:|
-|URL|/chat/:uid|
-|Method|`POST`|
-|URL Params| `uid=[String]`|
-|Data Params|`{message: [String]}`|
-|Success Response (code)| 200 OK|
-|Success Response (content)|`{response: [String], from: [Integer]}`|
-|Error Response (code)|404 NOT FOUND|
-|Error Response (content)|None|
-* Sample Call
-```js
-$.ajax({
-  url: "/chat/5e606260d8084c29e64eb64f",
-  type: "POST",
-  data: {message: "Hello World!"},
-  success : function(data, status, r) {
-    console.log(status);
-    console.log(data.response);
-  }
-});
-```
-### Delete user
-Remove user info from database and remove from Rainbow
-|   |                       |
-|:--|:----------------------:|
-|URL|/delete|
+|URL|/logout|
 |Method|`GET`|
 |URL Params|None|
-|Data Params|None|
+|Data Params| None|
 |Success Response (code)| 200 OK|
-|Success Response (content)|`{id:[String]}`|
-|Error Response (code)|501 NOT IMPLEMENTED|
-|Error Response (content)|None|
-* Sample Call
+|Success Response (content)| `{success: 1}` |
+|Error Response (code)|500 INTERNAL SERVER ERROR|
+|Error Response (content)|`{error: "Failed to logout! " + <errorMessage>}`|
+
+- To get the uid, which will be stored in cookie in the browser, call `getCookie("uid")`
+- Sample Call
+
 ```js
 $.ajax({
-  url: "/delete",
+  url: "/logout",
   type: "GET",
-  success : function(data, status, r) {
+  success: function(data, status, r) {
     console.log(status);
-    console.log(`User deleted is: ${data.id}`);
+  }
+});
+```
+
+### Create Anonymous Guest User at Rainbow
+
+User opens chat panel, backend create anonymous guest user in Rainbow and pass to frontend
+| | |
+|:--|:----------------------:|
+|URL|/chat|
+|Method|GET|
+|URL Params| None |
+|Data Params|None|
+|Success Response (code)| 200 OK|
+|Success Response (content)|`{data: [Object]}`|
+|Error Response (code)|501 NOT IMPLEMENTED|
+|Error Response (content)|`{error: "Failed to create user! " + <errorMessage>}`|
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/chat",
+  type: "GET",
+  success: function(data, status, r) {
+    console.log(status);
+    var credentials = data.data;
+  }
+});
+```
+
+### Connect to agents on Rainbow
+
+User selects "chat with agent", backend find available agent and return 
+
+|                            |                                                            |
+| :------------------------- | :--------------------------------------------------------: |
+| URL                        |                          /connect                          |
+| Method                     |                            POST                            |
+| URL Params                 |                            None                            |
+| Data Params                |                   `{request: [Integer]}`                   |
+| Success Response (code)    |                           200 OK                           |
+| Success Response (content) |                     `{info: [Object]}`                     |
+| Error Response (code)      |       501 NOT IMPLEMENTED, 500 INTERNAL SERVER ERROR       |
+| Error Response (content)   | `{error: "No available agent found!"}`, `{error: [error]}` |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/connect",
+  type: "POST",
+  data: { request: 0 },
+  success: function(data, status, r) {
+    var info = data.info;
+  },
+  error: function(error){
+    if (error.status == 501){
+        console.info(error.responseJSON.error);
+    } else {
+        console.info(error.responseJSON.error);
+    }
+  }
+});
+```
+
+### Disconnect from Agent
+Update agent's availability status
+|                            |                                                                |
+| :------------------------- | :------------------------------------------------------------: |
+| URL                        |                             /disconnect                             |
+| Method                     |                              POST                               |
+| URL Params                 |                              None                              |
+| Data Params                |                              `{agentID: [String]}`                              |
+| Success Response (code)    |                             200 OK                             |
+| Success Response (content) | `{id: [String]}` |
+| Error Response (code)      |                              501                              |
+| Error Response (content)   |                              `{error: "Failed to update agent" + <errorMessage>}`                              |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/disconnect",
+  type: "POST",
+  success: function(data, status, r) {
+    console.log(data.id);
+  }
+});
+```
+
+### Check Logged In status
+
+Check if user is logged in.
+
+|                            |                                                                |
+| :------------------------- | :------------------------------------------------------------: |
+| URL                        |                             /auth                             |
+| Method                     |                              GET                               |
+| URL Params                 |                              None                              |
+| Data Params                |                              None                              |
+| Success Response (code)    |                             200 OK                             |
+| Success Response (content) | `{loggedIn: [boolean], user: [Object]}` |
+| Error Response (code)      |                              401 UNAUTHORIZED                              |
+| Error Response (content)   |                              `{error: "Unauthenticated access!}`                              |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/auth",
+  type: "GET",
+  success: function(data, status, r) {
+    if (data.loggedIn) {
+      //do something if logged in
+    }
+  },
+  error: function(error){
+    if (error.status == 401){
+      //do something if not logged in
+    }
   }
 });
 ```
 
 ## License & Copyright
+
 © ESCC1G9, Singapore University of Technology and Design
 
+© ESCC1G9, Singapore University of Technology and Design
 
 Licensed under the [MIT License](LICENSE)

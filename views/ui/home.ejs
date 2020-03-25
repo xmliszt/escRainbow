@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>ALPHA Holdings</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/4.0.5/es6-promise.min.js"></script>
+  <script src="//cdn.jsdelivr.net/momentjs/2.15.1/moment-with-locales.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
+  <script src="/js/jquery/dist/jquery.min.js"></script>
+  <script src="/js/rainbow-sdk.min.js" ></script>
+  <script src="/js/vendors-sdk.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+  <link rel="stylesheet" href="/css/chat.css">
+  <script src="/js/elementsUtils.js"></script>
+  <script src="/js/chatBotResponse.js"></script>
+  <script src="/js/chatBotChoice.js"></script>
+  <script src="/js/agentConnUtils.js"></script>
+  <script src="/js/initialize.js"></script>
+  <script src="/js/home.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@2.12.1/dist/index.min.js"></script>
+
+</head>
+<body>
+
+  <nav id="top" class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="navbar-toggler-icon"></span>
+    </button> 
+    <% if (data.loggedIn){ %>
+      <a id="titleText" class="navbar-brand" href="/"><%=data.user.firstName%> <%=data.user.lastName%></a>
+    <% } else { %>
+      <a id="titleText" class="navbar-brand" href="/">ALPHA</a>
+    <% } %>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                 <a class="nav-link" href="#about">About <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+                 <a class="nav-link" href="#services">Services</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#career">Career</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#media">Media</a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-md-auto">
+            <li class="nav-item dropdown">
+                 <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" href="#" data-toggle="dropdown"><span id="settings">Settings</span></a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                     <a class="dropdown-item" href="#">About ALPHA</a> 
+                     <a class="dropdown-item" href="#">Terms and Conditions</a>
+                    <div class="dropdown-divider">
+                    </div> 
+                    <% if (data.loggedIn){ %>
+                      <a class="dropdown-item" href="#" id="quit">Logout</a>
+                    <% } else { %>
+                      <a class="dropdown-item" onclick="openModal()" id="register">Sign up</a>
+                      <a class="dropdown-item" onclick="openForm()" id="login">Login</a>
+                    <% } %>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="id01" class="modal">
+  <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+  <form class="modal-content">
+    <div class="container">
+      <h1>Sign Up</h1>
+      <p>Please fill in this form to create an account.</p>
+      <hr>
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" name="email" id="emailSignup" required autocomplete="username">
+
+      <label for='first-name'><b>Your First Name</b></label>
+      <input type='text' placeholder ='Enter First Name' name='first-name' id="fnSignup" required>
+
+      <label for='last-name'><b>Your Last Name</b></label>
+      <input type='text' placeholder ='Enter Last Name' name='last-name' id="lnSignup" required>
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" id="pwdSignup" required autocomplete="new-password">
+
+      <label for="psw-repeat"><b>Repeat Password</b></label>
+      <input type="password" placeholder="Repeat Password" name="psw-repeat" id="pwdRepeat" required autocomplete="off">
+      <p id="alertMsg" class="alert alert-danger" style="display: none;"></p>
+
+      <label>
+        <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+      </label>
+
+      <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+      <div class="clearfix">
+        <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+        <button type="button" class="signupbtn" id="registerBtn">Sign Up</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script>
+  // Get the modal
+  var modal = document.getElementById('id01');
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+</script>
+
+<div class="form-popup" id="myForm" style="z-index: 99;">
+  <form class="form-container">
+      <h1>Login</h1>
+
+      <label for="email"><b>Email</b></label>
+      <input type="text" placeholder="Enter Email" name="email" id="usernameInput" required autocomplete="username">
+
+      <label for="psw"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password" name="psw" id="passwordInput" required autocomplete="current-password">
+      <p id="alertLogin" class="alert alert-danger" style="display: none;"></p>
+      <button type="button" class="btn btn-warning" id="signInRegisterBtn" style="display: none;" onclick="openModal()">Register</button>
+      <button type="button" class="btn" id="login_btn">Login</button>
+      <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+  </form>
+</div>
+
+<script>
+  function openModal(){
+    closeForm();
+    document.getElementById('id01').style.display='block';
+  }
+</script>
+
+<script>
+  var loginBlock = document.getElementById("myForm");
+  window.onclick = function(e){
+    if (e.target == loginBlock){
+      loginBlock.style.display = "none";
+    }
+  }
+</script>
+
+<script>
+  function openForm() {
+  document.getElementById("myForm").style.display = "block";
+  }
+
+  function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+  }
+</script>
+
+<div class="jumbotron text-center">
+  <h1><strong>Alpha Holding</strong></h1> 
+  <p>Your Interests At Best</p> 
+</div>
+
+<!-- Container (About Section) -->
+<div id="about" class="container-fluid">
+  <div class="row">
+    <div class="col">
+      <h2>About Company Page</h2><br>
+      <h4>hihi</h4><br>
+      <p>blah</p>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid bg-grey">
+  <div class="row">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-globe logo slideanim"></span>
+    </div>
+    <div class="col-sm-8">
+      <h2>Our Values</h2><br>
+      <h4><strong>MISSION:</strong></h4><br>
+      <p><strong>VISION:</strong> </p>
+    </div>
+  </div>
+</div>
+
+<!-- Container (Services Section) -->
+<div id="services" class="container-fluid text-center">
+  <h2>SERVICES</h2>
+  <h4>What we offer</h4>
+  <br>
+  <div class="row slideanim">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-off logo-small"></span>
+      <h4>POWER</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-heart logo-small"></span>
+      <h4>LOVE</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-lock logo-small"></span>
+      <h4>JOB DONE</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+  </div>
+  <br><br>
+  <div class="row slideanim">
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-leaf logo-small"></span>
+      <h4>GREEN</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-certificate logo-small"></span>
+      <h4>CERTIFIED</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+    <div class="col-sm-4">
+      <span class="glyphicon glyphicon-wrench logo-small"></span>
+      <h4 style="color:#303030;">HARD WORK</h4>
+      <p>Lorem ipsum dolor sit amet..</p>
+    </div>
+  </div>
+</div>
+
+<!-- Container (career Section) -->
+<div id="career" class="container-fluid text-center bg-grey">
+  <h2>Career</h2><br>
+  <h4>Join Us as a Professional</h4>
+  <div class="row text-center slideanim">
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <!-- <img src="" alt="" width="400" height="300"> -->
+        <p><strong>Manager</strong></p>
+        <p>Yes</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+        <!-- <img src="" alt="" width="400" height="300"> -->
+        <p><strong>Data Analytics</strong></p>
+        <p>Yes</p>
+      </div>
+    </div>
+    <div class="col-sm-4">
+      <div class="thumbnail">
+          <!-- <img src="" alt="" width="400" height="300"> -->
+        <p><strong>Accountants</strong></p>
+        <p>Yes</p>
+      </div>
+    </div>
+  </div><br>
+  
+  <h2>What our customers say</h2>
+  <div id="myCarousel" class="carousel slide text-center" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner" role="listbox">
+      <div class="item active">
+        <h4>"This company is the best. I am so happy with the result!"<br><span>Michael Roe, Vice President, Comment Box</span></h4>
+      </div>
+      <div class="item">
+        <h4>"One word... WOW!!"<br><span>John Doe, Salesman, Rep Inc</span></h4>
+      </div>
+      <div class="item">
+        <h4>"Could I... BE any more happy with this company?"<br><span>Chandler Bing, Actor, FriendsAlot</span></h4>
+      </div>
+    </div>
+
+    <!-- Left and right controls -->
+    <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a>
+  </div>
+</div>
+
+<!-- Container (Media Section) -->
+<div id="media" class="container-fluid">
+  <div class="text-center">
+    <h2>Media</h2>
+    <h4>Highlights</h4>
+  </div>
+  <div class="row slideanim">
+    <div class="col-sm-4 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>1</h1>
+        </div>
+        <div class="panel-body">
+            <p>news</p>
+        </div>
+        <div class="panel-footer">
+          <button class="btn btn-lg">Read more</button>
+        </div>
+      </div>      
+    </div>     
+    <div class="col-sm-4 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>2</h1>
+        </div>
+        <div class="panel-body">
+            <p>news</p>
+        </div>
+        <div class="panel-footer">
+          <button class="btn btn-lg">Read more</button>
+        </div>
+      </div>      
+    </div>       
+    <div class="col-sm-4 col-xs-12">
+      <div class="panel panel-default text-center">
+        <div class="panel-heading">
+          <h1>3</h1>
+        </div>
+        <div class="panel-body">
+          <p>news</p>
+        </div>
+        <div class="panel-footer">
+          <button class="btn btn-lg">Read more</button>
+        </div>
+      </div>      
+    </div>    
+  </div>
+</div>
+
+<!-- Container (Contact Section) -->
+<div id="locations" class="container-fluid bg-grey">
+  <h2 class="text-center">Locations</h2>
+<p>insert map</p>
+  </div>
+</div> 
+
+<div class="chat">
+  <div class="card">
+      <div class="card-header">
+          <button class="btn btn-sm btn-danger chat-btn" id="close" type="button">&times;</button>
+          <div class="d-flex justify-content-center mt-5">
+              <div class="user_info">
+                  <span>Happy to chat with you!</span>
+              </div>
+          </div>
+      </div>
+      <div class="card-body msg_card_body" id="conversation_body"></div>
+      <div class="card-footer fixed-bottom">
+        <div class="input-block d-flex">
+          <div class="d-flex">
+            <button id="emoji-button">😄</button> 
+          </div>
+          <div class="flex-grow-1">
+            <form id="input-form">
+              <div class="input-group">
+                  <input id='userInputMsg' class="form-control type_msg" placeholder="Type your message here..." type="text" autocomplete="off">
+                  <div class="input-group-append">
+                      <span class="input-group-text send_btn" id="send-container"><input type="image" id="sendBtn" src="/icon/send.png"></span>
+                  </div>
+              </div>
+          </form>
+          </div>
+        </div>
+        <div class="emoji-block"></div>
+
+      </div>
+  </div>
+</div>
+<div class="container-flexbox">
+  <!-- faq side button -->
+  <div class="icon-bar">
+    <a href="/faq"><img src="/icon/faq.png" id='faqclick' class='faqclick'></a>
+  </div>
+  <div class="toggle-chat-btn">
+    <input type="image" class="chat-img" src="/icon/chat.png" alt="chat">
+  </div>
+</div>
+
+
+<footer class="container-fluid text-center">
+  <a href="#top" title="To Top"><img src="/icon/top.png" alt="Go To Top" style="width: 50px;"></a>
+  <p>Go To Top</p>
+</footer>
+</body>
+</html>
+

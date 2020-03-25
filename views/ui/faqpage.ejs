@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>General FAQ</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+      <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+      <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
+      <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+      <link rel="stylesheet" href="/css/chat.css">
+      <script src="/js/home.js"></script>
+      <style>
+         .faq-block{
+            margin: 20px;
+            padding: 40px;
+            border-radius: 10px;
+            background-color: transparent;
+            color: #111111;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+         }
+      </style>
+   </head>
+   <body>
+      
+      <nav id="top" class="navbar navbar-expand-lg navbar-light bg-light">
+                           
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="navbar-toggler-icon"></span>
+         </button> 
+         <a class="navbar-brand" href="/">ALPHA</a>
+         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="navbar-nav">
+               <li class="nav-item">
+                     <a class="nav-link" href="#about">About <span class="sr-only">(current)</span></a>
+               </li>
+               <li class="nav-item">
+                     <a class="nav-link" href="#services">Services</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="#career">Career</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="#media">Media</a>
+               </li>
+            </ul>
+            <ul class="navbar-nav ml-md-auto">
+               <li class="nav-item dropdown">
+                     <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" href="#" data-toggle="dropdown"><span id="settings">Settings</span></a>
+                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">About ALPHA</a> 
+                        <a class="dropdown-item" href="#">Terms and Conditions</a>
+                        <div class="dropdown-divider">
+                        </div> 
+                        <a class="dropdown-item" onclick="document.getElementById('id01').style.display='block'" id="register">Sign up</a>
+                        <a class="dropdown-item" onclick="openForm()" id="login">Login</a>
+                        <a class="dropdown-item" href="#" id="quit">Logout</a>
+                     </div>
+               </li>
+            </ul>
+         </div>
+      </nav>
+      <div id="id01" class="modal">
+      <span onclick="document.getElementById('id01').style.display='none'" class="close" title="Close Modal">&times;</span>
+      <form class="modal-content" action="/action_page.php">
+         <div class="container">
+         <h1>Sign Up</h1>
+         <p>Please fill in this form to create an account.</p>
+         <hr>
+         <label for="email"><b>Email</b></label>
+         <input type="text" placeholder="Enter Email" name="email" required>
+
+         <label for='first-name'><b>Your First Name</b></label>
+         <input type='text' placeholder ='Enter First Name' name='first-name' required>
+
+         <label for='last-name'><b>Your Last Name</b></label>
+         <input type='text' placeholder ='Enter Last Name' name='last-name' required>
+
+         <label for="psw"><b>Password</b></label>
+         <input type="password" placeholder="Enter Password" name="psw" required>
+
+         <label for="psw-repeat"><b>Repeat Password</b></label>
+         <input type="password" placeholder="Repeat Password" name="psw-repeat" required>
+
+         <label>
+            <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+         </label>
+
+         <p>By creating an account you agree to our <a href="#" style="color:dodgerblue">Terms & Privacy</a>.</p>
+
+         <div class="clearfix">
+            <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+            <button type="submit" class="signupbtn">Sign Up</button>
+         </div>
+         </div>
+      </form>
+      </div>
+      <script>
+      // Get the modal
+      var modal = document.getElementById('id01');
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function(event) {
+         if (event.target == modal) {
+         modal.style.display = "none";
+         }
+      }
+      </script>
+      <div class="form-popup" id="myForm" style="z-index: 99;">
+      <form class="form-container">
+         <h1>Login</h1>
+
+         <label for="email"><b>Email</b></label>
+         <input type="text" placeholder="Enter Email" name="email" required>
+
+         <label for="psw"><b>Password</b></label>
+         <input type="password" placeholder="Enter Password" name="psw" required>
+
+         <button type="submit" class="btn">Login</button>
+         <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+      </form>
+      <form>
+
+      </form>
+      </div>
+      <script>
+      function openForm() {
+      document.getElementById("myForm").style.display = "block";
+      }
+
+      function closeForm() {
+      document.getElementById("myForm").style.display = "none";
+      }
+      </script>
+
+      <div class="faq-block">
+         <h2><strong>General FAQ</strong></h2>
+         <p>
+         <strong>What is the eligibility to apply for iBanking?</strong>
+         <br><br>
+         You will need to be 16 years old and have a personal or joint-alternate account of the following:
+         
+         DBS Autosave/Current/Savings Plus or POSB Savings/Current Account
+         DBS or POSB Credit Card/Debit Card
+         DBS Cashline/Home Loan with Servicing Account
+         <br><br>
+         <strong>What can I do on iBanking?</strong><br><br>
+         Please click here for the list of services that we presently offer.
+         <br><br>
+         <strong>Why should I choose DBS iBanking?</strong><br><br>
+         You should choose DBS iBanking because:
+         <ol>
+            <li>
+               It's Easy to get started!
+               Register now using your personal ATM card*, Debit card, or Credit card and instantly access your accounts online . For more information on online registration for iBanking, click here.
+               * Includes DBS Bankcard, ALUMNUS card and POSB ATM cards.
+            </li>
+            <li>
+               It's Your Own Bank
+               You have instant access to the latest information of both your DBS and POSB accounts. You will be able to see the deposit accounts, cards, investments and loans that you have with DBS.      
+            </li>
+            <li>
+               It's Safe & Easy
+               Our simple and intuitive navigation toolbars guarantee you a smooth online experience. And as the bank that cares, we've built in the following security features that protect every transaction you make with DBS iBanking. You can now bank with confidence, knowing that your transactions remain safe with us.
+               100% security on your funds with automatic coverage under our Money Safe Guarantee - In the unlikely event that there is an unauthorized transaction, we will repay the money taken from your account.
+               Safe and secure transactions with Transaction Signing and (multifactor authentication) & transaction alerts.      
+            </li>
+            <li>
+               It's Fast
+               It takes only a few minutes to get your latest account information. You can also complete your banking transactions online and avoid the hassle of queuing.      
+            </li>
+            <li>
+               It's Convenient
+               You can perform transactions online from wherever you are.
+            </li>
+            <li>
+               It's 24 Hours
+               With DBS iBanking, you can get information about your DBS and POSB accounts at any time without having to wait for your monthly statement.      
+            </li>
+            <li>
+               It's Cost Saving
+               You will enjoy commission discounts when you use selected iBanking services.
+               No Special Software is Required
+               You don't need to purchase any special software. As long as you have a PC with the minimum configuration, you are ready to start.      
+            </li>
+         </ol>
+         <br>
+         <strong>How much does it cost to use DBS iBanking?</strong><br><br>
+         It's free. To encourage more customers to experience the true convenience of online banking for themselves, DBS iBanking is now available to you without any sign-up nor subscription fees*.
+         </p>
+      </div>
+      
+   </body>
+</html>
