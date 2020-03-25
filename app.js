@@ -133,6 +133,7 @@ app.post('/register', (req, res) => {
 app.get('/logout', (req, res) => {
     res.clearCookie('AuthToken');
     console.log("Token cleared!");
+    res.status(200).send({success: 1});
     res.end();
 });
 
