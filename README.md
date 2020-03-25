@@ -112,7 +112,7 @@ https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-re
 | URL Params                 |                    None                     |
 | Data Params                | `{username: [String], password: [String]}`  |
 | Success Response (code)    |                   200 OK                    |
-| Success Response (content) | `{firstName: [String], lastName: [String]}` |
+| Success Response (content) | `{loggedIn: [boolean], firstName: [String], lastName: [String]}` |
 | Error Response (code)      |          500 INTERNAL SERVER ERROR          |
 | Error Response (content)   |         {error: "User not found!"}          |
 
@@ -124,7 +124,12 @@ $.ajax({
   type: "POST",
   data: { username: "amyTan2012", password: "iloverainbow" },
   success: function(data, status, r) {
-    console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+    if (data.loggedIn){
+      console.log("Logged In!");
+      console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+    } else {
+      console.log("Password wrong!");
+    }
   }
 });
 ```
@@ -270,32 +275,34 @@ $.ajax({
 });
 ```
 
-
 ### Check Logged In status
 
 Check if user is logged in.
 
 |                            |                                                                |
 | :------------------------- | :------------------------------------------------------------: |
-| URL                        |                             /check                             |
+| URL                        |                             /auth                             |
 | Method                     |                              GET                               |
 | URL Params                 |                              None                              |
 | Data Params                |                              None                              |
 | Success Response (code)    |                             200 OK                             |
-| Success Response (content) | `{success: 1} if logged in` or `{success: 0} if not logged in` |
-| Error Response (code)      |                              None                              |
-| Error Response (content)   |                              None                              |
+| Success Response (content) | `{loggedIn: [boolean], user: [Object]}` |
+| Error Response (code)      |                              401 UNAUTHORIZED                              |
+| Error Response (content)   |                              `{error: "Unauthenticated access!}`                              |
 
 - Sample Call
 
 ```js
 $.ajax({
-  url: "/check",
+  url: "/auth",
   type: "GET",
   success: function(data, status, r) {
-    if (data.success) {
+    if (data.loggedIn) {
       //do something if logged in
-    } else {
+    }
+  },
+  error: function(error){
+    if (error.status == 401){
       //do something if not logged in
     }
   }
