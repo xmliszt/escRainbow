@@ -121,8 +121,8 @@ function getDateTime(){
 
 function generateSendBubble(message){
     var dateTime = getDateTime();
-    var name = document.getElementById("settings").innerHTML;
-    if (name == "Settings"){
+    var name = document.getElementById("titleText").innerHTML;
+    if (name == "ALPHA"){
         name = "Guest";
     }
     var bubble = $(`
@@ -141,8 +141,8 @@ function generateSendBubble(message){
 
 function generateSendBubbleConnectingAgent(message){
     var dateTime = getDateTime();
-    var name = document.getElementById("settings").innerHTML;
-    if (name == "Settings"){
+    var name = document.getElementById("titleText").innerHTML;
+    if (name == "ALPHA"){
         name = "Guest";
     }
     var bubble = $(`
@@ -173,7 +173,7 @@ function generateResponseBubble(response, from){
         <div>
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span> 
-                <p>Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
+                <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
             </div>
         </div>
         <span class="msg_time">${dateTime}</span><br>
@@ -233,7 +233,7 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span><br> 
                 ${elements.join("")} 
-                <p>Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
+                <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
             </div>
             
         </div>
