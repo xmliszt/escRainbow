@@ -100,10 +100,7 @@ Log in a user to its bank account [Differentiate this with "Login Guest", which 
 
 When user logged in using its username and password, they are sent to backend to do verification. If success, the user's firstName and lastName stored in database will be returned.
 
-Once logged in, backend will create cookie for this user account to be stored in the browser.
-
-https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
-https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response 
+A Auth token will be generated and stored in the cookie
 
 |                            |                                             |
 | :------------------------- | :-----------------------------------------: |
@@ -172,10 +169,9 @@ Logout the current logged in bank account
 |Data Params| None|
 |Success Response (code)| 200 OK|
 |Success Response (content)| `{success: 1}` |
-|Error Response (code)|500 INTERNAL SERVER ERROR|
-|Error Response (content)|`{error: "Failed to logout! " + <errorMessage>}`|
+|Error Response (code)|None|
+|Error Response (content)|None|
 
-- To get the uid, which will be stored in cookie in the browser, call `getCookie("uid")`
 - Sample Call
 
 ```js
