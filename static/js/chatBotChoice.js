@@ -1,4 +1,5 @@
 var current_query = 0;
+var subResponseCount = 0;
 var agent_btn = 0;
 
 function generateBotChoicesBubble(){
@@ -27,14 +28,14 @@ function generateBotChoicesBubble(){
     // Sub response for GENERAL ENQUERIES
     createCallbackResponseForButton(`#${cloneCount*5+0}`, function(){
         var elements = [
-            generateButton(`ge-${cloneCount*5+0}`, "Show me account types", 0),
-            generateButton(`ge-${cloneCount*5+1}`, "iBanking", 1),
+            generateButton(`ge-${subResponseCount*5+0}`, "Show me account types", 0),
+            generateButton(`ge-${subResponseCount*5+1}`, "iBanking", 1),
         ];
         generateResponseBubbleWithInsertionElements("You selected general enqueries: ", 0, elements);
-        createCallbackResponseForButton(`#ge-${cloneCount*5+0}`, function(){ 
+        createCallbackResponseForButton(`#ge-${subResponseCount*5+0}`, function(){ 
             var elements = [
-                generateButton(`ge-sub${cloneCount*5+0}`, "Day to Day", 0),
-                generateButton(`ge-sub${cloneCount*5+1}`, "Fixed Deposit", 1),
+                generateButton(`ge-sub${subResponseCount*5+0}`, "Day to Day", 0),
+                generateButton(`ge-sub${subResponseCount*5+1}`, "Fixed Deposit", 1),
         ];
             generateResponseBubbleWithInsertionElements("Which account type do you prefer? ", 0, elements);
             var msg1 = `
@@ -43,21 +44,21 @@ function generateBotChoicesBubble(){
                     <li>Autosave Account</li>
                 </ol>
                 `;
-            createResponseMessageForButton(`#ge-sub${cloneCount*5+0}`, msg1, 0);
+            createResponseMessageForButton(`#ge-sub${subResponseCount*5+0}`, msg1, 0);
             var msg2 = `
             <ol>
                 <li>Singapore Dollar Fixed Deposit</li>
                 <li>Foreign Currency Fixed Deposit</li>
             </ol>
             `;
-            createResponseMessageForButton(`#ge-sub${cloneCount*5+1}`, msg2, 0);
-
+            createResponseMessageForButton(`#ge-sub${subResponseCount*5+1}`, msg2, 0);
+            subResponseCount ++;
         }); 
 
-        createCallbackResponseForButton(`#ge-${cloneCount*5+1}`, function(){ 
+        createCallbackResponseForButton(`#ge-${subResponseCount*5+1}`, function(){ 
             var elements = [
-                generateButton(`ge-sub${cloneCount*5+0}`, "What is the eligibility to apply for iBanking?", 0),
-                generateButton(`ge-sub${cloneCount*5+1}`, "What can i do on iBanking?", 1),
+                generateButton(`ge-sub-sub${subResponseCount*5+0}`, "What is the eligibility to apply for iBanking?", 0),
+                generateButton(`ge-sub-sub${subResponseCount*5+1}`, "What can i do on iBanking?", 1),
         ];
             generateResponseBubbleWithInsertionElements("I am wondering ... ", 0, elements);
             var msg1 = `
@@ -66,7 +67,7 @@ function generateBotChoicesBubble(){
                     <li>Have a personal or joint alternate account</li>
                 </ol>
                 `;
-            createResponseMessageForButton(`#ge-sub${cloneCount*5+0}`, msg1, 0);
+            createResponseMessageForButton(`#ge-sub-sub${subResponseCount*5+0}`, msg1, 0);
             var msg2 = `
             <ol>
                 <li>Account summary</li>
@@ -75,8 +76,8 @@ function generateBotChoicesBubble(){
                 <li>Make investments</li>
             </ol>
             `;
-            createResponseMessageForButton(`#ge-sub${cloneCount*5+1}`, msg2, 0);
-
+            createResponseMessageForButton(`#ge-sub-sub${subResponseCount*5+1}`, msg2, 0);
+            subResponseCount ++;
         }); 
         current_query = 0;
         console.log("Query set to 0");
@@ -85,10 +86,54 @@ function generateBotChoicesBubble(){
      // Sub response for CARD REPLACEMENT
      createCallbackResponseForButton(`#${cloneCount*5+1}`, function(){
         var elements = [
-            generateButton(`cd-${cloneCount*5+0}`, "Yes please", 0),
-            generateButton(`cd-${cloneCount*5+1}`, "Nope, I have already done so", 1)
+            generateButton(`cd-${subResponseCount*5+0}`, "Yes please", 0),
+            generateButton(`cd-${subResponseCount*5+1}`, "I need more time to think about it", 1)
         ];
         generateResponseBubbleWithInsertionElements("To protect yourself, would you like to deactivate your stolen card? ", 0, elements);
+
+        //if customer is already signed in 
+        createCallbackResponseForButton(`#cd-${subResponseCount*5+0}`, function(){
+            $.ajax({
+                url: "/auth",
+                type: "GET",
+                success: function(data){
+                    if (data.loggedIn){
+                        // if customer is already signed in (for all below)
+                        generateResponseBubble("Please key in your card number", 0); 
+                        //set time out 
+                        waitSeconds(2, generateResponseBubble.bind(this, "Card number matched records. We are deactivating your card now... Please wait.", 0))
+                        waitSeconds(10, generateResponseBubble.bind(this, "Successful deactivation of card!", 0))
+                        var elements = [
+                            generateButton(`cd-sub1-${subResponseCount*5+0}`, "Yes", 0),
+                            generateButton(`cd-sub1-${subResponseCount*5+1}`, "Nope", 1)
+                        ];
+
+                        waitSeconds(13, generateResponseBubbleWithInsertionElements.bind(this, "Shall we proceed with card replacement?", 0, elements));
+                        waitSeconds(13, createResponseMessageForButton.bind(this, `#cd-sub1-${subResponseCount*5+0}`, "Rest assured, a new bank card and PIN number will be mailed to you within a week.", 0));
+                        waitSeconds(13, createResponseMessageForButton.bind(this, `#cd-sub1-${subResponseCount*5+1}`, "Thank you for the conversation! Hope we have resolved your issue!",0));
+                    }
+                },
+                error: function(error){
+                    if (error.status == 401){
+                        var element = [
+                            generateButton(`resignin-${subResponseCount*5+0}`, "Sign In", 0)
+                        ];
+                        generateResponseBubbleWithInsertionElements("To proceed, you are required to sign in to your iBanking account.", 0, element);
+                        createCallbackResponseForButton(`#resignin-${subResponseCount*5+0}`, function(){
+                            $('#myForm').show();
+                            $(".chat").animate({ opacity: "0.0", bottom: "0" }, "slow");
+                            $(".chat").hide();
+                            $(".toggle-chat-btn").show();
+                            $(".toggle-chat-btn").animate({ opacity: "1.0" }, "slow");
+                        })
+                    }
+                }
+            });
+            
+        }); 
+    
+        createResponseMessageForButton(`#cd-${subResponseCount*5+1}`, "If you have any queries, click the button below to talk to our agents.", 0); 
+        subResponseCount ++;
         current_query = 1;
         console.log("Query set to 1");
     });
@@ -96,13 +141,13 @@ function generateBotChoicesBubble(){
     // Sub response for investment/loan
     createCallbackResponseForButton(`#${cloneCount*5+2}`, function(){
         var elements = [
-            generateButton(`i-${cloneCount*5+0}`, "Show me loan types", 0),
-            generateButton(`i-${cloneCount*5+1}`, "Apply for loan", 1)
+            generateButton(`i-${subResponseCount*5+0}`, "Show me loan types", 0),
+            generateButton(`i-${subResponseCount*5+1}`, "Apply for loan", 1)
         ];
         generateResponseBubbleWithInsertionElements("You have selected Investment/Loan:", 0, elements);
 
-        createCallbackResponseForButton(`#i-${cloneCount*5+0}`, function(){ 
-            var elements = [generateButton(`i-sub${cloneCount*5+0}`, "Get to know Collaborative Loan", 0)];
+        createCallbackResponseForButton(`#i-${subResponseCount*5+0}`, function(){ 
+            var elements = [generateButton(`i-sub-${subResponseCount*5+0}`, "Get to know Collaborative Loan", 0)];
             generateResponseBubbleWithInsertionElements("Which loan type do you prefer? ", 0, elements);
             var msg1 = `
                     <p>
@@ -114,10 +159,49 @@ function generateBotChoicesBubble(){
                     </ol>
                     </p>
                     `;
-            createResponseMessageForButton(`#i-sub${cloneCount*5+0}`, msg1, 0);
-    }); 
-    
+            createResponseMessageForButton(`#i-sub-${subResponseCount*5+0}`, msg1, 0);
+        }); 
+        createCallbackResponseForButton(`#i-${subResponseCount*5+1}`, function(){
 
+            $.ajax({
+                url: "/auth",
+                type: "GET",
+                success: function(data){
+                    //if customer is already signed in (for all below)
+                    var elements = [
+                        generateButton(`i-sub2-${subResponseCount*5+0}`, "Collaborative Loan", 0),
+                        generateButton(`i-sub2-${subResponseCount*5+1}`, "Fly with Alpha Holding", 1)
+                    ];
+                    generateResponseBubbleWithInsertionElements("Please select the loan type you would like to apply for:", 0, elements);
+                    createCallbackResponseForButton(`#i-sub2-${subResponseCount*5+0}`, function(){
+                        //set time out 
+                        waitSeconds(2, generateResponseBubble.bind(this, "...", 0))
+                        waitSeconds(7, generateResponseBubble.bind(this, "Successfully creation of loan!", 0))
+                    }); 
+                    createCallbackResponseForButton(`#i-sub2-${subResponseCount*5+1}`, function(){
+                        //set time out 
+                        waitSeconds(2, generateResponseBubble.bind(this, "...", 0))
+                        waitSeconds(5, generateResponseBubble.bind(this, "Successfully creation of loan!", 0))
+                    });
+                },
+                error: function(error){
+                    if (error.status == 401){
+                        var element = [
+                            generateButton(`resignin-i-${subResponseCount*5+0}`, "Sign In", 0)
+                        ];
+                        generateResponseBubbleWithInsertionElements("To proceed, you are required to sign in to your iBanking account.", 0, element);
+                        createCallbackResponseForButton(`#resignin-i-${subResponseCount*5+0}`, function(){
+                            $('#myForm').show();
+                            $(".chat").animate({ opacity: "0.0", bottom: "0" }, "slow");
+                            $(".chat").hide();
+                            $(".toggle-chat-btn").show();
+                            $(".toggle-chat-btn").animate({ opacity: "1.0" }, "slow");
+                        })
+                    }
+                }
+            });
+        });
+        subResponseCount++;
         current_query = 2;
         console.log("Query set to 2");
     });
@@ -125,7 +209,41 @@ function generateBotChoicesBubble(){
     
     
     // sub response for overseas spending
-    createResponseMessageForButton(`#${cloneCount*5+3}`, "You selected Overseas Spending Activation", 0, 3);
+    createCallbackResponseForButton(`#${cloneCount*5+3}`, function(){
+
+        $.ajax({
+            url: "/auth",
+            type: "GET",
+            success: function(data){
+                if (data.loggedIn){
+                    //if customer is already signed in (for all below)
+                    generateResponseBubble("Please key in your credit card number:", 0); 
+                    waitSeconds(3, generateResponseBubble.bind(this, "Credit card number received and matched! Please wait...", 0));
+                    waitSeconds(10, generateResponseBubble.bind(this, "Successful Overseas Spending Activation!", 0));
+                }
+            },
+            error: function(error){
+                if (error.status == 401){
+                    var element = [
+                        generateButton(`resignin-oa-${subResponseCount*5+0}`, "Sign In", 0)
+                    ];
+                    generateResponseBubbleWithInsertionElements("To proceed, you are required to sign in to your iBanking account.", 0, element);
+                    createCallbackResponseForButton(`#resignin-oa-${subResponseCount*5+0}`, function(){
+                        $('#myForm').show();
+                        $(".chat").animate({ opacity: "0.0", bottom: "0" }, "slow");
+                        $(".chat").hide();
+                        $(".toggle-chat-btn").show();
+                        $(".toggle-chat-btn").animate({ opacity: "1.0" }, "slow");
+                    })
+                }
+            }
+        });
+        subResponseCount ++;
+        current_query = 3;
+        console.log("Query set to 3");
+
+    }); 
 
     cloneCount += 1;
+
 }
