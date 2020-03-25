@@ -1,10 +1,14 @@
 // import packages
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const crypto = require('crypto');
 const session = require('express-session');
 const rateLimit = require("express-rate-limit");
 var db = require('./static/js/db.js').dbUtils;
-var queries = require('./static/js/queries.js').queries;
+var cryption = require("simple-crypto-js").default;
+const _secretKey = "someSecretAboutAlphaSUTD2020C1G9~!@";
+var Crypto = new cryption(_secretKey);
 
 const limiter = rateLimit({
     windowMs: 1000, // 
@@ -31,62 +35,81 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + '/static'));
-app.use(session({secret: 'sutd20-alpha~!@', saveUninitialized: true, resave: true}));
+app.use(cookieParser());
 app.use("/chat", limiter);
 app.use("/connect", limiter);
+
+app.use((req, res, next) => {
+    // Get auth token from the cookies
+    const authToken = req.cookies['AuthToken'];
+    // Inject the user to the request
+    req.user = authTokens[authToken];
+    next();
+});
+
+const requestAuth = (req, res, next) =>{
+    if (req.user){
+        next();
+    } else {
+        res.status(401).send({error: "Unauthenticated access!"});
+        res.end();
+    }
+};
+
+const generateAuthToken = () => {
+    return crypto.randomBytes(30).toString('hex');
+}
 
 // index route GET
 app.get('/', (req, res) => {
     console.log(`Incoming address is: ${
         res.connection.remoteAddress
     }`);
-    res.render('home');
+    if (req.user){
+        var data = {loggedIn: true, user: req.user};
+    } else {
+        var data = {loggedIn: false, user: undefined};
+    }
+    res.render('home', {data: data});
 });
 
 app.get('/faq', (req, res) => {
     res.render('faqpage');
 })
 
-app.get('/login', (req, res) => {
-    res.render('login');
-})
-
-app.get('/register', (req, res) => {
-    res.render('register');
-})
-
+const authTokens = {};
 // login POST
 app.post('/login', (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
-    // TODO: user verification against database
-    var userExist = false;
-    var sess = req.session;
-
-    // if exist:
-    if (userExist) {
-        var firstName = "";
-        var lastName = "";
-        sess.LoggedIn = true;
-        res.send({firstName: firstName, lastName: lastName});
-        res.status(200);
+    db.search({username: username}, "Users").then(user=>{
+        var mPass = Crypto.decrypt(user.password);
+        if (mPass == password){
+            const authToken = generateAuthToken();
+            authTokens[authToken] = user;
+            res.cookie('AuthToken', authToken);
+            res.status(200).send({loggedIn: true, firstName: user.firstName, lastName: user.lastName});
+        } else {
+            res.status(200).send({loggedIn: false, firstName: undefined, lastName: undefined});
+        }
         res.end();
-    } else {
-        sess.LoggedIn = false;
-        res.send({error: "User not found!"});
-        res.status(500);
+    }).catch(e=>{
+        console.log(e);
+        res.status(500).send({error: "User not found!"});
         res.end();
-    }
+    });
 });
 
 // register a bank account
 app.post('/register', (req, res) => {
     var data = req.body;
     var username = data.username;
-    var password = data.password;
+    var password = Crypto.encrypt(data.password);
+    var uid = Crypto.encrypt(username);
     var firstName = data.firstName;
     var lastName = data.lastName;
     var userElement = {
+        id: uid,
         username: username,
         password: password,
         firstName: firstName,
@@ -97,18 +120,16 @@ app.post('/register', (req, res) => {
         res.status(200);
         res.end();
     }).catch(err => {
-        res.send({error: `Registration failed! ${err}`});
-        res.status(500);
+        console.log(err);
+        res.status(500).send({error: `Registration failed! ${err}`});
         res.end();
     });
 });
 
 // logout a bank account
 app.get('/logout', (req, res) => {
-    var sess = req.session;
-    sess.LoggedIn = false;
-    res.send({success: 1});
-    res.status(200);
+    res.clearCookie('AuthToken');
+    console.log("Token cleared!");
     res.end();
 });
 
@@ -203,6 +224,15 @@ app.get('/loan', (res, req) => {
         res.status(200);
         res.end();
     }
+});
+
+app.get('/auth', (req, res) =>{
+    if (req.user){
+        res.status(200).send({loggedIn: true, user: req.user});
+    } else {
+        res.status(401).send({error: "Unauthenticated access!"});
+    }
+    res.end();
 });
 
 
