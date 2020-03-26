@@ -101,29 +101,37 @@ app.post('/login', (req, res) => {
 });
 
 // register a bank account
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     var data = req.body;
     var username = data.username;
     var password = Crypto.encrypt(data.password);
     var uid = Crypto.encrypt(username);
     var firstName = data.firstName;
     var lastName = data.lastName;
-    var userElement = {
-        id: uid,
-        username: username,
-        password: password,
-        firstName: firstName,
-        lastName: lastName
+    try{
+        var user = await db.search({username: username}, "Users")
+        //user exist
+        res.status(200).send({success: 2});
+        res.end();
+    } catch(err){
+        // user does not exist
+        var userElement = {
+            id: uid,
+            username: username,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        }
+        db.insert(userElement, "Users").then(success => {
+            res.status(200).send({success: 1});
+            res.end();
+        }).catch(err => {
+            console.log(err);
+            res.status(500).send({error: `Registration failed! ${err}`});
+            res.end();
+        });
     }
-    db.insert(userElement, "Users").then(success => {
-        res.send({success: 1});
-        res.status(200);
-        res.end();
-    }).catch(err => {
-        console.log(err);
-        res.status(500).send({error: `Registration failed! ${err}`});
-        res.end();
-    });
+    
 });
 
 // logout a bank account
