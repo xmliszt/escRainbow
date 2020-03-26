@@ -14,7 +14,34 @@ _Make sure you have MongoDB installed before running_
 git clone https://github.com/xmliszt/escRainbow.git
 cd escRainbow
 npm install
-node app
+npm audit fix
+node server
+```
+
+## How To Test
+Install relevant dependencies for testing.<br>
+We are using Jest as the code coverage testing framework
+```bash
+npm install --save-dev babel-cli babel-preset-env jest supertest superagent
+npm audit fix
+```
+
+Add this to your `package.json`
+```bash
+{
+  "scripts": {
+    "test": "jest"
+  }
+}
+```
+
+to run simply
+```bash
+npm run test
+```
+to run code coverage simply
+```bash
+npm test -- coverage
 ```
 
 ## MongoDB Schema
@@ -102,7 +129,8 @@ When user logged in using its username and password, they are sent to backend to
 
 A Auth token will be generated and stored in the cookie
 
-|                            |                                             |
+https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response
+| | |
 | :------------------------- | :-----------------------------------------: |
 | URL                        |                   /login                    |
 | Method                     |                   `POST`                    |
@@ -247,17 +275,18 @@ $.ajax({
 ```
 
 ### Disconnect from Agent
+
 Update agent's availability status
-|                            |                                                                |
+| | |
 | :------------------------- | :------------------------------------------------------------: |
-| URL                        |                             /disconnect                             |
-| Method                     |                              POST                               |
-| URL Params                 |                              None                              |
-| Data Params                |                              `{agentID: [String]}`                              |
-| Success Response (code)    |                             200 OK                             |
+| URL | /disconnect |
+| Method | POST |
+| URL Params | None |
+| Data Params | `{agentID: [String]}` |
+| Success Response (code) | 200 OK |
 | Success Response (content) | `{id: [String]}` |
-| Error Response (code)      |                              501                              |
-| Error Response (content)   |                              `{error: "Failed to update agent" + <errorMessage>}`                              |
+| Error Response (code) | 501 |
+| Error Response (content) | `{error: "Failed to update agent" + <errorMessage>}` |
 
 - Sample Call
 

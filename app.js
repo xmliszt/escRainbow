@@ -10,6 +10,23 @@ var cryption = require("simple-crypto-js").default;
 const _secretKey = "someSecretAboutAlphaSUTD2020C1G9~!@";
 var Crypto = new cryption(_secretKey);
 
+// Rainbow Node SDK
+// Load the SDK
+let RainbowSDK = require("./node_modules/rainbow-node-sdk");
+// Load the credentials
+let Credentials = require("./static/js/credentials.js");
+// Instantiate the SDK
+let rainbowSDK = new RainbowSDK(Credentials.cred);
+// Start the SDK
+rainbowSDK.start();
+rainbowSDK.events.on('rainbow_onready', function () { // do something when the SDK is connected to Rainbow
+    console.log("Rainbow is ready!")
+});
+rainbowSDK.events.on('rainbow_onerror', function (err) { // do something when something goes wrong
+    console.error("Something wrong!")
+});
+
+
 const limiter = rateLimit({
     windowMs: 1000, // 
     max: 50 // limit each IP to 100 requests per windowMs
@@ -50,6 +67,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// middleware function
 const requestAuth = (req, res, next) =>{
     if (req.user){
         next();
@@ -104,29 +122,36 @@ app.post('/login', (req, res) => {
 });
 
 // register a bank account
-app.post('/register', (req, res) => {
+app.post('/register', async (req, res) => {
     var data = req.body;
     var username = data.username;
     var password = Crypto.encrypt(data.password);
     var uid = Crypto.encrypt(username);
     var firstName = data.firstName;
     var lastName = data.lastName;
-    var userElement = {
-        id: uid,
-        username: username,
-        password: password,
-        firstName: firstName,
-        lastName: lastName
+    var user = await db.search({username: username}, "Users");
+    if (user == null){
+        // user does not exist
+        var userElement = {
+            id: uid,
+            username: username,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+        }
+        db.insert(userElement, "Users").then(success => {
+            res.status(200).send({success: 1});
+            res.end();
+        }).catch(err => {
+            console.log(err);
+            res.status(500).send({error: `Registration failed! ${err}`});
+            res.end();
+        });
+    } else {
+        //user exist
+        res.status(200).send({success: 2});
+        res.end();
     }
-    db.insert(userElement, "Users").then(success => {
-        res.send({success: 1});
-        res.status(200);
-        res.end();
-    }).catch(err => {
-        console.log(err);
-        res.status(500).send({error: `Registration failed! ${err}`});
-        res.end();
-    });
 });
 
 // logout a bank account
@@ -239,21 +264,4 @@ app.get('/auth', (req, res) =>{
     res.end();
 });
 
-
-app.listen(80, '0.0.0.0');
-
-// Rainbow Node SDK
-// Load the SDK
-let RainbowSDK = require("./node_modules/rainbow-node-sdk");
-// Load the credentials
-let Credentials = require("./static/js/credentials.js");
-// Instantiate the SDK
-let rainbowSDK = new RainbowSDK(Credentials.cred);
-// Start the SDK
-rainbowSDK.start();
-rainbowSDK.events.on('rainbow_onready', function () { // do something when the SDK is connected to Rainbow
-    console.log("Rainbow is ready!")
-});
-rainbowSDK.events.on('rainbow_onerror', function (err) { // do something when something goes wrong
-    console.error("Something wrong!")
-});
+module.exports = app;

@@ -6,8 +6,8 @@ var intervalEvent;
 var timeoutEvent;
 var timeoutEvent2;
 
-function waitSeconds(seconds, callback){
-    setTimeout(callback, seconds*1000);
+function waitSeconds(seconds, callback) {
+    setTimeout(callback, seconds * 1000);
 }
 
 function cancelAgentCall(){
@@ -40,86 +40,80 @@ function sendReminderForInactivity(){
     startTimeOutForDisconnection(2);
 }
 
-function generateButton(id, content, btn_value){
-    var element = 
-        `<button class="btn btn-sm btn-dark" style="margin: 5" id="${id}" value="${btn_value}">${content}</button>`
-    ;
+function generateButton(id, content, btn_value) {
+    var element = `<button class="btn btn-sm btn-dark" style="margin: 5" id="${id}" value="${btn_value}">${content}</button>`;
     return element;
 }
 
 /**
- * 
+ *
  * @param {String} response response text
  * @param {Integer} from 0: bot, 1,2,3...: Agent 1,2,3...
  * @param {Array[String]} elements array of elements as string to be inserted
  */
 
-
-function createCallbackResponseForButton(identifier, callback){
-    $(identifier).click(function(){
+function createCallbackResponseForButton(identifier, callback) {
+    $(identifier).click(function () {
         generateSendBubble($(identifier).html());
         waitSeconds(1, callback);
     });
 }
 
-function createResponseMessageForButton(identifier, responseMsg, from, query){
-    $(identifier).click(function(){
+function createResponseMessageForButton(identifier, responseMsg, from, query) {
+    $(identifier).click(function () {
         generateSendBubble($(identifier).html());
-        setTimeout(generateResponseBubble.bind(this, responseMsg, from),1000);
+        setTimeout(generateResponseBubble.bind(this, responseMsg, from), 1000);
         current_query = query;
         console.log("Query set to " + current_query);
     });
 }
 
 /**
- * 
+ *
  * @param {Array[String]} choices Array of string of button elements
  */
-function createResponseMessageWithChoicesForButton(identifier, responseMsg, from, choices){
-    $(identifier).click(function(){
+function createResponseMessageWithChoicesForButton(identifier, responseMsg, from, choices) {
+    $(identifier).click(function () {
         generateSendBubble($(identifier).html());
         setTimeout(generateResponseBubbleWithInsertionElements.bind(this, responseMsg, from, choices), 1000);
     });
 }
 
-function createResponseWithAjaxForButton(identifier, responseMsg, from, method, url, data, callback){
-    $(identifier).click(function(){
+function createResponseWithAjaxForButton(identifier, responseMsg, from, method, url, data, callback) {
+    $(identifier).click(function () {
         generateSendBubble($(identifier).html());
         setTimeout(generateResponseBubble.bind(this, responseMsg, from), 1000);
         createAjax(method, url, data, callback);
     });
 }
 
-function createAjax(method,url,data,callback){
-    $.ajax({
-        type: method,
-        url: url,
-        data: data,
-        success: callback
-    });
+function createAjax(method, url, data, callback) {
+    $.ajax({type: method, url: url, data: data, success: callback});
 }
 
-function scrollToBottom(){
+function scrollToBottom() {
     var element = document.getElementById("conversation_body");
     element.scrollTop = element.scrollHeight;
 }
 
-function getPartFromURL(url, index){
+function getPartFromURL(url, index) {
     const mURL = new URL(url);
     var pathName = mURL.pathname;
     var paths = pathName.split("/");
     return paths[index];
 }
 
-function getDateTime(){
+function getDateTime() {
     var today = new Date();
-    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var date = today.getFullYear() + "-" + (
+        today.getMonth() + 1
+    ) + "-" + today.getDate();
     var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var dateTime = date+' '+time;
+    var dateTime = date + " " + time;
     return dateTime;
 }
 
-function generateSendBubble(message){
+function generateSendBubble(message) {
     var dateTime = getDateTime();
     var name = document.getElementById("titleText").innerHTML;
     if (name == "ALPHA"){
@@ -135,11 +129,11 @@ function generateSendBubble(message){
         </div>
         <span class="msg_time_send">${dateTime}</span>
     </div>`);
-    $('#conversation_body').append(bubble);
+    $("#conversation_body").append(bubble);
     scrollToBottom();
 }
 
-function generateSendBubbleConnectingAgent(message){
+function generateSendBubbleConnectingAgent(message) {
     var dateTime = getDateTime();
     var name = document.getElementById("titleText").innerHTML;
     if (name == "ALPHA"){
@@ -165,11 +159,13 @@ function generateSendBubbleConnectingAgent(message){
     scrollToBottom();
 }
 
-function generateResponseBubble(response, from){
+function generateResponseBubble(response, from) {
     var dateTime = getDateTime();
     var responseBubble = $(`
     <div>
-        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <span class="msg_head">${
+        from == 0 ? "Mr. Bot" : "Agent " + from
+    }</span>
         <div>
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span> 
@@ -178,7 +174,7 @@ function generateResponseBubble(response, from){
         </div>
         <span class="msg_time">${dateTime}</span><br>
     </div>`);
-    $('#conversation_body').append(responseBubble);
+    $("#conversation_body").append(responseBubble);
     $(`#agent-${agent_btn}`).click(callAgent);
     agent_btn += 1;
     scrollToBottom();
@@ -210,7 +206,9 @@ function generateResponseBubbleForAgent(response, from){
     var dateTime = getDateTime();
     var responseBubble = $(`
     <div>
-        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <span class="msg_head">${
+        from == 0 ? "Mr. Bot" : "Agent " + from
+    }</span>
         <div>
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span>
@@ -218,17 +216,19 @@ function generateResponseBubbleForAgent(response, from){
         </div>
         <span class="msg_time">${dateTime}</span><span class="msg_disconnect" id="disconnect-${agent_response_count}"> DISCONNECT</span><br>
     </div>`);
-    $('#conversation_body').append(responseBubble);
+    $("#conversation_body").append(responseBubble);
     $(`#disconnect-${agent_response_count}`).click(disconnect);
     agent_response_count += 1;
     scrollToBottom();
 }
 
-function generateResponseBubbleWithInsertionElements(response, from, elements){
+function generateResponseBubbleWithInsertionElements(response, from, elements) {
     var dateTime = getDateTime();
     var responseBubble = $(`
     <div>
-        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <span class="msg_head">${
+        from == 0 ? "Mr. Bot" : "Agent " + from
+    }</span>
         <div>
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span><br> 
@@ -239,8 +239,15 @@ function generateResponseBubbleWithInsertionElements(response, from, elements){
         </div>
         <span class="msg_time">${dateTime}</span>
     </div>`);
-    $('#conversation_body').append(responseBubble);
+    $("#conversation_body").append(responseBubble);
     $(`#agent-${agent_btn}`).click(callAgent);
     agent_btn += 1;
-    scrollToBottom();   
+    scrollToBottom();
 }
+
+module.exports = {
+    waitSeconds,
+    intervalCallAgent,
+    getPartFromURL,
+    getDateTime
+};
