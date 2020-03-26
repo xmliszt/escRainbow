@@ -14,6 +14,7 @@ _Make sure you have MongoDB installed before running_
 git clone https://github.com/xmliszt/escRainbow.git
 cd escRainbow
 npm install
+npm audit fix
 node server
 ```
 
@@ -22,7 +23,7 @@ Install relevant dependencies for testing.<br>
 We are using Jest as the code coverage testing framework
 ```bash
 npm install --save-dev babel-cli babel-preset-env jest supertest superagent
-
+npm audit fix
 ```
 
 Add this to your `package.json`
