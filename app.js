@@ -109,12 +109,8 @@ app.post('/register', async (req, res) => {
     var uid = Crypto.encrypt(username);
     var firstName = data.firstName;
     var lastName = data.lastName;
-    try{
-        var user = await db.search({username: username}, "Users")
-        //user exist
-        res.status(200).send({success: 2});
-        res.end();
-    } catch(err){
+    var user = await db.search({username: username}, "Users");
+    if (user == null){
         // user does not exist
         var userElement = {
             id: uid,
@@ -131,8 +127,11 @@ app.post('/register', async (req, res) => {
             res.status(500).send({error: `Registration failed! ${err}`});
             res.end();
         });
+    } else {
+        //user exist
+        res.status(200).send({success: 2});
+        res.end();
     }
-    
 });
 
 // logout a bank account
