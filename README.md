@@ -14,7 +14,7 @@ _Make sure you have MongoDB installed before running_
 git clone https://github.com/xmliszt/escRainbow.git
 cd escRainbow
 npm install
-node app
+node server
 ```
 
 ## How To Test
