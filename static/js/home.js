@@ -82,31 +82,6 @@ $(document).ready(function() {
   }
 
   $(".chat").hide();
-
-  // bank account registration
-  $("#register_btn").click(function (){
-    var usernameInput = $("#usernameInput").val();
-    var passwordInput = $("#passwordInput").val();
-    var firstNameInput = $("#firstNameInput").val();
-    var lastNameInput = $("#lastNameInput").val();
-    $.ajax({
-        url: "/register",
-        type: "POST",
-        data: {
-            username: usernameInput,
-            password: passwordInput,
-            firstName: firstNameInput,
-            lastName: lastNameInput
-        },
-        success: function (data, status, r) {
-            console.log(status);
-        },
-        error: function (err) {
-            console.log("Registration failed!" + err.responseText);
-          }
-      });
-  });
-
   
   $(".chat-img").click(function() {
     if (!hasOpened){
@@ -188,8 +163,6 @@ $(document).ready(function() {
                 $('#signInRegisterBtn').show();
             }
           })
-      } else {
-          return false;
       }
   });
 
@@ -202,31 +175,37 @@ $(document).ready(function() {
     var lastName = $("#lnSignup").val();
     var alertMsg = $('#alertMsg');
     var modal = document.getElementById('id01');
-    if (password == pwdrepeat){
-      $.ajax({
-        url: "/register",
-        data: {
-          username: username,
-          password: password,
-          firstName: firstName,
-          lastName: lastName
-        },
-        type: "POST",
-        success: function(data, status, r) {
-          modal.style.display = "none";
-          window.alert("You are registered successfully!");
-        },
-        error: function(error){
-          if (error.status == 500){
-            alertMsg.show();
-            alertMsg.html("Failed to register! Please contact the backend support team or try again!");
+    if (username != '' && password != '' && pwdrepeat != '' && firstName != '' && lastName != ''){
+      if (password == pwdrepeat){
+        $.ajax({
+          url: "/register",
+          data: {
+            username: username,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+          },
+          type: "POST",
+          success: function(data, status, r) {
+            if (data.success == 1){
+              modal.style.display = "none";
+              window.alert("You are registered successfully!");
+            } else if (data.success == 2){
+              alertMsg.show();
+              alertMsg.html("You are already registered! Please sign in!");
+            }
+          },
+          error: function(error){
+            if (error.status == 500){
+              alertMsg.show();
+              alertMsg.html("Failed to register! Please contact the backend support team or try again!");
+            }
           }
-        }
-      });
-    } else {
-      alertMsg.show();
-      alertMsg.html("Password does not match!");
+        });
+      } else {
+        alertMsg.show();
+        alertMsg.html("Password does not match!");
+      }
     }
-    
   });
 });

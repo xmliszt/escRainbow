@@ -85,7 +85,7 @@
       <p>Please fill in this form to create an account.</p>
       <hr>
       <label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" name="email" id="emailSignup" required autocomplete="username">
+      <input type="text" placeholder="Enter Email" name="email" id="emailSignup" autocomplete="username" required>
 
       <label for='first-name'><b>Your First Name</b></label>
       <input type='text' placeholder ='Enter First Name' name='first-name' id="fnSignup" required>
@@ -94,10 +94,10 @@
       <input type='text' placeholder ='Enter Last Name' name='last-name' id="lnSignup" required>
 
       <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" id="pwdSignup" required autocomplete="new-password">
+      <input type="password" placeholder="Enter Password" name="psw" id="pwdSignup" autocomplete="new-password" required>
 
       <label for="psw-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" name="psw-repeat" id="pwdRepeat" required autocomplete="off">
+      <input type="password" placeholder="Repeat Password" name="psw-repeat" id="pwdRepeat" autocomplete="off" required>
       <p id="alertMsg" class="alert alert-danger" style="display: none;"></p>
 
       <label>
@@ -108,7 +108,7 @@
 
       <div class="clearfix">
         <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
-        <button type="button" class="signupbtn" id="registerBtn">Sign Up</button>
+        <button type="submit" class="signupbtn" id="registerBtn">Sign Up</button>
       </div>
     </div>
   </form>
@@ -130,13 +130,15 @@
       <h1>Login</h1>
 
       <label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" name="email" id="usernameInput" required autocomplete="username">
+      <input type="text" placeholder="Enter Email" name="email" id="usernameInput"  autocomplete="username" required>
 
       <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" id="passwordInput" required autocomplete="current-password">
+      <input type="password" placeholder="Enter Password" name="psw" id="passwordInput" autocomplete="current-password" required>
+
       <p id="alertLogin" class="alert alert-danger" style="display: none;"></p>
+      
       <button type="button" class="btn btn-warning" id="signInRegisterBtn" style="display: none;" onclick="openModal()">Register</button>
-      <button type="button" class="btn" id="login_btn">Login</button>
+      <button type="submit" class="btn" id="login_btn">Login</button>
       <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
   </form>
 </div>
