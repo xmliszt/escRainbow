@@ -20,7 +20,7 @@ function initialize(){
       console.log("[DEMO] :: On SDK Loaded !");
 
       // Activate full SDK log
-      rainbowSDK.setVerboseLog(true);
+      rainbowSDK.setVerboseLog(false);
 
       rainbowSDK
           .initialize(applicationID, applicationSecret)

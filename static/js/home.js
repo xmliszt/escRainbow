@@ -1,9 +1,11 @@
 var cloneCount = 0;
 var hasOpened = false;
 var message;
+var FN;
+var LN;
 
 $(document).ready(function() {
-  $(".navbar a, footer a[href='#myPage']").on("click", function(event) {
+  $(".navbar a, footer a[href='#top']").on("click", function(event) {
     // Make sure this.hash has a value before overriding default behavior
     if (this.hash !== "") {
       // Prevent default anchor click behavior
@@ -79,62 +81,13 @@ $(document).ready(function() {
         }
       });
     }
+    var myCookies = document.cookie;
+    if (myCookies) {
+      console.log(`cookie: ${myCookies}`);
+    }
   }
 
-  // bank account registration
-  $("#register_btn").click(function() {
-    var usernameInput = $("#usernameInput").val();
-    var passwordInput = $("#passwordInput").val();
-    var firstNameInput = $("#firstNameInput").val();
-    var lastNameInput = $("#lastNameInput").val();
-    $.ajax({
-      url: "/register",
-      type: "POST",
-      data: {
-        username: usernameInput,
-        password: passwordInput,
-        firstName: firstNameInput,
-        lastName: lastNameInput
-      },
-      success: function(data, status, r) {
-        console.log(status);
-      },
-      error: function(err) {
-        console.log("Registration failed!" + err.responseText);
-      }
-    });
-  });
-
-  // bank account signin ajax
-  $("#login_btn").click(function() {
-    var usernameInput = $("#usernameInput").val();
-    var passwordInput = $("#passwordInput").val();
-    if (usernameInput != "" && passwordInput != "") {
-      $.ajax({
-        url: "/login",
-        type: "POST",
-        data: {
-          username: usernameInput,
-          password: passwordInput
-        },
-        crossDomain: true,
-        dataType: "json",
-        xhrFields: {
-          withCredentials: true
-        }, // request for browser to pass back cookie
-        success: function(data, status, r) {
-          console.log(
-            `First Name: ${data.firstName} Last Name: ${data.lastName}`
-          );
-        },
-        error: function(err) {
-          console.log("User not found");
-        }
-      });
-    } else {
-      return false;
-    }
-  });
+  $(".chat").hide();
 
   $(".chat-img").click(function() {
     if (!hasOpened) {
@@ -153,6 +106,8 @@ $(document).ready(function() {
     generateSendBubble(message);
     if (mConversation) {
       rainbowSDK.im.sendMessageToConversation(mConversation, message);
+      stopTimeOutEvent();
+      startTimeOutForReminder(3);
     } else {
       botTextResponse(message);
     }
@@ -211,17 +166,107 @@ $(document).ready(function() {
       "slow"
     );
   });
+
   $("#quit").click(function() {
-    var decision = confirm(
-      "You are in Guest mode. Exit will erase all dialogue history."
-    );
+    var decision = confirm("Logout will erase all dialogue history.");
     if (decision) {
-      createAjax("GET", "/delete", {}, function(data, status, els) {
-        console.log(`${status}: ${data.id} has been deleted successfully!`);
-        window.location.href = "/";
+      createAjax("GET", "/logout", {}, function(data) {
+        window.alert("You have been logged out successfully!");
+        window.location.reload();
       });
-    } else {
-      return false;
+    }
+  });
+
+  // bank account signin ajax
+  $("#login_btn").click(function() {
+    var usernameInput = $("#usernameInput").val();
+    var passwordInput = $("#passwordInput").val();
+    if (usernameInput != "" && passwordInput != "") {
+      $.ajax({
+        url: "/login",
+        type: "POST",
+        data: {
+          username: usernameInput,
+          password: passwordInput
+        },
+        crossDomain: true,
+        dataType: "json",
+        xhrFields: {
+          withCredentials: true
+        }, // request for browser to pass back cookie
+        success: function(data, status, r) {
+          if (data.loggedIn) {
+            console.log(
+              `First Name: ${data.firstName} Last Name: ${data.lastName}`
+            );
+            $("#titleText").html(`${data.firstName} ${data.lastName}`);
+            $("#myForm").hide();
+            window.alert("You are logged in successfully!");
+            window.location.reload();
+          } else {
+            $("#alertLogin").show();
+            $("#alertLogin").html("Incorrect password! Please try again!");
+          }
+        },
+        error: function(err) {
+          console.log("User not found");
+          $("#alertLogin").show();
+          $("#alertLogin").html(
+            "You are not registered yet! Please register first!"
+          );
+          $("#signInRegisterBtn").show();
+        }
+      });
+    }
+  });
+
+  $("#registerBtn").click(function() {
+    var username = $("#emailSignup").val();
+    var password = $("#pwdSignup").val();
+    var pwdrepeat = $("#pwdRepeat").val();
+    var firstName = $("#fnSignup").val();
+    var lastName = $("#lnSignup").val();
+    var alertMsg = $("#alertMsg");
+    var modal = document.getElementById("id01");
+    if (
+      username != "" &&
+      password != "" &&
+      pwdrepeat != "" &&
+      firstName != "" &&
+      lastName != ""
+    ) {
+      if (password == pwdrepeat) {
+        $.ajax({
+          url: "/register",
+          data: {
+            username: username,
+            password: password,
+            firstName: firstName,
+            lastName: lastName
+          },
+          type: "POST",
+          success: function(data, status, r) {
+            if (data.success == 1) {
+              modal.style.display = "none";
+              window.alert("You are registered successfully!");
+            } else if (data.success == 2) {
+              alertMsg.show();
+              alertMsg.html("You are already registered! Please sign in!");
+            }
+          },
+          error: function(error) {
+            if (error.status == 500) {
+              alertMsg.show();
+              alertMsg.html(
+                "Failed to register! Please contact the backend support team or try again!"
+              );
+            }
+          }
+        });
+      } else {
+        alertMsg.show();
+        alertMsg.html("Password does not match!");
+      }
     }
   });
 });

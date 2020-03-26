@@ -14,7 +14,34 @@ _Make sure you have MongoDB installed before running_
 git clone https://github.com/xmliszt/escRainbow.git
 cd escRainbow
 npm install
-node app
+npm audit fix
+node server
+```
+
+## How To Test
+Install relevant dependencies for testing.<br>
+We are using Jest as the code coverage testing framework
+```bash
+npm install --save-dev babel-cli babel-preset-env jest supertest superagent
+npm audit fix
+```
+
+Add this to your `package.json`
+```bash
+{
+  "scripts": {
+    "test": "jest"
+  }
+}
+```
+
+to run simply
+```bash
+npm run test
+```
+to run code coverage simply
+```bash
+npm test -- coverage
 ```
 
 ## MongoDB Schema
@@ -100,22 +127,19 @@ Log in a user to its bank account [Differentiate this with "Login Guest", which 
 
 When user logged in using its username and password, they are sent to backend to do verification. If success, the user's firstName and lastName stored in database will be returned.
 
-Once logged in, backend will create cookie for this user account to be stored in the browser.
-
-https://www.sitepoint.com/how-to-deal-with-cookies-in-javascript/
-https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response 
+A Auth token will be generated and stored in the cookie
 
 https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response
 | | |
 | :------------------------- | :-----------------------------------------: |
-| URL | /login |
-| Method | `POST` |
-| URL Params | None |
-| Data Params | `{username: [String], password: [String]}` |
-| Success Response (code) | 200 OK |
-| Success Response (content) | `{firstName: [String], lastName: [String]}` |
-| Error Response (code) | 500 INTERNAL SERVER ERROR |
-| Error Response (content) | {error: "User not found!"} |
+| URL                        |                   /login                    |
+| Method                     |                   `POST`                    |
+| URL Params                 |                    None                     |
+| Data Params                | `{username: [String], password: [String]}`  |
+| Success Response (code)    |                   200 OK                    |
+| Success Response (content) | `{loggedIn: [boolean], firstName: [String], lastName: [String]}` |
+| Error Response (code)      |          500 INTERNAL SERVER ERROR          |
+| Error Response (content)   |         {error: "User not found!"}          |
 
 - Sample Call
 
@@ -125,7 +149,12 @@ $.ajax({
   type: "POST",
   data: { username: "amyTan2012", password: "iloverainbow" },
   success: function(data, status, r) {
-    console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+    if (data.loggedIn){
+      console.log("Logged In!");
+      console.log(`First Name: ${data.firstName} Last Name: ${data.lastName}`);
+    } else {
+      console.log("Password wrong!");
+    }
   }
 });
 ```
@@ -168,10 +197,9 @@ Logout the current logged in bank account
 |Data Params| None|
 |Success Response (code)| 200 OK|
 |Success Response (content)| `{success: 1}` |
-|Error Response (code)|500 INTERNAL SERVER ERROR|
-|Error Response (content)|`{error: "Failed to logout! " + <errorMessage>}`|
+|Error Response (code)|None|
+|Error Response (content)|None|
 
-- To get the uid, which will be stored in cookie in the browser, call `getCookie("uid")`
 - Sample Call
 
 ```js
@@ -278,25 +306,28 @@ Check if user is logged in.
 
 |                            |                                                                |
 | :------------------------- | :------------------------------------------------------------: |
-| URL                        |                             /check                             |
+| URL                        |                             /auth                             |
 | Method                     |                              GET                               |
 | URL Params                 |                              None                              |
 | Data Params                |                              None                              |
 | Success Response (code)    |                             200 OK                             |
-| Success Response (content) | `{success: 1} if logged in` or `{success: 0} if not logged in` |
-| Error Response (code)      |                              None                              |
-| Error Response (content)   |                              None                              |
+| Success Response (content) | `{loggedIn: [boolean], user: [Object]}` |
+| Error Response (code)      |                              401 UNAUTHORIZED                              |
+| Error Response (content)   |                              `{error: "Unauthenticated access!}`                              |
 
 - Sample Call
 
 ```js
 $.ajax({
-  url: "/check",
+  url: "/auth",
   type: "GET",
   success: function(data, status, r) {
-    if (data.success) {
+    if (data.loggedIn) {
       //do something if logged in
-    } else {
+    }
+  },
+  error: function(error){
+    if (error.status == 401){
       //do something if not logged in
     }
   }
