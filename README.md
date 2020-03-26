@@ -17,6 +17,32 @@ npm install
 node app
 ```
 
+## How To Test
+Install relevant dependencies for testing.<br>
+We are using Jest as the code coverage testing framework
+```bash
+npm install --save-dev babel-cli babel-preset-env jest supertest superagent
+
+```
+
+Add this to your `package.json`
+```bash
+{
+  "scripts": {
+    "test": "jest"
+  }
+}
+```
+
+to run simply
+```bash
+npm run test
+```
+to run code coverage simply
+```bash
+npm test -- coverage
+```
+
 ## MongoDB Schema
 
 * Collection name: "Agents"

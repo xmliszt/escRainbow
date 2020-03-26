@@ -1,4 +1,6 @@
 .DS_Store
+coverage/
+jest.config.js
 # ignore node/grunt dependency directories
 node_modules/
 package-lock.json
