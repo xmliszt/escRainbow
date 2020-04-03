@@ -244,10 +244,3 @@ function generateResponseBubbleWithInsertionElements(response, from, elements) {
     agent_btn += 1;
     scrollToBottom();
 }
-
-module.exports = {
-    waitSeconds,
-    intervalCallAgent,
-    getPartFromURL,
-    getDateTime
-};
