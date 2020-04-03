@@ -1,4 +1,4 @@
-const {waitSeconds, getPartFromURL, getDateTime} = require("./elementsUtils.js");
+const {waitSeconds, getPartFromURL, getDateTime} = require("../js/elementsUtils.js");
 
 // test for waitSeconds
 jest.useFakeTimers();
