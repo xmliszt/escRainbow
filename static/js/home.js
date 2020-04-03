@@ -102,7 +102,7 @@ $(document).ready(function() {
     $(".toggle-chat-btn").hide();
   });
 
-  $("#sendBtn").click(function() {
+  $("#input-form").submit(function() {
     // append chat message bubble
     message = $("#userInputMsg").val();
     generateSendBubble(message);
@@ -138,17 +138,6 @@ $(document).ready(function() {
       "slow"
     );
     $(".toggle-chat-btn").hide();
-  });
-
-  $("form").submit(function(e) {
-    e.preventDefault();
-    // append chat message bubble
-    message = $("#userInputMsg").val();
-    generateSendBubble(message);
-    if (mConversation) {
-      rainbowSDK.im.sendMessageToConversation(mConversation, message);
-    }
-    document.getElementById("userInputMsg").value = "";
   });
 
   $("#close").click(function() {
