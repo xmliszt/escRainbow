@@ -1,10 +1,20 @@
 var cloneCount = 0;
 var hasOpened = false;
 var message;
-var FN;
-var LN;
+var reloaded = false;
 
 $(document).ready(function() {
+  
+  // initialize rainbow SD
+  initialize();
+
+  if (performance.navigation.type == 1) {
+    if (localStorage.getItem("conversation")){
+      reloaded = true;
+      window.alert("You have an un-terminated conversation! Page reloading has closed it for you.");
+    }
+    setTimeout(disconnect, 2000);
+  }
 
   $("#secret-path").click(()=>{
     window.location.replace("/su");
@@ -63,37 +73,11 @@ $(document).ready(function() {
     });
   });
 
-  // initialize rainbow SD
-  initialize();
-
-  if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
-    console.info("Page reloaded!");
-    if (agentInfo) {
-      $.ajax({
-        url: "/disconnect",
-        type: "POST",
-        data: {
-          agentID: agentInfo.id
-        },
-        success: function(data, status, els) {
-          console.log(`Agent [${data.id}] freed successfully!`);
-        },
-        error: function(err) {
-          console.error(err.responseText);
-        }
-      });
-    }
-    var myCookies = document.cookie;
-    if (myCookies) {
-      console.log(`cookie: ${myCookies}`);
-    }
-  }
-
   $(".chat").hide();
 
   $(".chat-img").click(function() {
     if (!hasOpened) {
-      generateBotChoicesBubble();
+      if (!reloaded) generateBotChoicesBubble();
       hasOpened = true;
     }
     $(".chat").show();
@@ -106,6 +90,7 @@ $(document).ready(function() {
     // append chat message bubble
     message = $("#userInputMsg").val();
     generateSendBubble(message);
+    var mConversation = localStorage.getItem("conversation");
     if (mConversation) {
       rainbowSDK.im.sendMessageToConversation(mConversation, message);
       stopTimeOutEvent();
@@ -114,30 +99,6 @@ $(document).ready(function() {
       botTextResponse(message);
     }
     document.getElementById("userInputMsg").value = "";
-  });
-
-  $(".chat").hide();
-
-  $(".chat-img").click(function() {
-    if (!hasOpened) {
-      generateBotChoicesBubble();
-      hasOpened = true;
-    }
-    $(".chat").show();
-    $(".chat").animate(
-      {
-        opacity: "1.0",
-        bottom: "20px"
-      },
-      "slow"
-    );
-    $(".toggle-chat-btn").animate(
-      {
-        opacity: "0.0"
-      },
-      "slow"
-    );
-    $(".toggle-chat-btn").hide();
   });
 
   $("#close").click(function() {
