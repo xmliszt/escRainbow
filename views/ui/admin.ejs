@@ -1,0 +1,55 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery/dist/jquery.min.js"></script>
+    <title>Admin Login</title>
+</head>
+<body>
+    <div>
+        <p id="alert" style="display: none; color: red"></p>
+    </div>
+    <form>
+        <label for="adminUsername">Username:</label>
+        <input id="adminUsername" type="text" name="username" required><br>
+        <label for="adminPassword">Password:</label>
+        <input id="adminPassword" type="password" name="password" required><br>
+        <button type="submit" id="submitBtnAdmin">Login</button>
+    </form>
+    
+    <script>
+        $('form').submit((e)=>{
+            e.preventDefault();
+            var username = $('#adminUsername').val();
+            var password = $('#adminPassword').val();
+            if (username && password){
+                $.ajax({
+                    url: '/su',
+                    data: {
+                        username: username,
+                        password: password
+                    },
+                    type: 'POST',
+                    success: (data, msg, jqXHR) =>{
+                        console.log(jqXHR.status);
+                        if (jqXHR.status == 200){
+                            // login successfully
+                            // go to add agent page
+                            window.location.replace("/su/dashboard");
+                        }
+                    },
+                    error: (jqXHR) => {
+                        console.log(jqXHR.status);
+                        if (jqXHR.status == 401){
+                            var warning = jqXHR.responseText;
+                            $('#alert').html(warning);
+                            $('#alert').show();
+                        }
+                    }
+                });
+            }
+            
+        });
+    </script>
+</body>
+</html>
