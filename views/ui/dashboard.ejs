@@ -1,0 +1,78 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery/dist/jquery.min.js"></script>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Create Agent Account in Rainbow</h1>
+    <div>
+        <form>
+            <label for="agentEmail">Agent Email</label>
+            <input id="agentEmail" type="text" required><span id="email-suffix">@alpha.com</span>
+            <br>
+            <label for="agentFN">First Name</label>
+            <input type="text" name="agentFN" id="agentFN" required>
+            <br>
+            <label for="agentLN">Last Name</label>
+            <input type="text" name="agentLN" id='agentLN' required>
+            <br>
+            <label for="agentPassword">Password</label>
+            <input type="password" name="agentPassword" id="agentPassword" value="~!@SUTDsutd123" disabled><span style="color: red"> Password is set by the admin by default! Please contact admin if you want to change!</span>
+            <br>
+            <label for="agentSkills"></label>
+            <select name="agentSkills" id="agentSkills" required>
+                <option value="0" selected>General Enqueries</option>
+                <option value="1">Card Replacement</option>
+                <option value="2">Investment/Loan</option>
+                <option value="3">Overseas Spending Activation</option>
+            </select>
+            <br>
+            <button id="agentSubmitBtn" type="submit">Create Agent</button>
+        </form>
+    </div>
+    <script>
+        var skill = 0;
+        $('#agentSkills').change(()=>{
+            skill = $('#agentSkills').children("option:selected").val();
+        });
+        $("form").submit((e)=>{
+            e.preventDefault();
+            var firstName = $('#agentFN').val();
+            var lastName = $('#agentLN').val();
+            var email = $('#agentEmail').val() + $('#email-suffix').html();
+            var password = $('#agentPassword').val();
+            if (skill != undefined){
+                $.ajax({
+                    url: "/su/create",
+                    type: "POST",
+                    data: {
+                        email: email,
+                        password: password,
+                        firstname: firstName,
+                        lastname: lastName,
+                        skill: skill
+                    },
+                    success: (data)=>{
+                        window.alert("Agent created successfully!");
+                        window.location.reload();
+                    },
+                    error: (xhr)=>{
+                        if (xhr.status == 401){
+                            window.alert("Unauthorized access! Please log in first!")
+                            window.location.replace("/su");
+                        } else if (xhr.status == 500){
+                            window.alert("Error in creating the agent: Agent already existed in RainbowSDK!");
+                            window.location.reload();
+                        } else if (xhr.status == 501){
+                            window.alert("Error: Agent already existed!");
+                            window.location.reload();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

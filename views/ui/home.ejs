@@ -14,24 +14,39 @@
   <script src="//cdn.jsdelivr.net/momentjs/2.15.1/moment-with-locales.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
   <script src="/js/jquery/dist/jquery.min.js"></script>
-  <script src="/js/rainbow-sdk.min.js" ></script>
   <script src="/js/vendors-sdk.min.js"></script>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@2.12.1/dist/index.min.js"></script>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
   <link rel="stylesheet" href="/css/chat.css">
-  <script src="/js/elementsUtils.js"></script>
-  <script src="/js/chatBotResponse.js"></script>
-  <script src="/js/chatBotChoice.js"></script>
-  <script src="/js/agentConnUtils.js"></script>
-  <script src="/js/initialize.js"></script>
-  <script src="/js/home.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@joeattardi/emoji-button@2.12.1/dist/index.min.js"></script>
+  <script type="module" src="/js/elementsUtils.js"></script>
+  <script type="module" src="/js/chatBotResponse.js"></script>
+  <script type="module" src="/js/chatBotChoice.js"></script>
+  <script type="module" src="/js/agentConnUtils.js"></script>
+  <script type="module" src="/js/initialize.js"></script>
+  <script type="module" src="/js/home.js"></script>
 
 </head>
 <body>
+
+  <div class="video-stream" >
+    <div class="minivideo-holder">
+      <video width="160rem" height="90rem" id="minivideo" class="minivideo" autoplay muted></video>
+    </div>
+    <div class="button-holder">
+      <i id="stopConnection" style="color: #d32046; font-size: 3rem; cursor: pointer;" class="far fa-stop-circle"></i>
+    </div>
+    <video width="600rem" height="400rem" id="largevideo" class="largevideo" autoplay></video>
+    <div class="largevideo-alt">
+      <h1>Sorry! As guest, the video of our agent is hidden from you for privacy protection.</h1>
+    </div>
+    <video id="globalVideoTag" autoplay style="display:none;"></video>
+    <audio id="globalAudioTag" autoplay style="display:none;"></audio>
+  </div>
+
 
   <nav id="top" class="navbar navbar-expand-lg navbar-light bg-light">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
@@ -280,7 +295,7 @@
     <!-- Wrapper for slides -->
     <div class="carousel-inner" role="listbox">
       <div class="item active">
-        <h4>"This company is the best. I am so happy with the result!"<br><span>Michael Roe, Vice President, Comment Box</span></h4>
+        <h4>"This company is the best. I am so happy with the result!"<br><span>Michael Roe, Vice President<span id="secret-path">,</span> Comment Box</span></h4>
       </div>
       <div class="item">
         <h4>"One word... WOW!!"<br><span>John Doe, Salesman, Rep Inc</span></h4>
@@ -399,6 +414,8 @@
     <input type="image" class="chat-img" src="/icon/chat.png" alt="chat">
   </div>
 </div>
+
+
 
 
 <footer class="container-fluid text-center">

@@ -1,6 +1,17 @@
+import {
+    generateResponseBubble,
+    generateResponseBubbleWithInsertionElements,
+    getDateTime,
+    scrollToBottom,
+    createCallbackResponseForButton,
+    createResponseMessageForButton,
+    generateButton
+} from "./../js/elementsUtils.js";
+
+
 var current_query = 0;
 var subResponseCount = 0;
-var agent_btn = 0;
+var cloneCount = 0;
 
 function generateBotChoicesBubble(){
     var dateTime = getDateTime();
@@ -243,7 +254,8 @@ function generateBotChoicesBubble(){
         console.log("Query set to 3");
 
     }); 
-
     cloneCount += 1;
 
 }
+
+export {generateBotChoicesBubble, current_query};
