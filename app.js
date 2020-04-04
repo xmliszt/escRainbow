@@ -1,11 +1,11 @@
 // import packages
-const fs = require("fs");
+// const fs = require("fs");
 // const http = require("http");
 // const https = require("https");
 const shield = require("helmet");
 const compression = require('compression');
-const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
-const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
+// const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
+// const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
 const appCredentials = {key: privateKey, cert: certificate};
 const express = require('express');
 const bodyParser = require('body-parser');
