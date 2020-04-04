@@ -38,6 +38,7 @@
     },
     "scripts": {
         "test": "jest",
+        "postinstall": "npm run build",
         "start": "node server.js"
     },
     "jest": {
