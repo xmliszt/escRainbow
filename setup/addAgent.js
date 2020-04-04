@@ -1,4 +1,4 @@
-const db = require('./static/js/db').dbUtils;
+const db = require('../static/js/db').dbUtils;
 
 var agent1 = {
     name: "Maude Muir",

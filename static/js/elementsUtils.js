@@ -1,8 +1,14 @@
+import {disconnect, callAgent, intervalEvent, contact} from "./../js/agentConnUtils.js";
+import {current_query} from "./../js/chatBotChoice.js";
+import rainbowSDK from './../js/rainbow-sdk.min.js';
+
+
 var agent_response_count = 0;
 var call_request_count = 0;
-var intervalEvent;
 var timeoutEvent;
 var timeoutEvent2;
+var agent_btn = 0;
+
 
 function waitSeconds(seconds, callback) {
     setTimeout(callback, seconds * 1000);
@@ -11,7 +17,6 @@ function waitSeconds(seconds, callback) {
 function stopIntervalEvent(){
     console.log("Clearing Interval ID: " + intervalEvent);
     clearInterval(intervalEvent);
-    intervalEvent = undefined;
 }
 
 function cancelAgentCall(){
@@ -100,13 +105,6 @@ function createAjax(method, url, data, callback) {
 function scrollToBottom() {
     var element = document.getElementById("conversation_body");
     element.scrollTop = element.scrollHeight;
-}
-
-function getPartFromURL(url, index) {
-    const mURL = new URL(url);
-    var pathName = mURL.pathname;
-    var paths = pathName.split("/");
-    return paths[index];
 }
 
 function getDateTime() {
@@ -250,3 +248,24 @@ function generateResponseBubbleWithInsertionElements(response, from, elements) {
     agent_btn += 1;
     scrollToBottom();
 }
+
+export {
+    stopTimeOutEvent, 
+    stopIntervalEvent,
+    generateConnectionReminderBubble,
+    generateResponseBubble,
+    generateResponseBubbleForAgent,
+    generateResponseBubbleWithInsertionElements,
+    generateSendBubble,
+    generateSendBubbleConnectingAgent,
+    startTimeOutForDisconnection,
+    startTimeOutForReminder,
+    startTimeOutForTerminateCallAgent,
+    getDateTime,
+    scrollToBottom,
+    createCallbackResponseForButton,
+    createResponseMessageForButton,
+    createResponseMessageWithChoicesForButton,
+    createResponseWithAjaxForButton,
+    generateButton
+};

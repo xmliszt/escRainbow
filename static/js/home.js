@@ -1,10 +1,16 @@
-var cloneCount = 0;
+import { initialize } from "./../js/initialize.js";
+import rainbowSDK from './../js/rainbow-sdk.min.js';
+import {disconnect, mConversation} from "./../js/agentConnUtils.js";
+import {generateBotChoicesBubble} from "./../js/chatBotChoice.js";
+import {stopTimeOutEvent,generateSendBubble,startTimeOutForReminder} from './../js/elementsUtils.js';
+
 var hasOpened = false;
 var message;
 var reloaded = false;
 
 $(document).ready(function() {
   
+  authorizeDevice();
   // initialize rainbow SD
   initialize();
 
@@ -90,7 +96,6 @@ $(document).ready(function() {
     // append chat message bubble
     message = $("#userInputMsg").val();
     generateSendBubble(message);
-    var mConversation = localStorage.getItem("conversation");
     if (mConversation) {
       rainbowSDK.im.sendMessageToConversation(mConversation, message);
       stopTimeOutEvent();
@@ -222,3 +227,37 @@ $(document).ready(function() {
     }
   });
 });
+
+
+function authorizeDevice(){
+  navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream)=>{
+    stream.getTracks().forEach((track) =>{
+      track.stop();
+    });
+    navigator.mediaDevices.enumerateDevices().then((devices)=>{
+      devices.forEach((device)=>{
+        switch(device.kind) {
+          case "audioinput":
+            localStorage.setItem("microphone", device.deviceId);
+            rainbowSDK.webRTC.useMicrophone(device.deviceId);
+            break;
+          case "audiooutput":
+            localStorage.setItem("speaker", device.deviceId);
+            rainbowSDK.webRTC.useSpeaker(device.deviceId);
+            break;
+          case "videoinput":
+            localStorage.setItem("camera", device.deviceId);
+            rainbowSDK.webRTC.useCamera(device.deviceId);
+
+            break;
+          default:
+            break;
+        }
+      });
+    }).catch((error)=>{
+      console.error("Error in enumerating the devices!");
+    });
+  }).catch((error)=>{
+    console.error("Error in authorizing the application to access media devices!");
+  });
+}

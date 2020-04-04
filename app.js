@@ -1,4 +1,10 @@
 // import packages
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
+const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
+const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
+const appCredentials = {key: privateKey, cert: certificate};
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -338,4 +344,10 @@ app.post('/su/create', async (req, res)=>{
     res.end();
 });
 
-module.exports = app;
+
+var httpServer = http.createServer(app);
+var httpsServer = https.createServer(appCredentials, app);
+module.exports = {
+    httpServer: httpsServer,
+    httpsServer: httpsServer
+};

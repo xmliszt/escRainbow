@@ -1,4 +1,4 @@
-const db = require('./static/js/db').dbUtils;
+const db = require('../static/js/db').dbUtils;
 var cryption = require("simple-crypto-js").default;
 const _secretKey_a = "someSecretAboutAlphaSUTD2020C1G9~!@";
 const _secretKey_b = "@#$430dfjasdf012831dafJELJlkfnf1-ijflkn";

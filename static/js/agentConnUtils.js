@@ -1,6 +1,23 @@
+import rainbowSDK from './../js/rainbow-sdk.min.js';
+import {
+    stopTimeOutEvent, 
+    stopIntervalEvent,
+    generateResponseBubble,
+    generateResponseBubbleForAgent,
+    generateSendBubble,
+    startTimeOutForReminder,
+    startTimeOutForTerminateCallAgent
+} from "./../js/elementsUtils.js";
+import {generateBotChoicesBubble, current_query} from "./../js/chatBotChoice.js";
+
 var email;
 var pwd;
-
+var agentName;
+var agentID;
+var conversationID;
+var intervalEvent;
+var mConversation;
+var contact;
 
 // simple version:  function for agent routing
 function connectAgent(){
@@ -16,9 +33,10 @@ function connectAgent(){
             rainbowSDK.contacts.searchById(agentInfo.id)
             .then(contact=>{
                 console.log("Agent found: " + contact.firstname); 
-                console.log(contact);
+                contact = contact;
                 rainbowSDK.conversations.openConversationForContact(contact)
                 .then(conversation=>{
+                    mConversation = conversation;
                     console.log(`Conversation ${conversation.id} is opened successfully!`);
                     stopTimeOutEvent();
                     localStorage.setItem("conversation", conversation.id);
@@ -27,6 +45,7 @@ function connectAgent(){
                     generateResponseBubbleForAgent(`You are connected to agent: ${agentInfo.name}. ID: ${agentInfo.id}`, 0);
                     startTimeOutForReminder(3);
                     rainbowSDK.im.sendMessageToConversation(conversation, `You are connected with guest user [${email}]`);
+                    // rainbowSDK.webRTC.callInVideo(contact);
                 })
                 .catch(err=>{
                     console.error("Failed to open conversation! "+ err);
@@ -57,6 +76,7 @@ function callAgent(){
                 startTimeOutForTerminateCallAgent(1);
             }).catch(err =>{
                 console.error("Failed to sign in guest account!");
+                console.error(err);
                 generateResponseBubble("Connection refused. Please try again!", 0);
             });
         }
@@ -114,3 +134,5 @@ function cleanUpWhenConversationClosed(){
         }
     });
 }
+
+export {disconnect, callAgent, intervalEvent, mConversation, contact};
