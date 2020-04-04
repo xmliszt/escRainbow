@@ -1,7 +1,7 @@
 // import packages
 const fs = require("fs");
-const http = require("http");
-const https = require("https");
+// const http = require("http");
+// const https = require("https");
 const shield = require("helmet");
 const compression = require('compression');
 const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
@@ -348,9 +348,6 @@ app.post('/su/create', async (req, res)=>{
 });
 
 
-var httpServer = http.createServer(app);
-var httpsServer = https.createServer(appCredentials, app);
-module.exports = {
-    httpServer: httpsServer,
-    httpsServer: httpsServer
-};
+// var httpServer = http.createServer(app);
+// var httpsServer = https.createServer(appCredentials, app);
+module.exports = app;
