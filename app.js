@@ -1,4 +1,12 @@
 // import packages
+const fs = require("fs");
+// const http = require("http");
+// const https = require("https");
+const shield = require("helmet");
+const compression = require('compression');
+const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
+const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
+const appCredentials = {key: privateKey, cert: certificate};
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -8,7 +16,10 @@ const rateLimit = require("express-rate-limit");
 var db = require('./static/js/db.js').dbUtils;
 var cryption = require("simple-crypto-js").default;
 const _secretKey = "someSecretAboutAlphaSUTD2020C1G9~!@";
+const _secretKey_b = "@#$430dfjasdf012831dafJELJlkfnf1-ijflkn";
 var Crypto = new cryption(_secretKey);
+var Secret_Crypto = new cryption(_secretKey_b);
+const COMPANY_ID = "5e45ff0ee9f1273063695d12";
 
 // Rainbow Node SDK
 // Load the SDK
@@ -26,23 +37,22 @@ rainbowSDK.events.on('rainbow_onerror', function (err) { // do something when so
     console.error("Something wrong!")
 });
 
-
 const limiter = rateLimit({
     windowMs: 1000, // 
     max: 50 // limit each IP to 100 requests per windowMs
   });
 
 // create db collections
-db.createUniqueCollection("Users").catch(e => {
-    console.error(e);
-    process.exit(1);
-})
-db.createUniqueCollection("Agents").catch(e => {
-    console.error(e);
-    process.exit(1);
-})
+// db.createUniqueCollection("Users").catch(e => {
+//     console.error(e);
+//     process.exit(1);
+// })
+// db.createUniqueCollection("Agents").catch(e => {
+//     console.error(e);
+//     process.exit(1);
+// })
 
-db.resetAgents();
+db.resetAgents().catch(err=>{console.error(err)});
 
 
 //hihi
@@ -58,12 +68,16 @@ app.use(express.static(__dirname + '/static'));
 app.use(cookieParser());
 app.use("/chat", limiter);
 app.use("/connect", limiter);
+app.use(shield());
+app.use(compression());
 
 app.use((req, res, next) => {
     // Get auth token from the cookies
     const authToken = req.cookies['AuthToken'];
+    const authTokenAdmin = req.cookies['AuthTokenAdmin'];
     // Inject the user to the request
     req.user = authTokens[authToken];
+    req.admin = authTokens[authTokenAdmin];
     next();
 });
 
@@ -101,6 +115,7 @@ app.get('/faq', (req, res) => {
 const authTokens = {};
 // login POST
 app.post('/login', (req, res) => {
+    res.clearCookie('AuthToken');
     var username = req.body.username;
     var password = req.body.password;
     db.search({username: username}, "Users").then(user=>{
@@ -264,4 +279,78 @@ app.get('/auth', (req, res) =>{
     res.end();
 });
 
+app.route('/su')
+.post(async (req, res) =>{
+    res.clearCookie('AuthTokenAdmin');
+    var credential = req.body;
+    var username = credential.username;
+    var password = credential.password;
+    var adminUser = await db.search({username: username}, "Users");
+    if (adminUser){
+        var DPassword = Secret_Crypto.decrypt(adminUser.password);
+        if (password == DPassword){
+            const authTokenAdmin = generateAuthToken();
+            authTokens[authTokenAdmin] = adminUser;
+            res.cookie('AuthTokenAdmin', authTokenAdmin);
+            res.status(200).send("Login Successfully!");
+        } else {
+            res.status(401).send("Incorrect Password");
+        }
+    } else{
+        res.status(401).send("Unknown user!");
+    }
+    res.end();
+}).get((req, res) =>{
+    res.render("admin");
+});
+
+app.get('/su/dashboard', (req, res) =>{
+    if (req.admin){
+        res.render("dashboard");
+    } else {
+        res.status(401).send("Unauthenticated Access!")
+    }
+});
+
+app.post('/su/create', async (req, res)=>{
+    if (req.admin){
+        var agent = req.body;
+        var email = agent.email;
+        var pwd = agent.password;
+        var firstName = agent.firstname;
+        var lastName = agent.lastname;
+        var skill = Number(agent.skill);
+        var found = await db.search({email: email}, "Agents");
+        if (found != null){
+            console.log("Agent already existed!");
+            res.status(501).send("Error: Agent already existed!");
+        } else {
+            try{
+                var cred = await rainbowSDK.admin.createUserInCompany(email, pwd, firstName, lastName, COMPANY_ID);
+                var agentObject = {
+                    name: firstName + " " + lastName,
+                    skill: skill,
+                    id: cred.id,
+                    busy: false,
+                    priority: 0
+                }
+                await db.insert(agentObject, "Agents");
+                console.log("Agent successfully created!");
+                await rainbowSDK.invitations.sendInvitationByEmail(email);
+                res.status(200).send("Agent created successfully!");
+            } catch (err) {
+                console.log(err)
+                console.error("Error: Unable to create agent in RainbowSDK");
+                res.status(500).send({error: err});
+            }
+        }
+    } else {
+        res.status(401).send("Unauthenticated Access!")
+    }
+    res.end();
+});
+
+
+// var httpServer = http.createServer(app);
+// var httpsServer = https.createServer(appCredentials, app);
 module.exports = app;

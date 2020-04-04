@@ -1,4 +1,4 @@
-const db = require('./static/js/db').dbUtils;
+const db = require('../static/js/db.js').dbUtils;
 
 var agent1 = {
     name: "Maude Muir",
@@ -31,8 +31,8 @@ var agent4 = {
     busy: false,
     priority: 0
 }
-
-db.insert(agent1, "Agents").catch(e=>{console.error(e);});
-db.insert(agent2, "Agents").catch(e=>{console.error(e);});
-db.insert(agent3, "Agents").catch(e=>{console.error(e);});
-db.insert(agent4, "Agents").catch(e=>{console.error(e);});
+// db.insert(agent1, "Agents").catch(e=>{console.error(e);});
+// db.insert(agent2, "Agents").catch(e=>{console.error(e);});
+// db.insert(agent3, "Agents").catch(e=>{console.error(e);});
+// db.insert(agent4, "Agents").catch(e=>{console.error(e);});
+// db.resetAgents().catch(err=>{console.error(err)});

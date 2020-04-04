@@ -272,7 +272,7 @@ visibility: visible;
 }
 
 .msg_cotainer{
-    display: inline-block;
+    display: block;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-left: 10px;
@@ -282,9 +282,10 @@ visibility: visible;
     position: relative;
     text-align: left;
     white-space: normal;
+    overflow: auto;
 }
 .msg_cotainer_send{
-    display: inline-block;
+    display: block;
     margin-top: 20px;
     margin-bottom: 10px;
     margin-right: 10px;
@@ -294,6 +295,7 @@ visibility: visible;
     position: relative;
     text-align: right;
     white-space: normal;
+    overflow: auto;
 }
 .msg_time{
     position: relative;
