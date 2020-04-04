@@ -63,7 +63,7 @@
                             window.alert("Unauthorized access! Please log in first!")
                             window.location.replace("/su");
                         } else if (xhr.status == 500){
-                            window.alert("Error in creating the agent: " + xhr.responseJSON.error.error.errorDetails[0]);
+                            window.alert("Error in creating the agent: Agent already existed in RainbowSDK!");
                             window.location.reload();
                         } else if (xhr.status == 501){
                             window.alert("Error: Agent already existed!");

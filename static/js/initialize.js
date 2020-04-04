@@ -3,7 +3,10 @@ import {generateResponseBubbleForAgent,
     generateResponseBubbleWithInsertionElements, 
     generateButton, 
     createCallbackResponseForButton,
-    generateSendBubble} from './../js/elementsUtils.js';
+    generateSendBubble,
+    generateResponseBubble,
+    stopTimeOutEvent,
+    startTimeOutForReminder} from './../js/elementsUtils.js';
 
 var call_count = 0;
 
@@ -31,111 +34,103 @@ async function initialize(){
     };
 
 
-  // set up listener for message
-  let onMessageReceived = function(event){
-      let message = event.detail.message;
-      let conversation = event.detail.conversation;
-      console.log(conversation);
-      rainbowSDK.im.markMessageFromConversationAsRead(conversation, message);
-      generateResponseBubbleForAgent(message.data, message.from.lastname + " " + message.from.firstname);
-  };
-
-  let onCallReceived = (call) => {
-      let callObject = call.detail;
-      if (callObject.status.value === "incommingCall"){
-          call_count ++;
-          // incoming call
-          var canCall = rainbowSDK.webRTC.canMakeAudioVideoCall();
-          if (canCall){
-            console.log(callObject);
-            // var peerConnection = rainbowSDK.webRTC.getPeerConnectionForCall(callObject);
-            // console.log("Peer Connection Statistics:");
-            // console.log(peerConnection);
-            if (callObject.remoteMedia === 3){
-                console.log("Received a video call!");
-                var caller = callObject.contact.name;
+    // set up listener for message
+    let onMessageReceived = function(event){
+        let message = event.detail.message;
+        let conversation = event.detail.conversation;
+        console.log(message.data);
+        if (message.data == "\\call"){
+            var agentID = localStorage.getItem("agent-id");
+            rainbowSDK.contacts.searchById(agentID).then(contact=>{
+            // agent request for initiating a call
+                rainbowSDK.im.markMessageFromConversationAsRead(conversation, message);
                 var elements = [
-                    generateButton(`video-call-accept-${call_count}`, "Accept", 1),
-                    generateButton(`video-call-decline-${call_count}`, "Decline", 0)
+                    generateButton(`call-audio-${call_count}`, "Audio", 0),
+                    generateButton(`call-video-${call_count}`, "Video", 1)
                 ];
-                generateResponseBubbleWithInsertionElements("Incoming video call request...", caller, elements);
-                createCallbackResponseForButton(`#video-call-accept-${call_count}`, () => {
-                    generateSendBubble("In video call with agent ...");
-                    rainbowSDK.webRTC.answerInVideo(callObject);
-                    // rainbowSDK.webRTC.showLocalVideo();
-                    // rainbowSDK.webRTC.showRemoteVideo(callObject);
+                generateResponseBubbleWithInsertionElements("The agent has initiated a call request. Please select one of the options to start the call...", 0, elements, false);
+                createCallbackResponseForButton(`#call-audio-${call_count}`, () => {
+                    stopTimeOutEvent();
+                    rainbowSDK.webRTC.callInAudio(contact);
                 });
-                createCallbackResponseForButton(`#video-call-decline-${call_count}`, () => {
-                    generateResponseBubbleForAgent("Video call has been cancelled", 0);
-                    rainbowSDK.webRTC.release(callObject);
-                    // rainbowSDK.webRTC.hideLocalVideo();
-                    // rainbowSDK.webRTC.hideRemoteVideo(callObject);
+                createCallbackResponseForButton(`#call-video-${call_count}`, () => {
+                    stopTimeOutEvent();
+                    rainbowSDK.webRTC.callInVideo(contact);
                 });
-                // if (rainbowSDK.webRTC.hasACamera()){
-                //     console.log("User have a camera!");
-                    // rainbowSDK.webRTC.useCamera(localStorage.getItem("camera"));
-                    // rainbowSDK.webRTC.useSpeaker(localStorage.getItem("speaker"));
+            }).catch(err=>{
+                console.error("Failed to find agent!");
+            });
+            call_count ++;
+        } else {
+            rainbowSDK.im.markMessageFromConversationAsRead(conversation, message);
+            generateResponseBubbleForAgent(message.data, message.from.lastname + " " + message.from.firstname);
+        }
+    };
 
-                // }
-            } else if (callObject.remoteMedia === 1) {
-                console.log("Received an audio call!");
-                var caller = callObject.contact.name;
+    let onCallReceived = (event) => {
+        let call = event.detail;
+        if (call.status.value == "dialing"){
+            console.log("Dialing...")
+            generateResponseBubble("Calling... Please wait...", 0, false);
+        } else if (call.status.value == "connecting"){
+            console.log("Connected");
+
+            if (call.localMedia == 1){
                 var elements = [
-                    generateButton(`call-accept-${call_count}`, "Accept", 1),
-                    generateButton(`call-decline-${call_count}`, "Decline", 0)
+                    generateButton(`call-connection-${call_count}`, "TERMINATE THE CALL", 1)
                 ];
-                generateResponseBubbleWithInsertionElements("Incoming call request...", caller, elements);
-                createCallbackResponseForButton(`#call-accept-${call_count}`, () => {
-                    generateSendBubble("In audio call with agent ...");
-                    rainbowSDK.webRTC.answerInAudio(callObject);
+                generateResponseBubbleWithInsertionElements(`<i class="fas fa-microphone-alt"></i><span> </span><i class="fas fa-ellipsis-h"></i><i class="fas fa-ellipsis-h"></i>  call in progress...`, 0, elements, false);
+                createCallbackResponseForButton(`#call-connection-${call_count}`, () => {
+                    rainbowSDK.webRTC.release(call);
                 });
-                createCallbackResponseForButton(`#call-decline-${call_count}`, () => {
-                    generateResponseBubbleForAgent("Audio call has been cancelled", 0);
-                    rainbowSDK.webRTC.release(callObject);
+
+            } else if (call.localMedia == 3){
+                //Video connection
+                $('.video-stream').css("display", "flex").hide().fadeIn();
+                $('#stopConnection').click(() => {
+                    rainbowSDK.webRTC.release(call);
                 });
-                // if (rainbowSDK.webRTC.hasAMicrophone()){
-                    // console.log("User have a microphone!");
-                    // rainbowSDK.webRTC.useMicrophone(localStorage.getItem("microphone"));
-                    // rainbowSDK.webRTC.useSpeaker(localStorage.getItem("speaker"));
-                // }
+                
+                console.log(call);
+                var res = rainbowSDK.webRTC.showRemoteVideo(call);
+                console.log(res);
+
+                rainbowSDK.webRTC.showLocalVideo();
+                generateResponseBubble(`<i class="fas fa-video"></i><span> </span><i class="fas fa-ellipsis-h"></i><i class="fas fa-ellipsis-h"></i>  call in progress...`, 0, false);
+
             }
-          }
-        } else if (callObject.status.value === "active"){
-            // if (callObject.remoteMedia & rainbowSDK.Call.Media.VIDEO) {
-            //     rainbowSDK.webRTC.displayRemoteVideo(callObject);
-            //   } else {
-            //     rainbowSDK.webRTC.hideRemoteVideo(callObject);
-            //   }
-    
-            //   if (callObject.localMedia & rainbowSDK.Call.Media.VIDEO) {
-            //     rainbowSDK.webRTC.displayLocalVideo(callObject);
-            //   } else {
-            //     rainbowSDK.webRTC.hideLocalVideo(callObject);
-            //   }
-        } else if (callObject.status.value === "Unknown") {
-            // rainbowSDK.webRTC.hideLocalVideo();
-            // rainbowSDK.webRTC.hideRemoteVideo(callObject);
-            // call cancelled
-            console.log("Call cancelled!");
-            rainbowSDK.webRTC.release(callObject);
-          
-      }
-    //   console.log(call);
-  }
+        } else if (call.status.value == "Unknown") {
+            console.log("Call ended!");
+            $('.video-stream').hide();
+            generateResponseBubble("Call has ended...", 0);
+            rainbowSDK.webRTC.hideLocalVideo();
+            rainbowSDK.webRTC.hideRemoteVideo(call);
+            startTimeOutForReminder(3);
+        } else {
+            console.log(call);
+        }
+    }
 
-  let onConversationRemoved = (conversation) => {
-      console.log("Conversation is removed!");
-  }
+    let onConversationRemoved = (conversation) => {
+        console.log("Conversation is removed!");
+    }
 
-  let onConversationChanged = (cid) => {
+    let onConversationChanged = (cid) => {
     //   console.log("Conversation ID changed to " + cid.detail);
-      localStorage.setItem("conversation", cid.detail);
-  }
+        localStorage.setItem("conversation", cid.detail);
+    }
 
-  let onWebRTCErrorHandled = (e) => {
-      let errorSDK = e.detail;
-      console.log("WebRTC ERROR", errorSDK);
-  }
+    let onWebRTCErrorHandled = (e) => {
+        let errorSDK = e.detail;
+        console.log("WebRTC ERROR", errorSDK);
+    }
+
+    let onWebRTCRemoteStreamAdded = (streams) => {
+        console.log("Web RTC stream added!");
+        console.log(streams);
+    }
+
+  document.addEventListener(rainbowSDK.webRTC.RAINBOW_ONWEBRTCSTREAMADDED, onWebRTCRemoteStreamAdded);
 
   document.addEventListener(rainbowSDK.webRTC.RAINBOW_ONWEBRTCERRORHANDLED, onWebRTCErrorHandled);
 

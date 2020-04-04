@@ -2,6 +2,8 @@
 coverage/
 jest.config.js
 # ignore node/grunt dependency directories
+sslcert/
+/sslcert
 node_modules/
 /node_modules
 npm-debug.log

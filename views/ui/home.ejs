@@ -32,10 +32,21 @@
 </head>
 <body>
 
-  <!-- <video id="minivideo" autoplay muted></video>
-  <video id="largevideo" autoplay></video>
-  <video id="globalVideoTag" autoplay style="display:none;"></video>
-  <audio id="globalAudioTag" autoplay style="display:none;"></audio> -->
+  <div class="video-stream" >
+    <div class="minivideo-holder">
+      <video width="160rem" height="90rem" id="minivideo" class="minivideo" autoplay muted></video>
+    </div>
+    <div class="button-holder">
+      <i id="stopConnection" style="color: #d32046; font-size: 3rem; cursor: pointer;" class="far fa-stop-circle"></i>
+    </div>
+    <video width="600rem" height="400rem" id="largevideo" class="largevideo" autoplay></video>
+    <div class="largevideo-alt">
+      <h1>Sorry! As guest, the video of our agent is hidden from you for privacy protection.</h1>
+    </div>
+    <video id="globalVideoTag" autoplay style="display:none;"></video>
+    <audio id="globalAudioTag" autoplay style="display:none;"></audio>
+  </div>
+
 
   <nav id="top" class="navbar navbar-expand-lg navbar-light bg-light">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">

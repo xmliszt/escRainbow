@@ -2,7 +2,8 @@ import { initialize } from "./../js/initialize.js";
 import rainbowSDK from './../js/rainbow-sdk.min.js';
 import {disconnect, mConversation} from "./../js/agentConnUtils.js";
 import {generateBotChoicesBubble} from "./../js/chatBotChoice.js";
-import {stopTimeOutEvent,generateSendBubble,startTimeOutForReminder} from './../js/elementsUtils.js';
+import {botTextResponse} from "./../js/chatBotResponse.js"
+import {stopTimeOutEvent,generateSendBubble,startTimeOutForReminder, createAjax} from './../js/elementsUtils.js';
 
 var hasOpened = false;
 var message;
