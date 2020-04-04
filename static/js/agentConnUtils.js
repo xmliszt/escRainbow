@@ -54,6 +54,8 @@ function connectAgent(){
         },
         error: function(error){
             if (error.status == 501){
+                console.error("Unable to connect");
+                setTimeout(connectAgent, 2000);
                 console.info(error.responseJSON.error);
             }
         }
@@ -70,8 +72,7 @@ function callAgent(){
             email = data.data.loginEmail;
             pwd = data.data.password;
             rainbowSDK.connection.signin(email, pwd).then(success=>{
-                stopIntervalEvent();
-                intervalEvent = setInterval(connectAgent, 2000);
+                connectAgent();
                 console.log("Creating Interval ID: " + intervalEvent);
                 startTimeOutForTerminateCallAgent(1);
             }).catch(err =>{

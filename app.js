@@ -2,6 +2,8 @@
 const fs = require("fs");
 const http = require("http");
 const https = require("https");
+const shield = require("helmet");
+const compression = require('compression');
 const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
 const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
 const appCredentials = {key: privateKey, cert: certificate};
@@ -35,23 +37,22 @@ rainbowSDK.events.on('rainbow_onerror', function (err) { // do something when so
     console.error("Something wrong!")
 });
 
-
 const limiter = rateLimit({
     windowMs: 1000, // 
     max: 50 // limit each IP to 100 requests per windowMs
   });
 
 // create db collections
-db.createUniqueCollection("Users").catch(e => {
-    console.error(e);
-    process.exit(1);
-})
-db.createUniqueCollection("Agents").catch(e => {
-    console.error(e);
-    process.exit(1);
-})
+// db.createUniqueCollection("Users").catch(e => {
+//     console.error(e);
+//     process.exit(1);
+// })
+// db.createUniqueCollection("Agents").catch(e => {
+//     console.error(e);
+//     process.exit(1);
+// })
 
-db.resetAgents();
+db.resetAgents().catch(err=>{console.error(err)});
 
 // set up express app
 const app = express();
@@ -64,6 +65,8 @@ app.use(express.static(__dirname + '/static'));
 app.use(cookieParser());
 app.use("/chat", limiter);
 app.use("/connect", limiter);
+app.use(shield());
+app.use(compression());
 
 app.use((req, res, next) => {
     // Get auth token from the cookies

@@ -4,8 +4,6 @@ const _secretKey_a = "someSecretAboutAlphaSUTD2020C1G9~!@";
 const _secretKey_b = "@#$430dfjasdf012831dafJELJlkfnf1-ijflkn";
 var Crypto = new cryption(_secretKey_a);
 var Crypto_PWD = new cryption(_secretKey_b)
-
-
 var username = "admin";
 var password = "~!@SUTDsutd123";
 

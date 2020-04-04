@@ -21,9 +21,11 @@
         "mongodb": "3.5.4",
         "mongoose": "^5.9.4",
         "pug": "^2.0.4",
-        "rainbow-node-sdk": "1.67.1",
+        "rainbow-node-sdk": "^1.69.0",
         "rainbow-web-sdk": "^1.69.0",
-        "simple-crypto-js": "2.2.0"
+        "simple-crypto-js": "2.2.0",
+        "helmet": "^3.22.0",
+        "compression": "^1.7.4"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",
@@ -35,7 +37,8 @@
         "supertest": "^4.0.2"
     },
     "scripts": {
-        "test": "jest"
+        "test": "jest",
+        "start": "node server.js"
     },
     "jest": {
         "collectCoverage": true,
