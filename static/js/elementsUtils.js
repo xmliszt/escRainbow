@@ -163,24 +163,40 @@ function generateSendBubbleConnectingAgent(message) {
     scrollToBottom();
 }
 
-function generateResponseBubble(response, from) {
+function generateResponseBubble(response, from, agentBtn=true) {
     var dateTime = getDateTime();
-    var responseBubble = $(`
-    <div>
-        <span class="msg_head">${
-        from == 0 ? "Mr. Bot" : "Agent " + from
-    }</span>
-        <div style="display: flex; justify-content: flex-start;">
-            <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span> 
-                <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
+    if (agentBtn){
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span> 
+                    <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-1-${agent_btn}"> to connect with agents.</p>
+                </div>
             </div>
-        </div>
-        <span class="msg_time">${dateTime}</span><br>
-    </div>`);
+            <span class="msg_time">${dateTime}</span><br>
+        </div>`);
+    } else {
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span> 
+                </div>
+            </div>
+            <span class="msg_time">${dateTime}</span><br>
+        </div>`);
+    }
     $("#conversation_body").append(responseBubble);
-    $(`#agent-${agent_btn}`).click(callAgent);
+    $(`#agent-1-${agent_btn}`).click(callAgent);
     agent_btn += 1;
+
     scrollToBottom();
 }
 
@@ -226,25 +242,43 @@ function generateResponseBubbleForAgent(response, from){
     scrollToBottom();
 }
 
-function generateResponseBubbleWithInsertionElements(response, from, elements) {
+function generateResponseBubbleWithInsertionElements(response, from, elements, agentBtn=true) {
     var dateTime = getDateTime();
-    var responseBubble = $(`
-    <div>
-        <span class="msg_head">${
-        from == 0 ? "Mr. Bot" : "Agent " + from
-    }</span>
-        <div style="display: flex; justify-content: flex-start;">
-            <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span><br> 
-                ${elements.join("")} 
-                <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
+    if (agentBtn){
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span><br> 
+                    ${elements.join("")} 
+                    <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-2-${agent_btn}"> to connect with agents.</p>
+                </div>
+                
             </div>
-            
-        </div>
-        <span class="msg_time">${dateTime}</span>
-    </div>`);
+            <span class="msg_time">${dateTime}</span>
+        </div>`);
+
+    } else {
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span><br> 
+                    ${elements.join("")} 
+                </div>
+                
+            </div>
+            <span class="msg_time">${dateTime}</span>
+        </div>`);
+    }
     $("#conversation_body").append(responseBubble);
-    $(`#agent-${agent_btn}`).click(callAgent);
+    $(`#agent-2-${agent_btn}`).click(callAgent);
     agent_btn += 1;
     scrollToBottom();
 }
@@ -267,5 +301,6 @@ export {
     createResponseMessageForButton,
     createResponseMessageWithChoicesForButton,
     createResponseWithAjaxForButton,
-    generateButton
+    generateButton,
+    createAjax
 };
