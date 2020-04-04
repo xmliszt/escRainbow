@@ -68,10 +68,12 @@ function callAgent(){
         url: '/chat',
         type: 'GET',
         success: function(data, status, els){
-            console.log(`Guest account sigin successfully! ${data.data.loginEmail}`);
+            // email = "agent2@alpha.com";
+            // pwd = "~!@SUTDsutd123";
             email = data.data.loginEmail;
             pwd = data.data.password;
             rainbowSDK.connection.signin(email, pwd).then(success=>{
+                console.log(`Guest account sigin successfully! ${data.data.loginEmail}`);
                 connectAgent();
                 console.log("Creating Interval ID: " + intervalEvent);
                 startTimeOutForTerminateCallAgent(1);
@@ -91,6 +93,7 @@ async function disconnect(){
     agentID = localStorage.getItem("agent-id");
     agentName = localStorage.getItem("agent-name");
     console.log(`Start disconnection... [${conversationID}]`);
+    console.log("Guest signed out successfully!");
     if (conversationID){
         storedConversation = await rainbowSDK.conversations.getConversationById(conversationID);
     } else {

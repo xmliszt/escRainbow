@@ -1,12 +1,19 @@
 // import packages
+
+/** FOR DEV ONLY
+
 // const fs = require("fs");
 // const http = require("http");
 // const https = require("https");
-const shield = require("helmet");
-const compression = require('compression');
 // const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
 // const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
-const appCredentials = {key: privateKey, cert: certificate};
+// const appCredentials = {key: privateKey, cert: certificate};
+
+*/
+
+
+const shield = require("helmet");
+const compression = require('compression');
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -53,9 +60,7 @@ const limiter = rateLimit({
 // })
 
 db.resetAgents().catch(err=>{console.error(err)});
-
-
-//hihi
+setInterval(db.resetAgents, 1*24*60*60*1000);
 
 // set up express app
 const app = express();
@@ -353,4 +358,5 @@ app.post('/su/create', async (req, res)=>{
 
 // var httpServer = http.createServer(app);
 // var httpsServer = https.createServer(appCredentials, app);
-module.exports = app;
+module.exports = {
+    app: app};

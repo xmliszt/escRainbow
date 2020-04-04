@@ -1,7 +1,10 @@
 
 const MongoClient = require('mongodb').MongoClient;
-// const uri = "mongodb://localhost:27017/alphadb";
-const uri = "mongodb+srv://alpha-holding:~!@SUTDsutd123@alpha-cluster-0-ruglw.mongodb.net/test?retryWrites=true&w=majority";
+/**
+ * FOR DEV ONLY
+ * // const uri = "mongodb+srv://alpha-holding:~!@SUTDsutd123@alpha-cluster-0-ruglw.mongodb.net/test?retryWrites=true";
+ */
+const uri = process.env.MONGODB_URI;  // PRODUCTION
 const dbName = "alphaDB";
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
 
