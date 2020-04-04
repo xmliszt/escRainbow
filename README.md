@@ -6,19 +6,16 @@
 
 
 
-## How To Run
+## Website
 
-_Make sure you have MongoDB installed before running_
+Go to this website to try out our services!
 
 ```bash
-git clone https://github.com/xmliszt/escRainbow.git
-cd escRainbow
-npm install
-npm audit fix
-node server
+https://alpha-holding.herokuapp.com/
 ```
 
 ## How To Test
+
 Install relevant dependencies for testing.<br>
 We are using Jest as the code coverage testing framework
 ```bash
