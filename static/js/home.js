@@ -9,8 +9,11 @@ var hasOpened = false;
 var message;
 var reloaded = false;
 
+
 $(document).ready(function() {
-  
+  if (window.location.protocol !== 'https:') {
+      window.location.replace(`https:${location.href.substring(location.protocol.length)}`);
+  }
   authorizeDevice();
   // initialize rainbow SD
   initialize();
@@ -19,6 +22,7 @@ $(document).ready(function() {
     if (localStorage.getItem("conversation")){
       reloaded = true;
       window.alert("You have an un-terminated conversation! Page reloading has closed it for you.");
+      disconnect();
     }
     setTimeout(disconnect, 2000);
   }

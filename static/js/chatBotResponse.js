@@ -1,4 +1,4 @@
-import { generateResponseBubble } from "./../js/elementsUtils.js";
+import { generateResponseBubble, waitSeconds } from "./../js/elementsUtils.js";
 
 import {generateBotChoicesBubble} from "./../js/chatBotChoice.js";
 
