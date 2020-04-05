@@ -100,20 +100,22 @@
       <p>Please fill in this form to create an account.</p>
       <hr>
       <label for="email"><b>Email</b></label>
-      <input type="text" placeholder="Enter Email" name="email" id="emailSignup" autocomplete="username" required>
+      <input type="text" placeholder="Enter Email" name="email" id="emailSignup" autocomplete="username" required onblur="checkEmail(this)">
+      <span id='message1'></span><br>
 
       <label for='first-name'><b>Your First Name</b></label>
-      <input type='text' placeholder ='Enter First Name' name='first-name' id="fnSignup" required>
-
+      <input type='text' placeholder ='Enter First Name' id="fnSignup" name='first-name' required>
       <label for='last-name'><b>Your Last Name</b></label>
       <input type='text' placeholder ='Enter Last Name' name='last-name' id="lnSignup" required>
 
-      <label for="psw"><b>Password</b></label>
-      <input type="password" placeholder="Enter Password" name="psw" id="pwdSignup" autocomplete="new-password" required>
+      <label for="pwdSignup"><b>Password</b></label>
+      <input type="password" placeholder="Enter Password (alphanumeric, 7-12 characters long, containing 1 upper case)" name="psw" id="pwdSignup" required onblur="checkPwd(this)">
+      <span id='message2'></span><br>
 
       <label for="psw-repeat"><b>Repeat Password</b></label>
-      <input type="password" placeholder="Repeat Password" name="psw-repeat" id="pwdRepeat" autocomplete="off" required>
+      <input type="password" placeholder="Repeat Password" name="pswr" id="pwdRepeat" autocomplete="off" required onkeyup='checkPwdRepeat()'>
       <p id="alertMsg" class="alert alert-danger" style="display: none;"></p>
+      <span id='message3'></span><br>
 
       <label>
         <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
@@ -415,7 +417,55 @@
   </div>
 </div>
 
-
+<script>
+  function checkEmail(input){
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    // var umail = document.reg.email
+    if(input.value.match(mailformat)){
+      document.getElementById('message1').style.color = 'green';
+      document.getElementById('message1').innerHTML = 'Email Accepted'
+      return true;
+      }
+    else{
+      input.focus();
+      document.getElementById('message1').style.color = 'red';
+      document.getElementById('message1').innerHTML = 'Please enter a valid Email'
+      return false;}
+    }
+  
+    function checkPwd(input){
+    var pwdss = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{7,12}$/;
+    // var passid = document.reg.psw;
+    if(input.value.match(pwdss)){
+      document.getElementById('message2').style.color = 'green';
+      document.getElementById('message2').innerHTML = 'Password Accepted'
+      return true;}
+    else{
+      // alert("You have entered an invalid password");
+      document.getElementById('message2').style.color = 'red';
+      document.getElementById('message2').innerHTML = 'Please enter a alphanumeric password of 7-12 characters long, containing 1 upper case'
+      passid.focus();
+      return false;}
+    }
+  
+    function checkPwdRepeat()
+    {
+      var a = document.getElementById('psw').value
+      var b = document.getElementById('pswr').value
+      if(a!= "" && a == b) {
+        document.getElementById('message3').style.color = 'green';
+        document.getElementById('message3').innerHTML = 'matching';
+        return true;
+  
+      } else{
+        document.getElementById('message3').style.color = 'red';
+        document.getElementById('message3').innerHTML = 'passwords do not match';
+        form.psw.focus();
+        return false;
+      }
+  
+    }
+</script>
 
 
 <footer class="container-fluid text-center">
