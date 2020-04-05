@@ -444,14 +444,15 @@
       // alert("You have entered an invalid password");
       document.getElementById('message2').style.color = 'red';
       document.getElementById('message2').innerHTML = 'Please enter a alphanumeric password of 7-12 characters long, containing 1 upper case'
+      var passid = document.getElementById('pwdSignup');
       passid.focus();
       return false;}
     }
   
     function checkPwdRepeat()
     {
-      var a = document.getElementById('psw').value
-      var b = document.getElementById('pswr').value
+      var a = document.getElementById('pwdSignup').value
+      var b = document.getElementById('pwdRepeat').value
       if(a!= "" && a == b) {
         document.getElementById('message3').style.color = 'green';
         document.getElementById('message3').innerHTML = 'matching';
@@ -460,7 +461,7 @@
       } else{
         document.getElementById('message3').style.color = 'red';
         document.getElementById('message3').innerHTML = 'passwords do not match';
-        form.psw.focus();
+        document.getElementById('pwdRepeat').focus();
         return false;
       }
   
