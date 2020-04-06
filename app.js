@@ -97,7 +97,7 @@ const generateAuthToken = () => {
 
 // index route GET
 app.get('/', (req, res) => {
-    req.admin = null;
+    res.clearCookie('AuthTokenAdmin');
     console.log(`Incoming address is: ${
         res.connection.remoteAddress
     }`);
@@ -173,7 +173,6 @@ app.post('/register', async (req, res) => {
 // logout a bank account
 app.get('/logout', (req, res) => {
     res.clearCookie('AuthToken');
-    console.log("Token cleared!");
     res.status(200).send({success: 1});
     res.end();
 });
@@ -302,7 +301,7 @@ app.route('/su')
     }
     res.end();
 }).get((req, res) =>{
-    req.admin = null;
+    res.clearCookie('AuthTokenAdmin');
     res.render("admin");
 });
 
@@ -356,8 +355,14 @@ app.post('/su/create', async (req, res)=>{
 
 
 app.get("/su/dashboard/data", async(req, res) => {
-    var arrays = await db.findAll({}, "Agents");
-    res.status(200).send(arrays);
+    try{
+        var arrays = await db.findAll({}, "Agents");
+        res.status(200).send(arrays);
+        res.end();
+    } catch(err){
+        res.status(500).send({error: err});
+        res.end();
+    }
 });
 
 
