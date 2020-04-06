@@ -24,21 +24,34 @@ p {
     font-size: 1rem;
 }
 
-h2 {
-    font-size: 24px;
+h1 {
+    font-size: 2.5rem;
     text-transform: uppercase;
-    font-weight: 600;
+    font-weight: 200;
+    margin-bottom: 0;
+}
+
+h2 {
+    font-size: 1.7rem;
+    text-transform: uppercase;
+    font-weight: 100;
     margin-bottom: 30px;
     }
 h4 {
-    font-size: 19px;
+    font-size: 1.2rem;
     line-height: 1.375em;
     font-weight: 400;
     margin-bottom: 30px;
 }  
 
+.big-title{
+    display: grid;
+    padding: 15vh;
+    align-items: center;
+}
+
 .container-fluid {
-padding: 60px 50px;
+    padding: 5vh 10vw;
 }
 .bg-grey {
     background-color: #f3f3f3;
@@ -85,6 +98,7 @@ margin: 70px 0;
 }
 .panel-body{
     padding: 1rem;
+    min-height: 12rem;
 }
 .panel:hover {
     box-shadow: 5px 0px 40px rgba(0,0,0, .2);
@@ -154,21 +168,20 @@ visibility: visible;
 }
 }
 @media screen and (max-width: 768px) {
-.col-sm-4 {
-    text-align: center;
-    margin: 25px 0;
-}
-.btn-lg {
-    width: 100%;
-    margin-bottom: 35px;
-}
-}
-@media screen and (max-width: 768px) {
-.logo {
-    font-size: 150px;
-}
-}
+    .col-sm-4 {
+        text-align: center;
+        margin: 25px 0;
+    }
+    .btn-lg {
+        width: 100%;
+        margin-bottom: 35px;
+    }
 
+    .logo {
+        font-size: 150px;
+    }
+
+}
 .agent-icon{
     width: 16px;
     margin-left: 2px;
@@ -242,11 +255,11 @@ visibility: visible;
 }
 .container{
     align-content: center;
-    padding: 50px;
+    padding: 2rem;
 }
 
 #sendBtn{
-    max-width: 1.5vw;
+    max-width: 1rem;
 }
 
 .type_msg{
@@ -356,9 +369,10 @@ visibility: visible;
     margin-left: 2rem;
 }
 .user_info{
+    text-align: center;
     position: absolute;
     top: 1vw;
-    font-size: 1vw;
+    font-size: 0.7rem;
     font-family: Arial, Helvetica, sans-serif;
     font-style: initial;
     color: azure;
@@ -406,6 +420,7 @@ input[type='text']{
 
 
 .jumbotron{
+    min-height: 40vh;
     background-attachment: fixed;
     background-position: bottom;
     background-repeat: no-repeat;
@@ -417,7 +432,7 @@ input[type='text']{
 }
 
 .jumbotron-small{
-    margin: 10rem;
+    margin: 5rem;
     padding: 2rem;
     background-attachment: fixed;
     background-position: bottom;
@@ -429,6 +444,7 @@ input[type='text']{
 
 .bg1{
     background-image: url("/img/bg.jpg");   
+    background-position-y: 90%;
 }
 
 .bg2{
@@ -552,7 +568,7 @@ button:hover {
     margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
     border: 1px solid #888;
     border-radius: 10px;
-    width: 50%; /* Could be more or less, depending on screen size */
+    width: 80%; /* Could be more or less, depending on screen size */
 }
 
 /* Style the horizontal ruler */
@@ -608,18 +624,25 @@ display: table;
 .form-popup {
     display: none;
     position: fixed;
+    width: 20%;
+    height: 70%;
     top: 0%;
     right: 0%;
     border: 3px solid #f1f1f1;
     background-color: #303030;
-    opacity: 0.8;
+    opacity: 0.9;
     z-index: 99;
     color: white;
+    overflow: scroll;
+
+}
+
+.form-popup::-webkit-scrollbar{
+    display: none;
 }
 
 /* Add styles to the form container */
 .form-container {
-    max-width: 300px;
     padding: 10px;
 }
 
@@ -745,4 +768,16 @@ display: table;
     height:100%;
     width:100%;
     position:absolute;
+}
+
+@media (max-width: 768px){
+    
+    .jumbotron-small{
+        margin: 2rem !important;
+    }
+
+    .form-popup{
+        width: 70%;
+        height: 100%;
+    }
 }
