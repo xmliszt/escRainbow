@@ -97,6 +97,7 @@ const generateAuthToken = () => {
 
 // index route GET
 app.get('/', (req, res) => {
+    req.admin = null;
     console.log(`Incoming address is: ${
         res.connection.remoteAddress
     }`);
@@ -301,6 +302,7 @@ app.route('/su')
     }
     res.end();
 }).get((req, res) =>{
+    req.admin = null;
     res.render("admin");
 });
 
@@ -308,7 +310,8 @@ app.get('/su/dashboard', (req, res) =>{
     if (req.admin){
         res.render("dashboard");
     } else {
-        res.status(401).send("Unauthenticated Access!")
+        res.status(401).send("Unauthorized access!");
+        res.end();
     }
 });
 
@@ -331,6 +334,7 @@ app.post('/su/create', async (req, res)=>{
                     name: firstName + " " + lastName,
                     skill: skill,
                     id: cred.id,
+                    email: email,
                     busy: false,
                     priority: 0
                 }
@@ -345,9 +349,15 @@ app.post('/su/create', async (req, res)=>{
             }
         }
     } else {
-        res.status(401).send("Unauthenticated Access!")
+        res.status(401).send("Unauthorized access!");
     }
     res.end();
+});
+
+
+app.get("/su/dashboard/data", async(req, res) => {
+    var arrays = await db.findAll({}, "Agents");
+    res.status(200).send(arrays);
 });
 
 
