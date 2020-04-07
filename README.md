@@ -439,7 +439,7 @@ create agent and add to database
 | URL                        |                         `/su/create`                         |
 | Method                     |                             POST                             |
 | URL Params                 |                             None                             |
-| Data Params                | `{email: [String], password: [String], firstname: [String], lastname: [String]}` |
+| Data Params                | `{email: [String], password: [String], firstname: [String], lastname: [String]}, skill: [Number]` |
 | Success Response (code)    |                            200 OK                            |
 | Success Response (content) |                "Agent created successfully!"                 |
 | Error Response (code)      |            401 UNAUTHORIZED, 500 NOT IMPLEMENTED             |
@@ -455,7 +455,8 @@ $.ajax({
     email: "test@alpha.com",
     password: "123456",
     firstname: "Test",
-    lastname: "Test"
+    lastname: "Test",
+    skill: 1
   },
   success: function(data) {
       //do something if created successfully
