@@ -340,7 +340,7 @@ app.post('/su/create', async (req, res)=>{
                 await db.insert(agentObject, "Agents");
                 console.log("Agent successfully created!");
                 await rainbowSDK.invitations.sendInvitationByEmail(email);
-                res.status(200).send("Agent created successfully!");
+                res.status(200).send({agent: agentObject});
             } catch (err) {
                 console.log(err)
                 console.error("Error: Unable to create agent in RainbowSDK");
