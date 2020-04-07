@@ -471,6 +471,36 @@ $.ajax({
 });
 ```
 
+### Admin: Delete Agent
+
+create agent and add to database
+
+|                            |                                                              |
+| :------------------------- | :----------------------------------------------------------: |
+| URL                        |                         `/su/dashboard/delete`  |
+| Method                     |                             GET                             |
+| URL Params                 |                             `{id: [String: agent's id]}`                             |
+| Data Params                |      |
+| Success Response (code)    |                            200 OK                            |
+| Success Response (content) |                "Deleted!"                 |
+| Error Response (code)      |           500 NOT IMPLEMENTED             |
+| Error Response (content)   |         `{error: [Object]}`          |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su/dashboard/delete?id=13dfa@34dfja2f",
+  type: "GET",
+  success: function(data) {
+      //do something if deleted successfully
+  },
+  error: function(error){
+      //do something if failed to delete
+  }
+});
+```
+
 ### Admin: Get all agent data information
 
 Retrieve information about agent from backend database

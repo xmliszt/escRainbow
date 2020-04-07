@@ -1,10 +1,10 @@
 // import packages
-// const fs = require("fs");
-// const http = require("http");
-// const https = require("https");
-// const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
-// const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
-// const appCredentials = {key: privateKey, cert: certificate};
+const fs = require("fs");
+const http = require("http");
+const https = require("https");
+const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
+const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
+const appCredentials = {key: privateKey, cert: certificate};
 
 
 const shield = require("helmet");
@@ -365,7 +365,20 @@ app.get("/su/dashboard/data", async(req, res) => {
     }
 });
 
+app.get("/su/dashboard/delete", async(req, res) => {
+    var agentID = req.query.id;
+    try{
+        await rainbowSDK.admin.deleteUser(agentID);
+        await db.delete({id: agentID}, "Agents");
+        res.status(200).send("deleted!");
+        res.end();
+    } catch (err) {
+        res.status(500).send({error: err});
+        res.end();
+    }
+});
+
 
 // var httpServer = http.createServer(app);
-// var httpsServer = https.createServer(appCredentials, app);
-module.exports = {app: app};
+var httpsServer = https.createServer(appCredentials, app);
+module.exports = {app: app, httpsServer: httpsServer};

@@ -75,6 +75,7 @@
                     <th scope="col">Skill</th>
                     <th scope="col">Status</th>
                     <th scope="col">Priority</th>
+                    <th scope="col">Action</th>
                 </tr>
             </thead>
             <tbody id="agent-table-body">                    
@@ -93,6 +94,7 @@
                 type: 'GET',
                 success: (data) => {
                     console.log(data);
+                    $('#agent-table-body').empty();
                     data.forEach((agent, index) => {
                         var skill = agent.skill;
                         var skillText;
@@ -114,9 +116,26 @@
                             <td>${skillText}</td>
                             <td>${busyText}</td>
                             <td>${agent.priority}</td>
+                            <td><button id="delete-agent-${agent.id}" class="btn btn-sm btn-danger">DELETE</button></td>
                         </tr>
                         `;
-                        $('#agent-table-body').append(entry);                    
+                        $('#agent-table-body').append(entry);     
+                        $(`#delete-agent-${agent.id}`).click(() => {
+                            $.ajax({
+                                url: `/su/dashboard/delete?id=${agent.id}`,
+                                type: 'GET',
+                                success: (data) => {
+                                    console.info("Agent deleted successfully!");
+                                    window.alert("Agent deleted successfully!");
+                                    refreshData();
+                                },
+                                error: (xhr) => {
+                                    console.error("Failed to delete agent.");
+                                    window.alert("Failed to delete agent. Check log for more information!");
+                                    console.error(xhr.responseJSON.error);
+                                }
+                            });
+                        });               
                     });
                 },
                 error: (error) => {
@@ -129,7 +148,6 @@
         }
 
         $('#refreshDataBtn').click(() => {
-            $('#agent-table-body').empty();
             refreshData();
         });
 
