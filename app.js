@@ -1,10 +1,10 @@
 // import packages
-const fs = require("fs");
-const http = require("http");
-const https = require("https");
-const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
-const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
-const appCredentials = {key: privateKey, cert: certificate};
+// const fs = require("fs");
+// const http = require("http");
+// const https = require("https");
+// const privateKey = fs.readFileSync('./sslcert/privateKey.key', 'utf8');
+// const certificate = fs.readFileSync('./sslcert/certificate.crt', 'utf8');
+// const appCredentials = {key: privateKey, cert: certificate};
 
 
 const shield = require("helmet");
@@ -380,5 +380,5 @@ app.get("/su/dashboard/delete", async(req, res) => {
 
 
 // var httpServer = http.createServer(app);
-var httpsServer = https.createServer(appCredentials, app);
-module.exports = {app: app, httpsServer: httpsServer};
+// var httpsServer = https.createServer(appCredentials, app);
+module.exports = {app: app};
