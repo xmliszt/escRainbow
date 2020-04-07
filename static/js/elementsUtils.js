@@ -165,7 +165,7 @@ function generateResponseBubble(response, from, agentBtn=true) {
             <div style="display: flex; justify-content: flex-start;">
                 <div class="msg_cotainer">  
                     <span class="msg_body">${response}</span> 
-                    <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-1-${agent_btn}"> to connect with agents.</p>
+                    <p style="color: #4065a1; font-size: 10px !important; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-1-${agent_btn}"> to connect with agents.</p>
                 </div>
             </div>
             <span class="msg_time">${dateTime}</span><br>
@@ -244,7 +244,7 @@ function generateResponseBubbleWithInsertionElements(response, from, elements, a
                 <div class="msg_cotainer">  
                     <span class="msg_body">${response}</span><br> 
                     ${elements.join("")} 
-                    <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-2-${agent_btn}"> to connect with agents.</p>
+                    <p style="color: #4065a1; font-size: 10px !important; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-2-${agent_btn}"> to connect with agents.</p>
                 </div>
                 
             </div>
