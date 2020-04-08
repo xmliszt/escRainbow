@@ -3,8 +3,15 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 
+'''
+# TODO1: when logged in, login and register button under settings will disappear
+# TODO2: when logged in, name of user should appear
+# TODO3: register a test account -> test sign in
+# TODO4: next to the word president has a comma, it is clickable to login with admin
+'''
 
-class fronendTest(unittest.TestCase):
+
+class frontendTest(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -18,20 +25,25 @@ class fronendTest(unittest.TestCase):
         chat_icon = driver.find_element_by_class_name("toggle-chat-btn")
         chat_icon.click()
         time.sleep(3)
+
+        # check whether the when the chat icon is pressed, the style should change
         assert int(driver.find_elements_by_css_selector(
             '.chat')[0].value_of_css_property('opacity')) == 1
         time.sleep(3)
 
+        # click for card replacement
         card_replacement = driver.find_element_by_xpath(
             '//*[@id="1"]')
         card_replacement.click()
         time.sleep(3)
 
+        # click for yes please
         yes_please = driver.find_element_by_xpath(
             '//*[@id="cd-0"]')
         yes_please.click()
         time.sleep(3)
 
+        # click to sign in
         sign_in = driver.find_element_by_xpath(
             '//*[@id="resignin-5"]')
         sign_in.click()
