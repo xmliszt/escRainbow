@@ -5,10 +5,8 @@ import time
 from selenium.common.exceptions import NoSuchElementException
 
 '''
-# TODO1: when logged in, login and register button under settings will disappear
-# TODO2: when logged in, name of user should appear
-# TODO3: register a test account -> test sign in
-# TODO4: next to the word president has a comma, it is clickable to login with admin
+# TODO1: register a test account -> test sign in
+# TODO2: next to the word president has a comma, it is clickable to login with admin
 
 test account:
 email: test1@email.com
