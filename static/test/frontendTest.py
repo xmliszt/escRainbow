@@ -16,7 +16,7 @@ password: !1234567Aa
 '''
 
 
-class frontendTest(unittest.TestCase):
+class FrontendTest(unittest.TestCase):
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -29,8 +29,8 @@ class frontendTest(unittest.TestCase):
         driver.get("https://alpha-holding.herokuapp.com/")
         time.sleep(5)
 
-        # get icon for chat
-        chat_icon = driver.find_element_by_class_name("toggle-chat-btn")
+        # click chat icon
+        chat_icon = driver.find_element_by_xpath('/html/body/div[13]/div[2]')
         chat_icon.click()
         time.sleep(3)
 
@@ -110,7 +110,8 @@ class frontendTest(unittest.TestCase):
     # chat name should be username instead of 'Guest' when login
     def chat_name(self):
         # get icon for chat
-        chat_icon = self.driver.find_element_by_class_name("toggle-chat-btn")
+        chat_icon = self.driver.find_element_by_xpath(
+            '/html/body/div[13]/div[2]')
         chat_icon.click()
         time.sleep(3)
 
