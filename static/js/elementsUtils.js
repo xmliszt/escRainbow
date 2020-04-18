@@ -1,7 +1,6 @@
 import {disconnect, callAgent} from "./../js/agentConnUtils.js";
 import {current_query, generateBotChoicesBubble} from "./../js/chatBotChoice.js";
 
-
 var agent_response_count = 0;
 var call_request_count = 0;
 var timeoutEvent;
@@ -110,6 +109,7 @@ function getDateTime() {
 }
 
 function generateSendBubble(message) {
+    console.log("HELLO WORLD")
     var dateTime = getDateTime();
     var name = document.getElementById("titleText").innerHTML;
     if (name == "ALPHA"){
@@ -292,5 +292,7 @@ export {
     createResponseWithAjaxForButton,
     generateButton,
     createAjax,
-    waitSeconds
+    waitSeconds,
+    cancelAgentCall,
+    sendReminderForInactivity
 };

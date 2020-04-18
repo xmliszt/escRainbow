@@ -7,7 +7,7 @@ const uri = "mongodb+srv://alpha-holding:~!@SUTDsutd123@alpha-cluster-0-ruglw.mo
 
 // const uri = process.env.MONGODB_URI;  // PRODUCTION
 const dbName = "alphaDB";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
+const client = new MongoClient(uri, {useMongoClient:true, useNewUrlParser: true, useUnifiedTopology: true});
 
 async function createUniqueCollection(collecitonName){
     client.connect(async err=>{

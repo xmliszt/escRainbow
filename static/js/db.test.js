@@ -1,7 +1,7 @@
 const { MongoClient } = require("mongodb");
-const db = require("./../js/db.js").dbUtils;
-const url = "mongodb://localhost:27017/alphadb";
-const dbName = "alphadb";
+const db = require("./db.js").dbUtils;
+const url = "mongodb+srv://alpha-holding:~!@SUTDsutd123@alpha-cluster-0-ruglw.mongodb.net/test?retryWrites=true";
+const dbName = "alphaDB";
 
 describe("Test the insert function", () => {
   let connection;
