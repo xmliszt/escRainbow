@@ -3,11 +3,11 @@ const MongoClient = require('mongodb').MongoClient;
 /**
  * FOR DEV ONLY
  */
-// const uri = "mongodb+srv://alpha-holding:~!@SUTDsutd123@alpha-cluster-0-ruglw.mongodb.net/test?retryWrites=true";
+const uri = "mongodb+srv://alpha-holding:~!@SUTDsutd123@alpha-cluster-0-ruglw.mongodb.net/test?retryWrites=true";
 
-const uri = process.env.MONGODB_URI;  // PRODUCTION
+// const uri = process.env.MONGODB_URI;  // PRODUCTION
 const dbName = "alphaDB";
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true});
+const client = new MongoClient(uri, {useMongoClient:true, useNewUrlParser: true, useUnifiedTopology: true});
 
 async function createUniqueCollection(collecitonName){
     client.connect(async err=>{
