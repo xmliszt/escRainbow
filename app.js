@@ -287,7 +287,7 @@ app.route('/su')
     var credential = req.body;
     var username = credential.username;
     var password = credential.password;
-    var adminUser = await db.search({username: username}, "Users");
+    var adminUser = await db.collection(USERS).findOne({username: username});
     if (adminUser){
         var DPassword = Secret_Crypto.decrypt(adminUser.password);
         if (password == DPassword){
