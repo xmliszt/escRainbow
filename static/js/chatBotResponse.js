@@ -1,3 +1,7 @@
+import { generateResponseBubble, waitSeconds } from "./../js/elementsUtils.js";
+
+import {generateBotChoicesBubble} from "./../js/chatBotChoice.js";
+
 function botTextResponse(message){
     if (message.toLowerCase() == "help"){
         waitSeconds(1, generateBotChoicesBubble);
@@ -11,3 +15,5 @@ function botTextResponse(message){
         return;
     }
 }
+
+export {botTextResponse};

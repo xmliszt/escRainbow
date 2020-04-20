@@ -1,19 +1,21 @@
+import {disconnect, callAgent} from "./../js/agentConnUtils.js";
+import {current_query, generateBotChoicesBubble} from "./../js/chatBotChoice.js";
+
 var agent_response_count = 0;
 var call_request_count = 0;
-var mConversation;
-var agentInfo;
-var intervalEvent;
 var timeoutEvent;
 var timeoutEvent2;
+var agent_btn = 0;
+
 
 function waitSeconds(seconds, callback) {
     setTimeout(callback, seconds * 1000);
 }
 
 function cancelAgentCall(){
-    clearInterval(intervalEvent);
     stopTimeOutEvent();
-    generateResponseBubble("Sorry all our agents are currently busy! Please try again later!", 0);
+    disconnect();
+    generateResponseBubble("Connection to agents has been terminated! Please try again!", 0);
 }
 
 function startTimeOutForReminder(minutes){
@@ -30,8 +32,8 @@ function startTimeOutForDisconnection(minutes){
 }
 
 function startTimeOutForTerminateCallAgent(minutes){
+    timeoutEvent2 = setTimeout(generateConnectionReminderBubble.bind(this, "All our agents are still busy, we are still trying out best to connect you... [The connection will be auto terminated after 30 seconds]", 0), 0.5*60*1000);
     timeoutEvent = setTimeout(cancelAgentCall, minutes*60*1000);
-    timeoutEvent2 = setTimeout(generateConnectionReminderBubble.bind(this, "All our agents are still busy, we are still trying out best to connect you!", 0), 0.5*60*1000);
 }
 
 function sendReminderForInactivity(){
@@ -96,13 +98,6 @@ function scrollToBottom() {
     element.scrollTop = element.scrollHeight;
 }
 
-function getPartFromURL(url, index) {
-    const mURL = new URL(url);
-    var pathName = mURL.pathname;
-    var paths = pathName.split("/");
-    return paths[index];
-}
-
 function getDateTime() {
     var today = new Date();
     var date = today.getFullYear() + "-" + (
@@ -114,6 +109,7 @@ function getDateTime() {
 }
 
 function generateSendBubble(message) {
+    console.log("HELLO WORLD")
     var dateTime = getDateTime();
     var name = document.getElementById("titleText").innerHTML;
     if (name == "ALPHA"){
@@ -122,7 +118,7 @@ function generateSendBubble(message) {
     var bubble = $(`
     <div style="text-align: right">
         <span class="msg_head_send">${name}</span>
-        <div>
+        <div style="display: flex; justify-content: flex-end;">
             <div class="msg_cotainer_send">  
                 <span class="msg_body">${message}</span><br>
             </div>
@@ -142,7 +138,7 @@ function generateSendBubbleConnectingAgent(message) {
     var bubble = $(`
     <div style="text-align: right">
         <span class="msg_head_send">${name}</span>
-        <div>
+        <div style="display: flex; justify-content: flex-end;">
             <div class="msg_cotainer_send">  
                 <span class="msg_body">${message}</span><br>
             </div>
@@ -151,32 +147,47 @@ function generateSendBubbleConnectingAgent(message) {
     </div>`);
     $('#conversation_body').append(bubble);
     $(`#cancel-${call_request_count}`).click(function(){
-        stopTimeOutEvent();
-        generateResponseBubble("Connection has been cancelled!", 0);
+        cancelAgentCall();
         waitSeconds(1, generateBotChoicesBubble);
     });
     call_request_count += 1;
     scrollToBottom();
 }
 
-function generateResponseBubble(response, from) {
+function generateResponseBubble(response, from, agentBtn=true) {
     var dateTime = getDateTime();
-    var responseBubble = $(`
-    <div>
-        <span class="msg_head">${
-        from == 0 ? "Mr. Bot" : "Agent " + from
-    }</span>
+    if (agentBtn){
+        var responseBubble = $(`
         <div>
-            <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span> 
-                <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span> 
+                    <p style="color: #4065a1; font-size: 10px !important; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-1-${agent_btn}"> to connect with agents.</p>
+                </div>
             </div>
-        </div>
-        <span class="msg_time">${dateTime}</span><br>
-    </div>`);
+            <span class="msg_time">${dateTime}</span><br>
+        </div>`);
+    } else {
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span> 
+                </div>
+            </div>
+            <span class="msg_time">${dateTime}</span><br>
+        </div>`);
+    }
     $("#conversation_body").append(responseBubble);
-    $(`#agent-${agent_btn}`).click(callAgent);
+    $(`#agent-1-${agent_btn}`).click(callAgent);
     agent_btn += 1;
+
     scrollToBottom();
 }
 
@@ -185,7 +196,7 @@ function generateConnectionReminderBubble(response, from){
     var responseBubble = $(`
     <div>
         <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
-        <div>
+        <div style="display: flex; justify-content: flex-start;">
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span> 
             </div>
@@ -194,8 +205,7 @@ function generateConnectionReminderBubble(response, from){
     </div>`);
     $('#conversation_body').append(responseBubble);
     $(`#cancel-${call_request_count}`).click(function(){
-        stopTimeOutEvent();
-        generateResponseBubble("Connection has been cancelled!", 0);
+        cancelAgentCall();
         waitSeconds(1, generateBotChoicesBubble);
     });
     call_request_count += 1;
@@ -209,7 +219,7 @@ function generateResponseBubbleForAgent(response, from){
         <span class="msg_head">${
         from == 0 ? "Mr. Bot" : "Agent " + from
     }</span>
-        <div>
+        <div style="display: flex; justify-content: flex-start;">
             <div class="msg_cotainer">  
                 <span class="msg_body">${response}</span>
             </div>
@@ -222,32 +232,67 @@ function generateResponseBubbleForAgent(response, from){
     scrollToBottom();
 }
 
-function generateResponseBubbleWithInsertionElements(response, from, elements) {
+function generateResponseBubbleWithInsertionElements(response, from, elements, agentBtn=true) {
     var dateTime = getDateTime();
-    var responseBubble = $(`
-    <div>
-        <span class="msg_head">${
-        from == 0 ? "Mr. Bot" : "Agent " + from
-    }</span>
+    if (agentBtn){
+        var responseBubble = $(`
         <div>
-            <div class="msg_cotainer">  
-                <span class="msg_body">${response}</span><br> 
-                ${elements.join("")} 
-                <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-${agent_btn}"> to connect with agents.</p>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span><br> 
+                    ${elements.join("")} 
+                    <p style="color: #4065a1; font-size: 10px !important; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-2-${agent_btn}"> to connect with agents.</p>
+                </div>
+                
             </div>
-            
-        </div>
-        <span class="msg_time">${dateTime}</span>
-    </div>`);
+            <span class="msg_time">${dateTime}</span>
+        </div>`);
+
+    } else {
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span><br> 
+                    ${elements.join("")} 
+                </div>
+                
+            </div>
+            <span class="msg_time">${dateTime}</span>
+        </div>`);
+    }
     $("#conversation_body").append(responseBubble);
-    $(`#agent-${agent_btn}`).click(callAgent);
+    $(`#agent-2-${agent_btn}`).click(callAgent);
     agent_btn += 1;
     scrollToBottom();
 }
 
-module.exports = {
+export {
+    stopTimeOutEvent, 
+    generateConnectionReminderBubble,
+    generateResponseBubble,
+    generateResponseBubbleForAgent,
+    generateResponseBubbleWithInsertionElements,
+    generateSendBubble,
+    generateSendBubbleConnectingAgent,
+    startTimeOutForDisconnection,
+    startTimeOutForReminder,
+    startTimeOutForTerminateCallAgent,
+    getDateTime,
+    scrollToBottom,
+    createCallbackResponseForButton,
+    createResponseMessageForButton,
+    createResponseMessageWithChoicesForButton,
+    createResponseWithAjaxForButton,
+    generateButton,
+    createAjax,
     waitSeconds,
-    intervalCallAgent,
-    getPartFromURL,
-    getDateTime
+    cancelAgentCall,
+    sendReminderForInactivity
 };

@@ -1,10 +1,35 @@
-var cloneCount = 0;
+import { initialize } from "./../js/initialize.js";
+import rainbowSDK from './../js/rainbow-sdk.min.js';
+import {disconnect, mConversation} from "./../js/agentConnUtils.js";
+import {generateBotChoicesBubble} from "./../js/chatBotChoice.js";
+import {botTextResponse} from "./../js/chatBotResponse.js"
+import {stopTimeOutEvent,generateSendBubble,startTimeOutForReminder, createAjax} from './../js/elementsUtils.js';
+
 var hasOpened = false;
 var message;
-var FN;
-var LN;
+var reloaded = false;
+
 
 $(document).ready(function() {
+  if (window.location.protocol !== 'https:') {
+      window.location.replace(`https:${location.href.substring(location.protocol.length)}`);
+  }
+  authorizeDevice();
+  // initialize rainbow SD
+  initialize();
+
+  if (performance.navigation.type == 1) {
+    if (localStorage.getItem("conversation")){
+      reloaded = true;
+      window.alert("You have an un-terminated conversation! Page reloading has closed it for you.");
+      disconnect();
+    }
+    setTimeout(disconnect, 2000);
+  }
+
+  $("#secret-path").click(()=>{
+    window.location.replace("/su");
+  });
   $(".navbar a, footer a[href='#top']").on("click", function(event) {
     // Make sure this.hash has a value before overriding default behavior
     if (this.hash !== "") {
@@ -59,39 +84,11 @@ $(document).ready(function() {
     });
   });
 
-  // initialize rainbow SD
-  initialize();
-
-  initialize();
-
-  if (performance.navigation.type == performance.navigation.TYPE_RELOAD) {
-    console.info("Page reloaded!");
-    if (agentInfo) {
-      $.ajax({
-        url: "/disconnect",
-        type: "POST",
-        data: {
-          agentID: agentInfo.id
-        },
-        success: function(data, status, els) {
-          console.log(`Agent [${data.id}] freed successfully!`);
-        },
-        error: function(err) {
-          console.error(err.responseText);
-        }
-      });
-    }
-    var myCookies = document.cookie;
-    if (myCookies) {
-      console.log(`cookie: ${myCookies}`);
-    }
-  }
-
   $(".chat").hide();
 
   $(".chat-img").click(function() {
     if (!hasOpened) {
-      generateBotChoicesBubble();
+      if (!reloaded) generateBotChoicesBubble();
       hasOpened = true;
     }
     $(".chat").show();
@@ -100,7 +97,7 @@ $(document).ready(function() {
     $(".toggle-chat-btn").hide();
   });
 
-  $("#sendBtn").click(function() {
+  $("#input-form").submit(function() {
     // append chat message bubble
     message = $("#userInputMsg").val();
     generateSendBubble(message);
@@ -110,41 +107,6 @@ $(document).ready(function() {
       startTimeOutForReminder(3);
     } else {
       botTextResponse(message);
-    }
-    document.getElementById("userInputMsg").value = "";
-  });
-
-  $(".chat").hide();
-
-  $(".chat-img").click(function() {
-    if (!hasOpened) {
-      generateBotChoicesBubble();
-      hasOpened = true;
-    }
-    $(".chat").show();
-    $(".chat").animate(
-      {
-        opacity: "1.0",
-        bottom: "20px"
-      },
-      "slow"
-    );
-    $(".toggle-chat-btn").animate(
-      {
-        opacity: "0.0"
-      },
-      "slow"
-    );
-    $(".toggle-chat-btn").hide();
-  });
-
-  $("form").submit(function(e) {
-    e.preventDefault();
-    // append chat message bubble
-    message = $("#userInputMsg").val();
-    generateSendBubble(message);
-    if (mConversation) {
-      rainbowSDK.im.sendMessageToConversation(mConversation, message);
     }
     document.getElementById("userInputMsg").value = "";
   });
@@ -270,3 +232,37 @@ $(document).ready(function() {
     }
   });
 });
+
+
+function authorizeDevice(){
+  navigator.mediaDevices.getUserMedia({audio: true, video: true}).then((stream)=>{
+    stream.getTracks().forEach((track) =>{
+      track.stop();
+    });
+    navigator.mediaDevices.enumerateDevices().then((devices)=>{
+      devices.forEach((device)=>{
+        switch(device.kind) {
+          case "audioinput":
+            localStorage.setItem("microphone", device.deviceId);
+            rainbowSDK.webRTC.useMicrophone(device.deviceId);
+            break;
+          case "audiooutput":
+            localStorage.setItem("speaker", device.deviceId);
+            rainbowSDK.webRTC.useSpeaker(device.deviceId);
+            break;
+          case "videoinput":
+            localStorage.setItem("camera", device.deviceId);
+            rainbowSDK.webRTC.useCamera(device.deviceId);
+
+            break;
+          default:
+            break;
+        }
+      });
+    }).catch((error)=>{
+      console.error("Error in enumerating the devices!");
+    });
+  }).catch((error)=>{
+    console.error("Error in authorizing the application to access media devices!");
+  });
+}

@@ -1,0 +1,78 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="/js/jquery/dist/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <title>Admin Login</title>
+</head>
+<body>
+    <div class="jumbotron">
+        <h1 class="display display-4">Admin Login</h1>
+        <button class="btn btn-primary" id="homeBtn">Back Home</button>
+    </div>
+    <div class="container">
+        <p id="alert" style="display: none; color: red"></p>
+    </div>
+    <div class="container">
+        <form>
+            <div class="form-group">
+                <label for="adminUsername">Username:</label>
+                <div class="input-group">
+                    <input class="form-control" id="adminUsername" type="text" name="username" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="adminPassword">Password:</label>
+                <div class="input-group">
+                    <input class="form-control" id="adminPassword" type="password" name="password" required><br>
+                </div>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-success" type="submit" id="submitBtnAdmin">Login</button>
+            </div>
+        </form>
+    </div>
+    
+    
+    <script>
+        $('#homeBtn').click(() => {
+            window.location.href = "/";
+        });
+        $('form').submit((e)=>{
+            e.preventDefault();
+            var username = $('#adminUsername').val();
+            var password = $('#adminPassword').val();
+            if (username && password){
+                $.ajax({
+                    url: '/su',
+                    data: {
+                        username: username,
+                        password: password
+                    },
+                    type: 'POST',
+                    success: (data, msg, jqXHR) =>{
+                        console.log(jqXHR.status);
+                        if (jqXHR.status == 200){
+                            // login successfully
+                            // go to add agent page
+                            window.location.replace("/su/dashboard");
+                        }
+                    },
+                    error: (jqXHR) => {
+                        console.log(jqXHR.status);
+                        if (jqXHR.status == 401){
+                            var warning = jqXHR.responseText;
+                            $('#alert').html(warning);
+                            $('#alert').show();
+                        }
+                    }
+                });
+            }
+            
+        });
+    </script>
+</body>
+</html>

@@ -1,6 +1,18 @@
+import {
+    generateResponseBubble,
+    generateResponseBubbleWithInsertionElements,
+    getDateTime,
+    scrollToBottom,
+    createCallbackResponseForButton,
+    createResponseMessageForButton,
+    generateButton,
+    waitSeconds
+} from "./../js/elementsUtils.js";
+
+
 var current_query = 0;
 var subResponseCount = 0;
-var agent_btn = 0;
+var cloneCount = 0;
 
 function generateBotChoicesBubble(){
     var dateTime = getDateTime();
@@ -101,8 +113,8 @@ function generateBotChoicesBubble(){
                         // if customer is already signed in (for all below)
                         generateResponseBubble("Please key in your card number", 0); 
                         //set time out 
-                        waitSeconds(2, generateResponseBubble.bind(this, "Card number matched records. We are deactivating your card now... Please wait.", 0))
-                        waitSeconds(10, generateResponseBubble.bind(this, "Successful deactivation of card!", 0))
+                        waitSeconds(2, generateResponseBubble.bind(this, "Card number matched records. We are deactivating your card now... Please wait.", 0));
+                        waitSeconds(10, generateResponseBubble.bind(this, "Successful deactivation of card!", 0));
                         var elements = [
                             generateButton(`cd-sub1-${subResponseCount*5+0}`, "Yes", 0),
                             generateButton(`cd-sub1-${subResponseCount*5+1}`, "Nope", 1)
@@ -243,7 +255,8 @@ function generateBotChoicesBubble(){
         console.log("Query set to 3");
 
     }); 
-
     cloneCount += 1;
 
 }
+
+export {generateBotChoicesBubble, current_query};
