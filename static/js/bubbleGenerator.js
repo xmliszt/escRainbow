@@ -1,18 +1,188 @@
-import {
-    generateResponseBubble,
-    generateResponseBubbleWithInsertionElements,
-    getDateTime,
-    scrollToBottom,
-    createCallbackResponseForButton,
-    createResponseMessageForButton,
-    generateButton,
-    waitSeconds
-} from "./../js/elementsUtils.js";
+import {getDateTime, generateButton} from "./../js/elementsUtils.js";
+import {callAgent, disconnect} from "./../js/agentConnUtils.js";
+import {waitSeconds, stopTimeOutEvent} from "./../js/timeUtil.js";
+import {createCallbackResponseForButton, createResponseMessageForButton} from "./../js/buttonActionCreator.js";
 
-
-var current_query = 0;
+var agent_response_count = 0;
+var call_request_count = 0;
 var subResponseCount = 0;
 var cloneCount = 0;
+var agent_btn = 0;
+
+function scrollToBottom() {
+    var element = document.getElementById("conversation_body");
+    element.scrollTop = element.scrollHeight;
+}
+
+function cancelAgentCall() {
+    stopTimeOutEvent();
+    disconnect();
+    generateResponseBubble("Connection to agents has been terminated! Please try again!", 0);
+}
+
+function generateSendBubble(message) {
+    console.log("HELLO WORLD")
+    var dateTime = getDateTime();
+    var name = document.getElementById("titleText").innerHTML;
+    if (name == "ALPHA"){
+        name = "Guest";
+    }
+    var bubble = $(`
+    <div style="text-align: right">
+        <span class="msg_head_send">${name}</span>
+        <div style="display: flex; justify-content: flex-end;">
+            <div class="msg_cotainer_send">  
+                <span class="msg_body">${message}</span><br>
+            </div>
+        </div>
+        <span class="msg_time_send">${dateTime}</span>
+    </div>`);
+    $("#conversation_body").append(bubble);
+    scrollToBottom();
+}
+
+function generateSendBubbleConnectingAgent(message) {
+    var dateTime = getDateTime();
+    var name = document.getElementById("titleText").innerHTML;
+    if (name == "ALPHA"){
+        name = "Guest";
+    }
+    var bubble = $(`
+    <div style="text-align: right">
+        <span class="msg_head_send">${name}</span>
+        <div style="display: flex; justify-content: flex-end;">
+            <div class="msg_cotainer_send">  
+                <span class="msg_body">${message}</span><br>
+            </div>
+        </div>
+        <span class="msg_time_send">${dateTime}</span><span class="msg_disconnect" id="cancel-${call_request_count}">CANCEL CONNECTION</span><br>
+    </div>`);
+    $('#conversation_body').append(bubble);
+    $(`#cancel-${call_request_count}`).click(function(){
+        cancelAgentCall();
+        waitSeconds(1, generateBotChoicesBubble);
+    });
+    call_request_count += 1;
+    scrollToBottom();
+}
+
+function generateResponseBubble(response, from, agentBtn=true) {
+    var dateTime = getDateTime();
+    if (agentBtn){
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span> 
+                    <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-1-${agent_btn}"> to connect with agents.</p>
+                </div>
+            </div>
+            <span class="msg_time">${dateTime}</span><br>
+        </div>`);
+    } else {
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span> 
+                </div>
+            </div>
+            <span class="msg_time">${dateTime}</span><br>
+        </div>`);
+    }
+    $("#conversation_body").append(responseBubble);
+    $(`#agent-1-${agent_btn}`).click(callAgent);
+    agent_btn += 1;
+    scrollToBottom();
+}
+
+function generateConnectionReminderBubble(response, from){
+    var dateTime = getDateTime();
+    var responseBubble = $(`
+    <div>
+        <span class="msg_head">${from==0 ? "Mr. Bot" : "Agent "+from}</span>
+        <div style="display: flex; justify-content: flex-start;">
+            <div class="msg_cotainer">  
+                <span class="msg_body">${response}</span> 
+            </div>
+        </div>
+        <span class="msg_time_send">${dateTime}</span><span class="msg_disconnect" id="cancel-${call_request_count}">CANCEL CONNECTION</span><br>
+    </div>`);
+    $('#conversation_body').append(responseBubble);
+    $(`#cancel-${call_request_count}`).click(function(){
+        cancelAgentCall();
+        waitSeconds(1, generateBotChoicesBubble);
+    });
+    call_request_count += 1;
+    scrollToBottom();
+}
+
+function generateResponseBubbleForAgent(response, from){
+    var dateTime = getDateTime();
+    var responseBubble = $(`
+    <div>
+        <span class="msg_head">${
+        from == 0 ? "Mr. Bot" : "Agent " + from
+    }</span>
+        <div style="display: flex; justify-content: flex-start;">
+            <div class="msg_cotainer">  
+                <span class="msg_body">${response}</span>
+            </div>
+        </div>
+        <span class="msg_time">${dateTime}</span><span class="msg_disconnect" id="disconnect-${agent_response_count}"> DISCONNECT</span><br>
+    </div>`);
+    $("#conversation_body").append(responseBubble);
+    $(`#disconnect-${agent_response_count}`).click(disconnect);
+    agent_response_count += 1;
+    scrollToBottom();
+}
+
+function generateResponseBubbleWithInsertionElements(response, from, elements, agentBtn=true) {
+    var dateTime = getDateTime();
+    if (agentBtn){
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span><br> 
+                    ${elements.join("")} 
+                    <p style="color: #4065a1; font-size: 10px; margin-top: 8px">Click <img class="agent-icon" src="/icon/agent.png" id="agent-2-${agent_btn}"> to connect with agents.</p>
+                </div>
+                
+            </div>
+            <span class="msg_time">${dateTime}</span>
+        </div>`);
+
+    } else {
+        var responseBubble = $(`
+        <div>
+            <span class="msg_head">${
+            from == 0 ? "Mr. Bot" : "Agent " + from
+        }</span>
+            <div style="display: flex; justify-content: flex-start;">
+                <div class="msg_cotainer">  
+                    <span class="msg_body">${response}</span><br> 
+                    ${elements.join("")} 
+                </div>
+                
+            </div>
+            <span class="msg_time">${dateTime}</span>
+        </div>`);
+    }
+    $("#conversation_body").append(responseBubble);
+    $(`#agent-2-${agent_btn}`).click(callAgent);
+    agent_btn += 1;
+    scrollToBottom();
+}
 
 function generateBotChoicesBubble(){
     var dateTime = getDateTime();
@@ -91,7 +261,7 @@ function generateBotChoicesBubble(){
             createResponseMessageForButton(`#ge-sub-sub${subResponseCount*5+1}`, msg2, 0);
             subResponseCount ++;
         }); 
-        current_query = 0;
+        localStorage.setItem("userQuery", "0");
         console.log("Query set to 0");
      });
 
@@ -146,7 +316,7 @@ function generateBotChoicesBubble(){
     
         createResponseMessageForButton(`#cd-${subResponseCount*5+1}`, "If you have any queries, click the button below to talk to our agents.", 0); 
         subResponseCount ++;
-        current_query = 1;
+        localStorage.setItem("userQuery", "1");
         console.log("Query set to 1");
     });
 
@@ -214,7 +384,7 @@ function generateBotChoicesBubble(){
             });
         });
         subResponseCount++;
-        current_query = 2;
+        localStorage.setItem("userQuery", "2");
         console.log("Query set to 2");
     });
 
@@ -251,12 +421,21 @@ function generateBotChoicesBubble(){
             }
         });
         subResponseCount ++;
-        current_query = 3;
+        localStorage.setItem("userQuery", "3");
         console.log("Query set to 3");
 
     }); 
     cloneCount += 1;
-
 }
 
-export {generateBotChoicesBubble, current_query};
+
+export {
+    generateConnectionReminderBubble,
+    generateResponseBubble,
+    generateResponseBubbleForAgent,
+    generateResponseBubbleWithInsertionElements,
+    generateSendBubble,
+    generateSendBubbleConnectingAgent,
+    generateBotChoicesBubble,
+    cancelAgentCall
+}

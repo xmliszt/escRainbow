@@ -1,21 +1,16 @@
-import { initialize } from "./../js/initialize.js";
+import {initialize} from "./../js/initialize.js";
 import rainbowSDK from './../js/rainbow-sdk.min.js';
 import {disconnect, mConversation} from "./../js/agentConnUtils.js";
-import {generateBotChoicesBubble} from "./../js/chatBotChoice.js";
 import {botTextResponse} from "./../js/chatBotResponse.js"
-import {stopTimeOutEvent,generateSendBubble,startTimeOutForReminder, createAjax} from './../js/elementsUtils.js';
+import {generateSendBubble, generateBotChoicesBubble} from './../js/bubbleGenerator.js';
+import {stopTimeOutEvent, startTimeOutForReminder} from "./../js/timeUtil.js";
 
 var hasOpened = false;
 var message;
 var reloaded = false;
 
-
 $(document).ready(function() {
-  // if (window.location.protocol !== 'https:') {
-  //     window.location.replace(`https:${location.href.substring(location.protocol.length)}`);
-  // }
-  // authorizeDevice();
-  // initialize rainbow SD
+
   initialize();
 
   if (performance.navigation.type == 1) {
@@ -132,9 +127,13 @@ $(document).ready(function() {
   $("#quit").click(function() {
     var decision = confirm("Logout will erase all dialogue history.");
     if (decision) {
-      createAjax("GET", "/logout", {}, function(data) {
-        window.alert("You have been logged out successfully!");
-        window.location.reload();
+      $.ajax({
+        type: "GET",
+        url: "/logout",
+        success: (data) =>{
+          window.alert("You have been logged out successfully!");
+          window.location.reload();
+        }
       });
     }
   });

@@ -1,13 +1,8 @@
 import rainbowSDK from './../js/rainbow-sdk.min.js';
-import {generateResponseBubbleForAgent, 
-    generateResponseBubbleWithInsertionElements, 
-    generateButton, 
-    createCallbackResponseForButton,
-    generateSendBubble,
-    generateResponseBubble,
-    stopTimeOutEvent,
-    startTimeOutForReminder
-} from './../js/elementsUtils.js';
+import {generateButton} from './../js/elementsUtils.js';
+import {generateResponseBubbleForAgent, generateResponseBubbleWithInsertionElements, generateResponseBubble} from "./../js/bubbleGenerator.js";
+import {stopTimeOutEvent, startTimeOutForReminder} from "./../js/timeUtil.js";
+import {createCallbackResponseForButton} from "./../js/buttonActionCreator.js";
 
 var call_count = 0;
 
