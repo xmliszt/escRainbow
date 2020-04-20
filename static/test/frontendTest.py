@@ -3,6 +3,12 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.chrome.options import Options
+
 
 '''
 # TODO1: register a test account -> test sign in
@@ -19,6 +25,8 @@ password: !1234567Aa
 class FrontendTest(unittest.TestCase):
 
     def setUp(self):
+        # option = Options()
+        # option.headless = False
         self.driver = webdriver.Chrome()
 
     '''Supporting functions'''
@@ -26,36 +34,82 @@ class FrontendTest(unittest.TestCase):
     # supporting function to enter username and password
     def username_password(self, username_input, password_input):
         driver = self.driver
-        driver.get("https://alpha-holding.herokuapp.com/")
-        time.sleep(5)
-
-        # click chat icon
-        chat_icon = driver.find_element_by_xpath('/html/body/div[13]/div[2]')
-        chat_icon.click()
+        driver.maximize_window()
         time.sleep(3)
+        driver.get("https://alpha-holding.herokuapp.com/")
+        # time.sleep(5)
+        DELAY = 10
+        # t = time.time()
+        # driver.set_page_load_timeout(10)
+
+        # try:
+        #     driver.get('http://www.tibetculture.net/2012zyzy/zx/201509/t20150915_3939844.html')
+        # except TimeoutException:
+        #     driver.execute_script("window.stop();")
+        #     print('Time consuming:', time.time() - t)
+
+        # wait till page is loaded fully and click on chat icon
+        try:
+            print('Hi i am in try loop')
+            # myElem = WebDriverWait(driver, DELAY).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[13]/div[2]'))).click()
+            # myElem = WebDriverWait(driver, DELAY).until(
+            # EC.element_to_be_clickable((By.CLASS_NAME, 'toggle-chat-btn'))).click()
+            chat_icon = WebDriverWait(driver, DELAY).until(
+                EC.element_to_be_clickable((By.XPATH, "/html/body/div[13]/div[2]")))
+            # chat_icon = driver.find_element_by_class_name('toggle-chat-btn')
+            # chat_icon.send_keys(Keys.SPACE)  # element not interactable
+            chat_icon.click()
+
+            # driver.find_element_by_xpath('/html/body/div[13]/div[2]').click()
+            print("Page is ready and chat icon is clicked!")
+        except Exception as e:
+            # print("Loading chat icon took too much time!")
+            print(e)
+
+        # # click chat icon
+        # try:
+        #     chat_icon = driver.find_element_by_xpath(
+        #         '/html/body/div[13]/div[2]')
+        #     driver.execute_script("arguments[0].click();", chat_icon)
+        #     time.sleep(3)
+        #     print("clicked chat icon")
+        # except Exception as e:
+        #     print(e)
+        # chat_icon.click()
 
         # check whether the when the chat icon is pressed, the style should change
-        assert int(driver.find_elements_by_css_selector(
-            '.chat')[0].value_of_css_property('opacity')) == 1
-        time.sleep(3)
+        try:
+            assert int(driver.find_elements_by_css_selector(
+                '.chat')[0].value_of_css_property('opacity')) == 1
+        except Exception as e:
+            print(e)
 
-        # click for card replacement
-        card_replacement = driver.find_element_by_xpath(
-            '//*[@id="1"]')
-        card_replacement.click()
-        time.sleep(3)
+        # wait till page is loaded fully, click for card replacement
+        try:
+            card_replacement = WebDriverWait(driver, DELAY).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="1"]')))
+            print("Card replacement is ready!")
+            card_replacement.click()
+        except TimeoutException:
+            print("Loading card replacement took too much time!")
 
-        # click for yes please
-        yes_please = driver.find_element_by_xpath(
-            '//*[@id="cd-0"]')
-        yes_please.click()
-        time.sleep(3)
+        # wait till page is loaded fully, click for yes please
+        try:
+            yes_please = WebDriverWait(driver, DELAY).until(
+                EC.element_to_be_clickable((By.XPATH, '//*[@id="cd-0"]')))
+            yes_please.click()
+            print("Yes please is ready!")
+        except TimeoutException:
+            print("Loading yes took too much time!")
 
-        # click to sign in
-        sign_in = driver.find_element_by_xpath(
-            '//*[@id="resignin-5"]')
-        sign_in.click()
-        time.sleep(3)
+        # wait till page is loaded fully, click to sign in
+        try:
+            sign_in = WebDriverWait(driver, DELAY).until(
+                EC.presence_of_element_located((By.XPATH, '//*[@id="resignin-5"]')))
+            sign_in.click()
+            print("Sign in is ready!")
+        except TimeoutException:
+            print("Loading sign in took too much time!")
 
         # enter username and password
         username = driver.find_element_by_id("usernameInput")
@@ -95,7 +149,7 @@ class FrontendTest(unittest.TestCase):
         except NoSuchElementException:
             return False
 
-            # login button should not exist
+        # login button should not exist
         try:
             login = self.driver.find_element_by_xpath('//*[@id="login"]')
         except NoSuchElementException:
