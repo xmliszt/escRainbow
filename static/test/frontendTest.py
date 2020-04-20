@@ -11,6 +11,9 @@ from selenium.webdriver.chrome.options import Options
 
 
 '''
+# TODO1: register a test account -> test sign in
+# TODO2: next to the word president has a comma, it is clickable to login with admin
+
 test account:
 email: test1@email.com
 first name: test_first
@@ -25,6 +28,7 @@ class FrontendTest(unittest.TestCase):
         # option = Options()
         # option.headless = False
         self.driver = webdriver.Chrome()
+        # self.driver = webdriver.Firefox(executable_path=".\\geckodriver.exe")
 
     '''Supporting functions'''
 
@@ -32,21 +36,22 @@ class FrontendTest(unittest.TestCase):
     def username_password(self, username_input, password_input):
         driver = self.driver
         driver.maximize_window()
-        time.sleep(3)
-        driver.get("https://alpha-holding.herokuapp.com/")
-        # time.sleep(5)
+        driver.get("http://localhost:5000/")
         DELAY = 10
 
         # wait till page is loaded fully and click on chat icon
         try:
+            WebDriverWait(driver, DELAY).until(
+                EC.presence_of_element_located((By.CLASS_NAME, 'chat-img')))
+            chat = WebDriverWait(driver, DELAY).until(
+                EC.invisibility_of_element_located((By.CLASS_NAME, 'chat')))
+            WebDriverWait(driver, DELAY).until(
+                EC.visibility_of_element_located((By.CLASS_NAME, 'toggle-chat-btn')))
             chat_icon = WebDriverWait(driver, DELAY).until(
-                EC.element_to_be_clickable((By.XPATH, "/html/body/div[13]/div[2]")))
-            location = chat_icon.location
-            print("location: ", location)
+                EC.element_to_be_clickable((By.CLASS_NAME, 'toggle-chat-btn')))
 
             chat_icon.click()
 
-            # driver.find_element_by_xpath('/html/body/div[13]/div[2]').click()
             print("Page is ready and chat icon is clicked!")
         except Exception as e:
             # print("Loading chat icon took too much time!")
@@ -91,9 +96,11 @@ class FrontendTest(unittest.TestCase):
         password = driver.find_element_by_id("passwordInput")
         time.sleep(3)
 
+        username.click()
         username.send_keys(username_input)
+        password.click()
         password.send_keys(password_input)
-        time.sleep(3)
+        # time.sleep(3)
 
         driver.find_element_by_xpath('//*[@id="login_btn"]').click()
         time.sleep(3)
@@ -101,21 +108,25 @@ class FrontendTest(unittest.TestCase):
     # alert will pop up for those who have not registered
     def alert_register(self):
         alert = self.driver.find_element_by_xpath('//*[@id="alertLogin"]')
-        time.sleep(3)
+        # time.sleep(3)
         self.assertIsNotNone(
             self.driver.find_element_by_id('signInRegisterBtn'))
 
     # accept alert
     def accept_alert(self):
         alert_obj = self.driver.switch_to.alert
-        time.sleep(3)
+        # time.sleep(3)
         alert_obj.accept()
-        time.sleep(5)
+        # time.sleep(5)
 
     # check whether logout appears and login and signin disappears
     def logout_appears_login_disappears(self):
-        logout = self.driver.find_element_by_xpath('//*[@id="quit"]')
-        time.sleep(1)
+        # here wait for webpage to be loaded again
+        driver = self.driver
+        logout = WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.XPATH, '//*[@id="quit"]')))
+        # logout = self.driver.find_element_by_xpath()
+        # time.sleep(1)
         self.assertIsNotNone(logout)
 
         # register button should not exist
@@ -142,13 +153,13 @@ class FrontendTest(unittest.TestCase):
         chat_icon = self.driver.find_element_by_xpath(
             '/html/body/div[13]/div[2]')
         chat_icon.click()
-        time.sleep(3)
+        # time.sleep(3)
 
         # click for card replacement
         card_replacement = self.driver.find_element_by_xpath(
             '//*[@id="1"]')
         card_replacement.click()
-        time.sleep(3)
+        # time.sleep(3)
 
         # check chat name
         name = self.driver.find_element_by_xpath(
@@ -157,23 +168,34 @@ class FrontendTest(unittest.TestCase):
 
     '''Testing'''
 
+    # test
     def test_username_password1(self):
         self.username_password('test1', 'test1')
         self.alert_register()
 
+    # test for blank string
     def test_username_password2(self):
         self.username_password('', '')
 
+    # test for format string values
     def test_username_password3(self):
-        self.username_password('%ssomething', '%d1234')
+        self.username_password('%ssomething\n', '%d1234\n')
+        self.alert_register()
+
+    # test for long strings
+    def test_username_password4(self):
+        self.username_password('long_string'*100, 'long_string'*100)
         self.alert_register()
 
     def test_login1(self):
-        self.username_password('test1@email.com', '!1234567Aa')
-        self.accept_alert()
-        self.logout_appears_login_disappears()
-        self.top_left_name()
-        self.chat_name()
+        try:
+            self.username_password('test1@email.com', '!1234567Aa')
+            self.accept_alert()
+            self.logout_appears_login_disappears()
+            self.top_left_name()
+            self.chat_name()
+        except Exception as e:
+            print(e)
 
     def tearDown(self):
         self.driver.close()
