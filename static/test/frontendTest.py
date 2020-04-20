@@ -11,9 +11,6 @@ from selenium.webdriver.chrome.options import Options
 
 
 '''
-# TODO1: register a test account -> test sign in
-# TODO2: next to the word president has a comma, it is clickable to login with admin
-
 test account:
 email: test1@email.com
 first name: test_first
@@ -39,25 +36,14 @@ class FrontendTest(unittest.TestCase):
         driver.get("https://alpha-holding.herokuapp.com/")
         # time.sleep(5)
         DELAY = 10
-        # t = time.time()
-        # driver.set_page_load_timeout(10)
-
-        # try:
-        #     driver.get('http://www.tibetculture.net/2012zyzy/zx/201509/t20150915_3939844.html')
-        # except TimeoutException:
-        #     driver.execute_script("window.stop();")
-        #     print('Time consuming:', time.time() - t)
 
         # wait till page is loaded fully and click on chat icon
         try:
-            print('Hi i am in try loop')
-            # myElem = WebDriverWait(driver, DELAY).until(EC.element_to_be_clickable((By.XPATH, '/html/body/div[13]/div[2]'))).click()
-            # myElem = WebDriverWait(driver, DELAY).until(
-            # EC.element_to_be_clickable((By.CLASS_NAME, 'toggle-chat-btn'))).click()
             chat_icon = WebDriverWait(driver, DELAY).until(
                 EC.element_to_be_clickable((By.XPATH, "/html/body/div[13]/div[2]")))
-            # chat_icon = driver.find_element_by_class_name('toggle-chat-btn')
-            # chat_icon.send_keys(Keys.SPACE)  # element not interactable
+            location = chat_icon.location
+            print("location: ", location)
+
             chat_icon.click()
 
             # driver.find_element_by_xpath('/html/body/div[13]/div[2]').click()
@@ -65,17 +51,6 @@ class FrontendTest(unittest.TestCase):
         except Exception as e:
             # print("Loading chat icon took too much time!")
             print(e)
-
-        # # click chat icon
-        # try:
-        #     chat_icon = driver.find_element_by_xpath(
-        #         '/html/body/div[13]/div[2]')
-        #     driver.execute_script("arguments[0].click();", chat_icon)
-        #     time.sleep(3)
-        #     print("clicked chat icon")
-        # except Exception as e:
-        #     print(e)
-        # chat_icon.click()
 
         # check whether the when the chat icon is pressed, the style should change
         try:
