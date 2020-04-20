@@ -8,7 +8,3 @@ process.env.NODE_ENV = "production";
 // app.listen(8080);
 app.app.listen(PORT, () => {
     console.log(`Our app is running on port ${ PORT }`);});
-
-
-// DEV
-// app.httpsServer.listen(8443);
