@@ -206,7 +206,7 @@ visibility: visible;
 }
 
 .container-flexbox{
-    z-index: 1000;
+    z-index: 99;
     position: fixed;
     display: flex;
     margin-right: 20px;
