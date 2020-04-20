@@ -11,10 +11,10 @@ var reloaded = false;
 
 
 $(document).ready(function() {
-  if (window.location.protocol !== 'https:') {
-      window.location.replace(`https:${location.href.substring(location.protocol.length)}`);
-  }
-  authorizeDevice();
+  // if (window.location.protocol !== 'https:') {
+  //     window.location.replace(`https:${location.href.substring(location.protocol.length)}`);
+  // }
+  // authorizeDevice();
   // initialize rainbow SD
   initialize();
 
