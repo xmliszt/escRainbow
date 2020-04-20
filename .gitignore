@@ -8,6 +8,10 @@ node_modules/
 /node_modules
 npm-debug.log
 /*.env
+chromedriver.exe
+geckodriver.exe
+geckodriver.log
+debug.log
 package-lock.json
 # ignore composer vendor directory
 /vendor
