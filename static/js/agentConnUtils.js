@@ -139,4 +139,4 @@ function cleanUpWhenConversationClosed(){
     });
 }
 
-export {disconnect, callAgent, mConversation, contact};
+export {disconnect, callAgent, connectAgent, mConversation, contact, cleanUpWhenConversationClosed};
