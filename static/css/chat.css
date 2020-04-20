@@ -19,7 +19,7 @@ a {
     text-decoration: none;
 }
 
-p {
+.p-lg {
     font-weight: 100 !important;
     font-size: 2rem !important;
 }
@@ -206,7 +206,7 @@ visibility: visible;
 }
 
 .container-flexbox{
-    z-index: 99;
+    z-index: 1000;
     position: fixed;
     display: flex;
     margin-right: 20px;

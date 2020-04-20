@@ -442,7 +442,7 @@ create agent and add to database
 | URL Params                 |                             None                             |
 | Data Params                | `{email: [String], password: [String], firstname: [String], lastname: [String]}, skill: [Number]` |
 | Success Response (code)    |                            200 OK                            |
-| Success Response (content) |                "Agent created successfully!"                 |
+| Success Response (content) |                `{agent: [Object]}`                |
 | Error Response (code)      |            401 UNAUTHORIZED, 500 NOT IMPLEMENTED             |
 | Error Response (content)   |         "Unauthorized access!", `{error: [Object]}`          |
 
@@ -461,6 +461,7 @@ $.ajax({
   },
   success: function(data) {
       //do something if created successfully
+      var agentObject = data.agent;
   },
   error: function(error){
       if (error.status === 401){

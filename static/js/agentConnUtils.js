@@ -1,13 +1,6 @@
 import rainbowSDK from './../js/rainbow-sdk.min.js';
-import {
-    stopTimeOutEvent, 
-    generateResponseBubble,
-    generateResponseBubbleForAgent,
-    generateSendBubble,
-    startTimeOutForReminder,
-    startTimeOutForTerminateCallAgent
-} from "./../js/elementsUtils.js";
-import {generateBotChoicesBubble, current_query} from "./../js/chatBotChoice.js";
+import {generateResponseBubble, generateResponseBubbleForAgent, generateSendBubble, generateBotChoicesBubble} from "./../js/bubbleGenerator.js";
+import {stopTimeOutEvent, startTimeOutForReminder, startTimeOutForTerminateCallAgent} from "./../js/timeUtil.js";
 
 var email;
 var pwd;
@@ -22,7 +15,7 @@ var timeOutForConnection;
 function connectAgent(){
     $.ajax({
         url: '/connect',
-        data: {request: current_query},
+        data: {request: Number(localStorage.getItem("userQuery"))},
         type: "POST",
         success: function(data, status, els){
             console.log("Connect to agent successfully!");
@@ -139,4 +132,4 @@ function cleanUpWhenConversationClosed(){
     });
 }
 
-export {disconnect, callAgent, mConversation, contact};
+export {disconnect, callAgent, connectAgent, mConversation, contact, cleanUpWhenConversationClosed};
