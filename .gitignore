@@ -15,7 +15,9 @@ debug.log
 package-lock.json
 # ignore composer vendor directory
 /vendor
-
+venv/
+/venv
+.vscode
 # ignore components loaded via Bower
 /bower_components
 
