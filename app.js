@@ -225,7 +225,7 @@ app.post('/disconnect', (req, res) => {
 app.post('/connect', async (req, res) => {
     var data = req.body;
     var query = data.request;
-    var agents = await db.collection(AGENTS).find({skill: Number(query)});
+    var agents = await db.collection(AGENTS).find({skill: Number(query)}).toArray();
     if (agents.length == 0){
         res.status(501).send({error: "No available agent found!"});
         res.end();
@@ -234,6 +234,7 @@ app.post('/connect', async (req, res) => {
         // sort agent according to priority scores
         agents.sort((a, b) => (a.priority > b.priority) ? 1 : -1);
         for (var i=0; i<agents.length; i++){
+            console.log(agents[i]);
             var agent = agents[i];
             // find a agent not busy
             if(!agent.busy){
@@ -252,10 +253,6 @@ app.post('/connect', async (req, res) => {
                 }
             }
         }
-        console.log("Not found!");
-        res.status(501).send({error: "No available agent found!"});
-        res.end();
-        return 1;
     }
 });
 
