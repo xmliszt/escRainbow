@@ -358,7 +358,7 @@ app.post('/su/create', async (req, res)=>{
 
 app.get("/su/dashboard/data", async(req, res) => {
     try{
-        var arrays = await db.collection(AGENTS).find({});
+        var arrays = await db.collection(AGENTS).find({}).toArray();
         res.status(200).send(arrays);
         res.end();
     } catch(err){
