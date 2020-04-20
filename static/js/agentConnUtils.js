@@ -1,7 +1,6 @@
 import rainbowSDK from './../js/rainbow-sdk.min.js';
 import {
     stopTimeOutEvent, 
-    stopIntervalEvent,
     generateResponseBubble,
     generateResponseBubbleForAgent,
     generateSendBubble,
@@ -15,9 +14,9 @@ var pwd;
 var agentName;
 var agentID;
 var conversationID;
-var intervalEvent;
 var mConversation;
 var contact;
+var timeOutForConnection;
 
 // simple version:  function for agent routing
 function connectAgent(){
@@ -26,7 +25,6 @@ function connectAgent(){
         data: {request: current_query},
         type: "POST",
         success: function(data, status, els){
-            stopIntervalEvent();
             console.log("Connect to agent successfully!");
             var agentInfo = data.info;
             console.log(agentInfo);
@@ -39,6 +37,7 @@ function connectAgent(){
                     mConversation = conversation;
                     console.log(`Conversation ${conversation.id} is opened successfully!`);
                     stopTimeOutEvent();
+                    clearTimeout(timeOutForConnection);
                     localStorage.setItem("conversation", conversation.id);
                     localStorage.setItem("agent-id", agentInfo.id);
                     localStorage.setItem("agent-name", agentInfo.name);
@@ -55,7 +54,7 @@ function connectAgent(){
         error: function(error){
             if (error.status == 501){
                 console.error("Unable to connect");
-                setTimeout(connectAgent, 2000);
+                timeOutForConnection = setTimeout(connectAgent, 2000);
                 console.info(error.responseJSON.error);
             }
         }
@@ -75,7 +74,6 @@ function callAgent(){
             rainbowSDK.connection.signin(email, pwd).then(success=>{
                 console.log(`Guest account sigin successfully! ${data.data.loginEmail}`);
                 connectAgent();
-                console.log("Creating Interval ID: " + intervalEvent);
                 startTimeOutForTerminateCallAgent(1);
             }).catch(err =>{
                 console.error("Failed to sign in guest account!");
@@ -89,6 +87,7 @@ function callAgent(){
 async function disconnect(){
     var storedConversation;
     stopTimeOutEvent();
+    clearTimeout(timeOutForConnection);
     conversationID = localStorage.getItem("conversation");
     agentID = localStorage.getItem("agent-id");
     agentName = localStorage.getItem("agent-name");
@@ -122,6 +121,7 @@ function cleanUpWhenConversationClosed(){
         type: 'POST',
         data: {agentID: agentID},
         success: function(data, status, els){
+            stopTimeOutEvent();
             console.log(`Agent [${data.id}] freed successfully!`);
             localStorage.removeItem("conversation");
             localStorage.removeItem("agent-id");
@@ -139,4 +139,4 @@ function cleanUpWhenConversationClosed(){
     });
 }
 
-export {disconnect, callAgent, intervalEvent, mConversation, contact};
+export {disconnect, callAgent, mConversation, contact};

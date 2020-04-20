@@ -1,7 +1,5 @@
-import {disconnect, callAgent, intervalEvent, contact} from "./../js/agentConnUtils.js";
-import {current_query} from "./../js/chatBotChoice.js";
-import rainbowSDK from './../js/rainbow-sdk.min.js';
-
+import {disconnect, callAgent} from "./../js/agentConnUtils.js";
+import {current_query, generateBotChoicesBubble} from "./../js/chatBotChoice.js";
 
 var agent_response_count = 0;
 var call_request_count = 0;
@@ -14,15 +12,10 @@ function waitSeconds(seconds, callback) {
     setTimeout(callback, seconds * 1000);
 }
 
-function stopIntervalEvent(){
-    console.log("Clearing Interval ID: " + intervalEvent);
-    clearInterval(intervalEvent);
-}
-
 function cancelAgentCall(){
-    stopIntervalEvent();
     stopTimeOutEvent();
-    generateResponseBubble("Sorry all our agents are currently busy! Please try again later!", 0);
+    disconnect();
+    generateResponseBubble("Connection to agents has been terminated! Please try again!", 0);
 }
 
 function startTimeOutForReminder(minutes){
@@ -32,8 +25,6 @@ function startTimeOutForReminder(minutes){
 function stopTimeOutEvent(){
     clearTimeout(timeoutEvent);
     clearTimeout(timeoutEvent2);
-    timeoutEvent = undefined;
-    timeoutEvent2 = undefined;
 }
 
 function startTimeOutForDisconnection(minutes){
@@ -41,7 +32,7 @@ function startTimeOutForDisconnection(minutes){
 }
 
 function startTimeOutForTerminateCallAgent(minutes){
-    timeoutEvent2 = setTimeout(generateConnectionReminderBubble.bind(this, "All our agents are still busy, we are still trying out best to connect you!", 0), 0.5*60*1000);
+    timeoutEvent2 = setTimeout(generateConnectionReminderBubble.bind(this, "All our agents are still busy, we are still trying out best to connect you... [The connection will be auto terminated after 30 seconds]", 0), 0.5*60*1000);
     timeoutEvent = setTimeout(cancelAgentCall, minutes*60*1000);
 }
 
@@ -118,6 +109,7 @@ function getDateTime() {
 }
 
 function generateSendBubble(message) {
+    console.log("HELLO WORLD")
     var dateTime = getDateTime();
     var name = document.getElementById("titleText").innerHTML;
     if (name == "ALPHA"){
@@ -156,7 +148,6 @@ function generateSendBubbleConnectingAgent(message) {
     $('#conversation_body').append(bubble);
     $(`#cancel-${call_request_count}`).click(function(){
         cancelAgentCall();
-        generateResponseBubble("Connection has been cancelled!", 0);
         waitSeconds(1, generateBotChoicesBubble);
     });
     call_request_count += 1;
@@ -215,7 +206,6 @@ function generateConnectionReminderBubble(response, from){
     $('#conversation_body').append(responseBubble);
     $(`#cancel-${call_request_count}`).click(function(){
         cancelAgentCall();
-        generateResponseBubble("Connection has been cancelled!", 0);
         waitSeconds(1, generateBotChoicesBubble);
     });
     call_request_count += 1;
@@ -285,7 +275,6 @@ function generateResponseBubbleWithInsertionElements(response, from, elements, a
 
 export {
     stopTimeOutEvent, 
-    stopIntervalEvent,
     generateConnectionReminderBubble,
     generateResponseBubble,
     generateResponseBubbleForAgent,
@@ -302,5 +291,8 @@ export {
     createResponseMessageWithChoicesForButton,
     createResponseWithAjaxForButton,
     generateButton,
-    createAjax
+    createAjax,
+    waitSeconds,
+    cancelAgentCall,
+    sendReminderForInactivity
 };

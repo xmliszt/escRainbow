@@ -6,18 +6,14 @@
 
 
 
-## Website
+## Access The Website
 
-Go to this website to try out our services!
-
-```bash
 https://alpha-holding.herokuapp.com/
-```
 
-## How To Test
+## Jest Testing
 
-Install relevant dependencies for testing.<br>
-We are using Jest as the code coverage testing framework
+Install relevant dependencies for testing.
+
 ```bash
 npm install --save-dev babel-cli babel-preset-env jest supertest superagent
 npm audit fix
@@ -50,6 +46,7 @@ npm test -- coverage
     name: [String],
     skill: [Number],
     id: [String],
+    email: [String],
     busy: [Boolean],
     priority: [Number]
 }
@@ -62,6 +59,7 @@ npm test -- coverage
     name: "Michalina Hebert",
     skill: 2,
     id: "5e5e23516c332176648fe58e",
+    email: "agent1@alpha.com",
     busy: false,
     priority: 0
 }
@@ -97,7 +95,7 @@ npm test -- coverage
 Render Alpha bank home page without any login
 | | |
 |:--|:----------------------:|
-|URL|/|
+|URL|`/`|
 |Method|`GET`|
 |URL Params| None|
 |Data Params| None|
@@ -129,7 +127,7 @@ A Auth token will be generated and stored in the cookie
 https://stackoverflow.com/questions/12840410/how-to-get-a-cookie-from-an-ajax-response
 | | |
 | :------------------------- | :-----------------------------------------: |
-| URL                        |                   /login                    |
+| URL                        |                  `/login`                  |
 | Method                     |                   `POST`                    |
 | URL Params                 |                    None                     |
 | Data Params                | `{username: [String], password: [String]}`  |
@@ -161,7 +159,7 @@ $.ajax({
 New user register for a bank account, information will be submitted to MongoDB at Bankend
 | | |
 |:--|:----------------------:|
-|URL|/register|
+|URL|`/register`|
 |Method|POST|
 |URL Params|None|
 |Data Params| `{username: [String], password: [String], firstName: [String], lastName: [String]}` |
@@ -188,7 +186,7 @@ $.ajax({
 Logout the current logged in bank account
 | | |
 |:--|:----------------------:|
-|URL|/logout|
+|URL|`/logout`|
 |Method|`GET`|
 |URL Params|None|
 |Data Params| None|
@@ -214,7 +212,7 @@ $.ajax({
 User opens chat panel, backend create anonymous guest user in Rainbow and pass to frontend
 | | |
 |:--|:----------------------:|
-|URL|/chat|
+|URL|`/chat`|
 |Method|GET|
 |URL Params| None |
 |Data Params|None|
@@ -242,7 +240,7 @@ User selects "chat with agent", backend find available agent and return
 
 |                            |                                                            |
 | :------------------------- | :--------------------------------------------------------: |
-| URL                        |                          /connect                          |
+| URL                        |                         `/connect`                         |
 | Method                     |                            POST                            |
 | URL Params                 |                            None                            |
 | Data Params                |                   `{request: [Integer]}`                   |
@@ -276,7 +274,7 @@ $.ajax({
 Update agent's availability status
 | | |
 | :------------------------- | :------------------------------------------------------------: |
-| URL | /disconnect |
+| URL | `/disconnect` |
 | Method | POST |
 | URL Params | None |
 | Data Params | `{agentID: [String]}` |
@@ -301,16 +299,16 @@ $.ajax({
 
 Check if user is logged in.
 
-|                            |                                                                |
-| :------------------------- | :------------------------------------------------------------: |
-| URL                        |                             /auth                             |
-| Method                     |                              GET                               |
-| URL Params                 |                              None                              |
-| Data Params                |                              None                              |
-| Success Response (code)    |                             200 OK                             |
+|                            |                                         |
+| :------------------------- | :-------------------------------------: |
+| URL                        |                 `/auth`                 |
+| Method                     |                   GET                   |
+| URL Params                 |                  None                   |
+| Data Params                |                  None                   |
+| Success Response (code)    |                 200 OK                  |
 | Success Response (content) | `{loggedIn: [boolean], user: [Object]}` |
-| Error Response (code)      |                              401 UNAUTHORIZED                              |
-| Error Response (content)   |                              `{error: "Unauthenticated access!}`                              |
+| Error Response (code)      |            401 UNAUTHORIZED             |
+| Error Response (content)   |   `{error: "Unauthenticated access!}`   |
 
 - Sample Call
 
@@ -331,9 +329,215 @@ $.ajax({
 });
 ```
 
-## License & Copyright
+### Admin: Login Page Rendering
 
-© ESCC1G9, Singapore University of Technology and Design
+Render the admin login page
+
+|                            |               |
+| :------------------------- | :-----------: |
+| URL                        |     `/su`     |
+| Method                     |      GET      |
+| URL Params                 |     None      |
+| Data Params                |     None      |
+| Success Response (code)    |    200 OK     |
+| Success Response (content) |  'text/html'  |
+| Error Response (code)      | 404 NOT FOUND |
+| Error Response (content)   |     None      |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su",
+  type: "GET",
+  success: function(data, status, r) {
+      //do something if logged in
+  },
+  error: function(error){
+      //do something if not logged in
+  }
+});
+```
+
+
+
+### Admin: Login 
+
+Login in to admin
+
+|                            |                                            |
+| :------------------------- | :----------------------------------------: |
+| URL                        |                   `/su`                    |
+| Method                     |                    POST                    |
+| URL Params                 |                    None                    |
+| Data Params                | `{username: [String], password: [String]}` |
+| Success Response (code)    |                   200 OK                   |
+| Success Response (content) |           "Login Successfully!"            |
+| Error Response (code)      |              401 UNAUTHORIZED              |
+| Error Response (content)   |                  [String]                  |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su",
+  type: "POST",
+  data: {
+    username: "test@mail.com",
+    password: "abcdefg123"
+  },
+  success: function(data) {
+      //do something if logged in
+  },
+  error: function(error){
+      if (error.status === 401){
+          // do something if not logged in
+      }
+  }
+});
+```
+
+### Admin: Render Dashboard
+
+Render the admin dashboard
+
+|                            |                        |
+| :------------------------- | :--------------------: |
+| URL                        |    `/su/dashboard`     |
+| Method                     |          GET           |
+| URL Params                 |          None          |
+| Data Params                |          None          |
+| Success Response (code)    |         200 OK         |
+| Success Response (content) |      'text/html'       |
+| Error Response (code)      |    401 UNAUTHORIZED    |
+| Error Response (content)   | "Unauthorized access!" |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su/dashboard",
+  type: "GET",
+  success: function(data, status, r) {
+      //do something if authenticated
+  },
+  error: function(error){
+      //do something if not authorized
+      if (error.status === 401){
+          
+      }
+  }
+});
+```
+
+### Admin: Create Agent
+
+create agent and add to database
+
+|                            |                                                              |
+| :------------------------- | :----------------------------------------------------------: |
+| URL                        |                         `/su/create`                         |
+| Method                     |                             POST                             |
+| URL Params                 |                             None                             |
+| Data Params                | `{email: [String], password: [String], firstname: [String], lastname: [String]}, skill: [Number]` |
+| Success Response (code)    |                            200 OK                            |
+| Success Response (content) |                "Agent created successfully!"                 |
+| Error Response (code)      |            401 UNAUTHORIZED, 500 NOT IMPLEMENTED             |
+| Error Response (content)   |         "Unauthorized access!", `{error: [Object]}`          |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su/create",
+  type: "POST",
+  data: {
+    email: "test@alpha.com",
+    password: "123456",
+    firstname: "Test",
+    lastname: "Test",
+    skill: 1
+  },
+  success: function(data) {
+      //do something if created successfully
+  },
+  error: function(error){
+      if (error.status === 401){
+          //do something if not authorized
+      } else if (error.status === 500){
+          //do something if not implemented
+      }
+  }
+});
+```
+
+### Admin: Delete Agent
+
+create agent and add to database
+
+|                            |                                                              |
+| :------------------------- | :----------------------------------------------------------: |
+| URL                        |                         `/su/dashboard/delete`  |
+| Method                     |                             GET                             |
+| URL Params                 |                             `{id: [String: agent's id]}`                             |
+| Data Params                |      |
+| Success Response (code)    |                            200 OK                            |
+| Success Response (content) |                "Deleted!"                 |
+| Error Response (code)      |           500 NOT IMPLEMENTED             |
+| Error Response (content)   |         `{error: [Object]}`          |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su/dashboard/delete?id=13dfa@34dfja2f",
+  type: "GET",
+  success: function(data) {
+      //do something if deleted successfully
+  },
+  error: function(error){
+      //do something if failed to delete
+  }
+});
+```
+
+### Admin: Get all agent data information
+
+Retrieve information about agent from backend database
+
+|                            |                                   |
+| :------------------------- | :-------------------------------: |
+| URL                        |       `/su/dashboard/data`        |
+| Method                     |                GET                |
+| URL Params                 |               None                |
+| Data Params                |               None                |
+| Success Response (code)    |              200 OK               |
+| Success Response (content) | `Arrays[[Object], [Object], ...]` |
+| Error Response (code)      |        500 NOT IMPLEMENTED        |
+| Error Response (content)   |        `{error: [Object]}`        |
+
+- Sample Call
+
+```js
+$.ajax({
+  url: "/su/dashboard/data",
+  type: "GET",
+  success: function(data) {
+      data.forEach((element, index) => {
+          //do something with each data in the array
+      });
+  },
+  error: function(error){
+      if (error.status === 500){
+          //do something if not implemented
+      }
+  }
+});
+```
+
+
+
+## License & Copyright
 
 © ESCC1G9, Singapore University of Technology and Design
 

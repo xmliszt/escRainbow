@@ -6,7 +6,8 @@ import {generateResponseBubbleForAgent,
     generateSendBubble,
     generateResponseBubble,
     stopTimeOutEvent,
-    startTimeOutForReminder} from './../js/elementsUtils.js';
+    startTimeOutForReminder
+} from './../js/elementsUtils.js';
 
 var call_count = 0;
 
@@ -38,7 +39,6 @@ async function initialize(){
     let onMessageReceived = function(event){
         let message = event.detail.message;
         let conversation = event.detail.conversation;
-        console.log(message.data);
         if (message.data == "\\call"){
             var agentID = localStorage.getItem("agent-id");
             rainbowSDK.contacts.searchById(agentID).then(contact=>{
@@ -50,12 +50,22 @@ async function initialize(){
                 ];
                 generateResponseBubbleWithInsertionElements("The agent has initiated a call request. Please select one of the options to start the call...", 0, elements, false);
                 createCallbackResponseForButton(`#call-audio-${call_count}`, () => {
-                    stopTimeOutEvent();
-                    rainbowSDK.webRTC.callInAudio(contact);
+                    var can = rainbowSDK.webRTC.canMakeAudioVideoCall();
+                    if (can){
+                        stopTimeOutEvent();
+                        rainbowSDK.webRTC.callInAudio(contact);
+                    } else {
+                        generateResponseBubble("Your device does not support audio/video call!", 0, false);
+                    }
                 });
                 createCallbackResponseForButton(`#call-video-${call_count}`, () => {
-                    stopTimeOutEvent();
-                    rainbowSDK.webRTC.callInVideo(contact);
+                    var can = rainbowSDK.webRTC.canMakeAudioVideoCall();
+                    if (can){
+                        stopTimeOutEvent();
+                        rainbowSDK.webRTC.callInVideo(contact);
+                    } else {
+                        generateResponseBubble("Your device does not support audio/video call!", 0, false);
+                    }
                 });
             }).catch(err=>{
                 console.error("Failed to find agent!");
@@ -74,6 +84,7 @@ async function initialize(){
             generateResponseBubble("Calling... Please wait...", 0, false);
         } else if (call.status.value == "connecting"){
             console.log("Connected");
+            stopTimeOutEvent();
 
             if (call.localMedia == 1){
                 var elements = [
@@ -102,11 +113,62 @@ async function initialize(){
         } else if (call.status.value == "Unknown") {
             console.log("Call ended!");
             $('.video-stream').hide();
-            generateResponseBubble("Call has ended...", 0);
+            generateResponseBubbleForAgent("Call has ended...", 0, false);
             rainbowSDK.webRTC.hideLocalVideo();
             rainbowSDK.webRTC.hideRemoteVideo(call);
             startTimeOutForReminder(3);
+        } else if (call.status.value == "incommingCall"){
+            var can = rainbowSDK.webRTC.canMakeAudioVideoCall();
+            var micro = rainbowSDK.webRTC.hasAMicrophone();
+            var cam = rainbowSDK.webRTC.hasACamera();
+            console.log(`Microhpone: ${micro} Camera: ${cam}`);
+            if (can){
+                console.log("Receive incomming call...");
+                var elements = [
+                    generateButton(`incoming-accept-${call_count}`, "Accept", 1),
+                    generateButton(`incoming-decline-${call_count}`, "Decline", 0)
+                ];
+                generateResponseBubbleWithInsertionElements("Incoming call...", 0, elements, false);
+                createCallbackResponseForButton(`#incoming-accept-${call_count}`, () => {
+                    if (call.remoteMedia === 3) {
+                        // video
+                        $('.video-stream').css("display", "flex").hide().fadeIn();
+                        $('#stopConnection').click(() => {
+                            rainbowSDK.webRTC.release(call);
+                        });
+                        rainbowSDK.webRTC.answerInVideo(call);
+                    } else if (call.remoteMedia === 1) {
+                        // audio
+                        rainbowSDK.webRTC.answerInAudio(call);
+                    }
+                });
+                createCallbackResponseForButton(`#incoming-decline-${call_count}`, () => {
+                    rainbowSDK.webRTC.release(call);
+                });
+                call_count ++;
+            } else {
+                generateResponseBubble("Your device does not support audio/video call!", 0, false);
+                rainbowSDK.webRTC.release(call);
+            }
+            
+        } else if (call.status.value == "answering"){
+            stopTimeOutEvent();
+            if (call.remoteMedia == 3){
+                rainbowSDK.webRTC.showLocalVideo();
+                rainbowSDK.webRTC.showRemoteVideo(call);
+                generateResponseBubble(`<i class="fas fa-video"></i><span> </span><i class="fas fa-ellipsis-h"></i><i class="fas fa-ellipsis-h"></i>  call in progress...`, 0, false);
+            } else if (call.remoteMedia == 1){
+                var elements = [
+                    generateButton(`call-connection-${call_count}`, "TERMINATE THE CALL", 1)
+                ];
+                generateResponseBubbleWithInsertionElements(`<i class="fas fa-microphone-alt"></i><span> </span><i class="fas fa-ellipsis-h"></i><i class="fas fa-ellipsis-h"></i>  call in progress...`, 0, elements, false);
+                createCallbackResponseForButton(`#call-connection-${call_count}`, () => {
+                    rainbowSDK.webRTC.release(call);
+                });
+            }
+           
         } else {
+            console.log("Unhandled call event!");
             console.log(call);
         }
     }
