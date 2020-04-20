@@ -51,7 +51,7 @@ const USERS = "Users";
 const AGENTS = "Agents";
 
 MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, async (err, database) => {
-    if(err) console.error(err);
+    if(err) throw err;
     db = await database.db(dbName);
     console.log("Mongo is connected!");
     resetAgents();
