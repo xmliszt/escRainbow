@@ -324,6 +324,11 @@ app.post('/su/create', async (req, res)=>{
         var firstName = agent.firstname;
         var lastName = agent.lastname;
         var skill = Number(agent.skill);
+
+        if (pwd == ""){
+            pwd = "~!@SUTDsutd123";
+        }
+
         var found = await db.collection(AGENTS).findOne({email: email});
         if (found != null){
             console.log("Agent already existed!");
