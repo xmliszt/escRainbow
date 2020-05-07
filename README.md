@@ -11,6 +11,10 @@
 
 https://alpha-holding.herokuapp.com/
 
+## Final Project Report
+
+https://docs.google.com/document/d/1jXOXUDD9_DxxlOv1kN3OtP0ftsphTvbtucvVDYqSE5U/edit?usp=sharing
+
 ## Jest Testing
 
 Install relevant dependencies for testing.
